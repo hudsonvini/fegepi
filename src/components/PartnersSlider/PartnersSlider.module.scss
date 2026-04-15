@@ -1,0 +1,167 @@
+.container {
+    border-radius: 20px;
+    // padding: 36px 0;
+    overflow: hidden;
+    margin-bottom: 80px;
+}
+
+.titleArea {
+    padding: 0 40px;
+    margin-bottom: 28px;
+
+    span {
+        display: block;
+        color: #034ea7;
+        font-size: 16px;
+        margin-bottom: 8px;
+    }
+
+    h2 {
+        color: #034ea7;
+        font-size: 28px;
+        font-weight: 500;
+    }
+}
+
+.slider {
+    overflow: hidden;
+    -webkit-mask-image: linear-gradient(to right, transparent, #000 8%, #000 92%, transparent);
+    mask-image: linear-gradient(to right, transparent, #000 8%, #000 92%, transparent);
+}
+
+.marquee {
+    display: flex;
+    width: max-content;
+    animation: marquee 26s linear infinite;
+    will-change: transform;
+}
+
+.group {
+    display: flex;
+    align-items: stretch;
+    gap: 24px;
+    list-style: none;
+    padding: 0 40px;
+}
+
+.logoCard {
+    min-width: 180px;
+    min-height: 86px;
+    padding: 18px 30px;
+    border-radius: 16px;
+    color: #8b93a4;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    flex-shrink: 0;
+}
+
+.wordmark {
+    font-size: 28px;
+    line-height: 1;
+    letter-spacing: -0.03em;
+}
+
+.subtitle {
+    font-size: 12px;
+    line-height: 1;
+    font-weight: 700;
+    text-transform: lowercase;
+    margin-top: 4px;
+}
+
+.shefinds {
+    .wordmark {
+        font-size: 22px;
+        font-weight: 800;
+        letter-spacing: -0.05em;
+    }
+}
+
+.yahooNews {
+    .wordmark {
+        font-size: 24px;
+        font-style: italic;
+        font-weight: 800;
+    }
+}
+
+.healthline {
+    .wordmark {
+        font-family: Georgia, 'Times New Roman', serif;
+        font-size: 34px;
+        font-weight: 700;
+        letter-spacing: -0.04em;
+        text-transform: lowercase;
+    }
+}
+
+.yahoo {
+    .wordmark {
+        font-size: 30px;
+        font-style: italic;
+        font-weight: 800;
+        text-transform: lowercase;
+    }
+}
+
+.msn {
+    .wordmark {
+        font-size: 24px;
+        font-weight: 700;
+        text-transform: lowercase;
+    }
+}
+
+@keyframes marquee {
+    from {
+        transform: translate3d(0, 0, 0);
+    }
+
+    to {
+        transform: translate3d(-50%, 0, 0);
+    }
+}
+
+@media (max-width: 900px) {
+    .container {
+        padding: 28px 0;
+        margin-bottom: 56px;
+    }
+
+    .titleArea {
+        padding: 0 24px;
+
+        h2 {
+            font-size: 34px;
+        }
+    }
+
+    .group {
+        gap: 16px;
+        padding: 0 24px;
+    }
+
+    .logoCard {
+        min-width: 150px;
+        min-height: 74px;
+        padding: 16px 24px;
+    }
+
+    .wordmark {
+        font-size: 24px;
+    }
+
+    .healthline {
+        .wordmark {
+            font-size: 28px;
+        }
+    }
+}
+
+@media (prefers-reduced-motion: reduce) {
+    .marquee {
+        animation-play-state: paused;
+    }
+}
