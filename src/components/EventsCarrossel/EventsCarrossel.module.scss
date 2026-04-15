@@ -1,0 +1,179 @@
+.container {
+    position: relative;
+    padding: 40px;
+}
+
+.titleSection {
+    display: flex;
+    justify-content: space-between;
+    align-items: flex-end;
+    padding-bottom: 180px;
+
+    .titleArea {
+        color: #fff;
+
+        span {
+            font-size: 14px;
+        }
+        h1 {
+            font-size: 36px;
+            font-weight: 500;
+            margin-top: 4px;
+        }
+    }
+
+    .buttonsArea {
+        display: flex;
+        gap: 8px;
+        
+        .button {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            background-color: #fff;
+            width: 48px;
+            height: 48px;
+            color: #034EA7;
+        }
+    }
+}
+
+.carrosselArea {
+    position: absolute;
+    transform: translateY(-140px);
+    width: calc(100% - 80px);
+    display: grid;
+    grid-template-columns: 1fr 1fr 1fr 1fr;
+    gap: 20px;
+}
+
+.card {
+    background-color: #fff;
+
+    &.destaq {
+        grid-column: span 2;
+        .mediaArea {
+            .titleArea {
+                opacity: 1;
+            }
+        }
+
+        .textArea {
+            .inscreverButton {
+                background-color: #FDD516;
+                padding: 8px 8px 8px 14px;
+                width: auto;
+
+                span {
+                    display: block;
+                    font-size: 14px;
+                    font-weight: 600;
+                }
+
+                svg {
+                    color: #000;
+                }
+            }
+        }
+    }
+
+    .mediaArea {
+        position: relative;
+        height: 300px;
+
+        img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+        }
+
+        .titleArea {
+            position: absolute;
+            bottom: 20px;
+            left: 20px;
+            color: #fff;
+            opacity: 0;
+
+            h1 {
+                font-size: 32px;
+                font-weight: 600;
+                margin-bottom: 4px;
+            }
+            span {
+                font-size: 14px;
+            }
+        }
+
+    }
+    .textArea {
+        display: flex;
+        justify-content: space-between;
+        align-items: flex-end;
+        padding: 14px;
+
+        .leftArea {
+            p {
+                display: flex;
+                align-items: center;
+                gap: 8px;
+                color: #034EA7;
+                font-weight: 600;
+                font-size: 14px;
+                margin-bottom: 10px;
+
+                svg {
+                    height: 20px;
+                    width: auto;
+                }
+            }
+            .status {
+                position: relative;
+                display: block;
+                color: #D84343;
+                font-weight: 500;
+                font-size: 14px;
+                margin-left: 18px;
+
+                &.active {
+                    color: #2BB05E;
+
+                    &::after {
+                        background-color: #2BB05E;
+                    }
+                }
+
+                &::after {
+                    content: '';
+                    position: absolute;
+                    top: calc(50% - 4px);
+                    left: -16px;
+                    width: 8px;
+                    height: 8px;
+                    background-color: #D84343;
+                    border-radius: 50%;
+                }
+            }
+        }
+
+        .inscreverButton {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 8px;
+            background-color: #EFEFEF;
+            border-radius: 6px;
+            width: 36px;
+            height: 36px;
+
+            span {
+                display: none;
+
+            }
+            svg {
+                color: #ACACAC;
+                height: 20px;
+                width: auto;
+            }
+        }
+    }
+}

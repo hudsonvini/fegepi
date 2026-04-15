@@ -1,0 +1,33 @@
+.container {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    background-color: #fff;
+    border-radius: 16px 16px 0px 0px;
+    padding: 10px 40px;
+
+    .logo {}
+
+    .listLink {
+        display: flex;
+        gap: 20px;
+        font-size: 14px;
+    }
+
+    .buttonsArea {
+        display: flex;
+        gap: 10px;
+
+        .button {
+            padding: 10px 16px;
+            border-radius: 8px;
+            background-color: #003073;
+            color: #fff;
+            font-weight: 500;
+
+            &.cadastro {
+                background-color: #53a133;
+            }
+        }
+    }
+}
