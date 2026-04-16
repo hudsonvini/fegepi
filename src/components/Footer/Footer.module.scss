@@ -36,100 +36,6 @@
     justify-content: center;
 }
 
-.brandBadge {
-    position: relative;
-    width: 282px;
-    padding: 18px 22px 34px;
-}
-
-.brandBadge::before,
-.brandBadge::after {
-    content: '';
-    position: absolute;
-    bottom: 10px;
-    width: 46px;
-    height: 92px;
-    border: 4px solid #fff;
-    border-top: 0;
-    border-radius: 0 0 24px 24px;
-}
-
-.brandBadge::before {
-    left: 0;
-    transform: skewX(-10deg);
-}
-
-.brandBadge::after {
-    right: 0;
-    transform: skewX(10deg);
-}
-
-.flag {
-    position: relative;
-    width: 230px;
-    height: 30px;
-    margin: 0 auto 10px;
-    border-radius: 2px;
-    background:
-        linear-gradient(180deg, #ffe11c 0 33%, #2fa94d 33% 66%, #ffe11c 66% 100%);
-}
-
-.star {
-    position: absolute;
-    left: -36px;
-    top: 0;
-    width: 42px;
-    height: 30px;
-    background-color: #313b88;
-    color: #fff;
-    display: grid;
-    place-items: center;
-    font-size: 16px;
-}
-
-.flagTop,
-.flagBottom {
-    position: absolute;
-    left: 0;
-    width: 100%;
-    height: 2px;
-    background-color: rgba(255, 255, 255, 0.24);
-}
-
-.flagTop {
-    top: 9px;
-}
-
-.flagBottom {
-    bottom: 9px;
-}
-
-.brandCenter {
-    position: relative;
-    z-index: 1;
-    border: 4px solid #fff;
-    border-bottom-width: 6px;
-    border-radius: 44px 44px 28px 28px;
-    padding: 12px 14px 16px;
-    text-align: center;
-    color: #fff;
-}
-
-.brandCenter strong {
-    display: block;
-    font-size: 34px;
-    font-weight: 800;
-    line-height: 0.95;
-    margin-bottom: 10px;
-}
-
-.brandCenter span {
-    display: block;
-    font-size: 11px;
-    font-weight: 700;
-    line-height: 1.25;
-}
-
 .linksGrid {
     display: grid;
     grid-template-columns: repeat(4, minmax(0, 1fr));
@@ -152,7 +58,7 @@
 }
 
 .linkGroup a {
-    font-size: 17px;
+    font-size: 14px;
     line-height: 1.35;
     opacity: 0.95;
 }
@@ -179,15 +85,18 @@
 .socialLink {
     width: 42px;
     height: 42px;
-    border: 2px solid rgba(255, 255, 255, 0.85);
     border-radius: 12px;
     display: grid;
     place-items: center;
 }
 
 .socialLink svg {
-    width: 20px;
-    height: 20px;
+    width: 28px;
+    height: 28px;
+}
+
+.socialLink svg path{
+    fill: #fff;
 }
 
 .bottomRow p {
