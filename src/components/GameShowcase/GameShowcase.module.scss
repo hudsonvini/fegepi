@@ -10,18 +10,6 @@
     padding-top: 60px;
 }
 
-.topNotch {
-    position: absolute;
-    top: 0;
-    left: 50%;
-    transform: translateX(-50%);
-    width: 150px;
-    height: 32px;
-    background-color: #dfe4ed;
-    border-radius: 0 0 18px 18px;
-    z-index: 2;
-}
-
 .heroArea {
     display: grid;
     grid-template-columns: minmax(320px, 44%) minmax(0, 1fr);
@@ -29,6 +17,8 @@
     gap: 24px;
     min-height: 460px;
     padding: 34px 44px 0;
+    max-width: 1500px;
+    margin: 0 auto;
 }
 
 .mediaArea {
@@ -130,7 +120,7 @@
     strong {
         display: block;
         font-size: 24px;
-        font-weight: 700;
+        font-weight: 600;
     }
 }
 
@@ -166,11 +156,6 @@
 @media (max-width: 720px) {
     .container {
         padding-bottom: 88px;
-    }
-
-    .topNotch {
-        width: 110px;
-        height: 24px;
     }
 
     .heroArea {

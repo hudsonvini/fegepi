@@ -39,7 +39,6 @@ export default function GameShowcase({
     return (
         <section className={styles.container}>
             <div className={styles.card}>
-                <div className={styles.topNotch} aria-hidden="true"></div>
 
                 <div className={styles.heroArea}>
                     <div className={styles.mediaArea}>
