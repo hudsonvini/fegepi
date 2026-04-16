@@ -1,3 +1,4 @@
+import GameArea from "@/components/GameArea/GameArea";
 import styles from "./page.module.scss";
 import Hero from "@/components/Hero/Hero";
 import PartnersSlider from "@/components/PartnersSlider/PartnersSlider";
@@ -9,6 +10,7 @@ export default function Home() {
         <Hero />
         <PartnersSlider />
       </div>
+      <GameArea />
     </div>
   );
 }
