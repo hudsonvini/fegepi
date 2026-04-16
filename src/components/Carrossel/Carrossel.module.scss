@@ -17,7 +17,6 @@
 
 .slide {
     min-width: 100%;
-    height: clamp(320px, 42vw, 520px);
     background-color: #09254a;
 }
 
@@ -40,7 +39,7 @@
 
 .bullet {
     width: 12px;
-    height: 12px;
+    height: 8px;
     border: 0;
     border-radius: 999px;
     background-color: rgba(255, 255, 255, 0.42);
@@ -52,11 +51,11 @@
 
 .activeBullet {
     width: 34px;
-    background-color: #fff;
+    background-color: #fdd516;
 }
 
 @media (max-width: 768px) {
     .slide {
-        height: 420px;
+        // height: 420px;
     }
 }

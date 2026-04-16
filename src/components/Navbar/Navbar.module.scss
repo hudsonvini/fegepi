@@ -4,14 +4,34 @@
     align-items: center;
     background-color: #fff;
     border-radius: 16px 16px 0px 0px;
-    padding: 10px 40px;
+    padding: 10px;
+    padding-left: 60px;
 
     .logo {}
 
     .listLink {
         display: flex;
-        gap: 20px;
+        gap: 10px;
         font-size: 14px;
+
+        .link {
+            display: flex;
+            align-items: center;
+            gap: 4px;
+            background-color: #f1f1f1;
+            padding: 4px 8px;
+            border-radius: 6px;
+
+            svg {
+                height: 16px;
+                width: auto;
+            }
+
+            &.destaq {
+                background-color: #c5d6eb;
+                color: #034ea7;
+            }
+        }
     }
 
     .buttonsArea {
@@ -21,12 +41,14 @@
         .button {
             padding: 10px 16px;
             border-radius: 8px;
-            background-color: #003073;
-            color: #fff;
-            font-weight: 500;
+            background-color: #fdd516;
+            color: #000000;
+            font-weight: 400;
+            font-size: 14px;
 
             &.cadastro {
-                background-color: #53a133;
+                background-color: #034ea7;
+                color: #fff;
             }
         }
     }

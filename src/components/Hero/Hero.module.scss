@@ -1,9 +1,27 @@
+.container {
+    position: relative;
+}
+
 .internalContainer {
     background-color: #034EA7;
     width: 100%;
     margin-top: 40px;
     border-radius: 16px;
     margin-bottom: 230px;
+}
+
+.strip {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    position: absolute;
+    top: 0px;
+    left: 0px;
+    width: 40px;
+    height: 100%;
+    background-color: #00387A;
+    border-radius: 16px 0px 0px  16px ;
+    z-index: 9;
 }
 
 @media (max-width: 900px) {

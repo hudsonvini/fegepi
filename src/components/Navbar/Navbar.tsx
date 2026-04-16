@@ -1,4 +1,5 @@
 import styles from './Navbar.module.scss'
+import { House } from 'lucide-react'
 
 export default function Navbar() {
     return (
@@ -8,11 +9,11 @@ export default function Navbar() {
             </a>
 
             <ul className={styles.listLink}>
-                <a className={styles.link} href="">Home</a>
-                <a className={styles.link} href="">Eventos</a>
-                <a className={styles.link} href="">Institucional </a>
-                <a className={styles.link} href="">Ranking</a>
-                <a className={styles.link} href="">Contato</a>
+                <a className={`${styles.link} ${styles.destaq}`} href="#"><House />Home</a>
+                <a className={styles.link} href="#">Eventos</a>
+                <a className={styles.link} href="#">Institucional </a>
+                <a className={styles.link} href="#">Ranking</a>
+                <a className={styles.link} href="#">Contato</a>
             </ul>
 
             <div className={styles.buttonsArea}>

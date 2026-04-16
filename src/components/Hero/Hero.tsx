@@ -6,6 +6,9 @@ import styles from './Hero.module.scss'
 export default function Hero() {
     return (
         <section className={styles.container}>
+            <div className={styles.strip}>
+                <img src="/star.svg" alt="Estrela" />
+            </div>
             <div className={styles.internalContainer}>
                 <Navbar />
 
