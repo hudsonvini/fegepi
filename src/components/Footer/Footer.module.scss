@@ -1,0 +1,285 @@
+.footer {
+    position: relative;
+    padding-top: 86px;
+}
+
+.brandHeading {
+    position: relative;
+    z-index: 2;
+    text-align: center;
+    color: #0f58b5;
+    font-size: clamp(68px, 10vw, 150px);
+    font-weight: 800;
+    line-height: 0.88;
+    letter-spacing: -0.06em;
+    margin-bottom: -22px;
+}
+
+.shell {
+    background-color: #0f58b5;
+    border-radius: 38px 38px 0 0;
+    overflow: hidden;
+}
+
+.content {
+    max-width: 1500px;
+    margin: 0 auto;
+    padding: 84px 32px 42px;
+    display: grid;
+    grid-template-columns: 360px minmax(0, 1fr);
+    gap: 36px;
+    align-items: start;
+}
+
+.brandColumn {
+    display: flex;
+    justify-content: center;
+}
+
+.brandBadge {
+    position: relative;
+    width: 282px;
+    padding: 18px 22px 34px;
+}
+
+.brandBadge::before,
+.brandBadge::after {
+    content: '';
+    position: absolute;
+    bottom: 10px;
+    width: 46px;
+    height: 92px;
+    border: 4px solid #fff;
+    border-top: 0;
+    border-radius: 0 0 24px 24px;
+}
+
+.brandBadge::before {
+    left: 0;
+    transform: skewX(-10deg);
+}
+
+.brandBadge::after {
+    right: 0;
+    transform: skewX(10deg);
+}
+
+.flag {
+    position: relative;
+    width: 230px;
+    height: 30px;
+    margin: 0 auto 10px;
+    border-radius: 2px;
+    background:
+        linear-gradient(180deg, #ffe11c 0 33%, #2fa94d 33% 66%, #ffe11c 66% 100%);
+}
+
+.star {
+    position: absolute;
+    left: -36px;
+    top: 0;
+    width: 42px;
+    height: 30px;
+    background-color: #313b88;
+    color: #fff;
+    display: grid;
+    place-items: center;
+    font-size: 16px;
+}
+
+.flagTop,
+.flagBottom {
+    position: absolute;
+    left: 0;
+    width: 100%;
+    height: 2px;
+    background-color: rgba(255, 255, 255, 0.24);
+}
+
+.flagTop {
+    top: 9px;
+}
+
+.flagBottom {
+    bottom: 9px;
+}
+
+.brandCenter {
+    position: relative;
+    z-index: 1;
+    border: 4px solid #fff;
+    border-bottom-width: 6px;
+    border-radius: 44px 44px 28px 28px;
+    padding: 12px 14px 16px;
+    text-align: center;
+    color: #fff;
+}
+
+.brandCenter strong {
+    display: block;
+    font-size: 34px;
+    font-weight: 800;
+    line-height: 0.95;
+    margin-bottom: 10px;
+}
+
+.brandCenter span {
+    display: block;
+    font-size: 11px;
+    font-weight: 700;
+    line-height: 1.25;
+}
+
+.linksGrid {
+    display: grid;
+    grid-template-columns: repeat(4, minmax(0, 1fr));
+    gap: 28px;
+    color: #fff;
+}
+
+.linkGroup h3 {
+    font-size: 18px;
+    font-weight: 700;
+    margin-bottom: 16px;
+}
+
+.linkGroup ul {
+    list-style: none;
+}
+
+.linkGroup li + li {
+    margin-top: 12px;
+}
+
+.linkGroup a {
+    font-size: 17px;
+    line-height: 1.35;
+    opacity: 0.95;
+}
+
+.bottomRow {
+    max-width: 1500px;
+    margin: 0 auto;
+    padding: 0 32px 48px;
+    display: grid;
+    grid-template-columns: minmax(0, 1fr) auto minmax(0, 1fr);
+    gap: 20px;
+    align-items: center;
+    color: #fff;
+}
+
+.legalLinks {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 10px;
+    font-size: 15px;
+    align-items: center;
+}
+
+.socialLink {
+    width: 42px;
+    height: 42px;
+    border: 2px solid rgba(255, 255, 255, 0.85);
+    border-radius: 12px;
+    display: grid;
+    place-items: center;
+}
+
+.socialLink svg {
+    width: 20px;
+    height: 20px;
+}
+
+.bottomRow p {
+    text-align: right;
+    font-size: 15px;
+    line-height: 1.35;
+}
+
+.flagBar {
+    display: grid;
+    grid-template-columns: 132px minmax(0, 1fr);
+}
+
+.flagStarBlock {
+    background-color: #313b88;
+    color: #fff;
+    display: grid;
+    place-items: center;
+    font-size: 28px;
+    min-height: 54px;
+}
+
+.stripes {
+    background:
+        linear-gradient(180deg, #2fa94d 0 25%, #ffe11c 25% 50%, #2fa94d 50% 75%, #ffe11c 75% 100%);
+}
+
+@media (max-width: 1180px) {
+    .content {
+        grid-template-columns: 1fr;
+    }
+
+    .linksGrid {
+        grid-template-columns: repeat(2, minmax(0, 1fr));
+    }
+
+    .bottomRow {
+        grid-template-columns: 1fr;
+        justify-items: center;
+        text-align: center;
+    }
+
+    .bottomRow p {
+        text-align: center;
+    }
+}
+
+@media (max-width: 720px) {
+    .footer {
+        padding-top: 56px;
+    }
+
+    .brandHeading {
+        margin-bottom: -10px;
+    }
+
+    .shell {
+        border-radius: 28px 28px 0 0;
+    }
+
+    .content {
+        padding: 56px 18px 32px;
+        gap: 28px;
+    }
+
+    .brandBadge {
+        width: 250px;
+        padding: 12px 18px 28px;
+    }
+
+    .flag {
+        width: 194px;
+    }
+
+    .brandCenter strong {
+        font-size: 30px;
+    }
+
+    .linksGrid {
+        grid-template-columns: 1fr;
+        gap: 24px;
+    }
+
+    .bottomRow {
+        padding: 0 18px 34px;
+    }
+
+    .legalLinks {
+        justify-content: center;
+    }
+
+    .flagBar {
+        grid-template-columns: 92px minmax(0, 1fr);
+    }
+}
