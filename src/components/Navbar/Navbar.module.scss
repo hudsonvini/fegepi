@@ -1,55 +1,325 @@
 .container {
+    position: relative;
     display: flex;
     justify-content: space-between;
     align-items: center;
+    gap: 16px;
     background-color: #fff;
-    border-radius: 16px 16px 0px 0px;
+    border-radius: 16px 16px 0 0;
     padding: 10px;
     padding-left: 60px;
+    z-index: 8;
+}
 
-    .logo {}
+.logo {
+    display: inline-flex;
+    align-items: center;
+    flex-shrink: 0;
+}
 
-    .listLink {
-        display: flex;
-        gap: 10px;
-        font-size: 14px;
+.logo img {
+    display: block;
+    height: 40px;
+    width: auto;
+}
 
-        .link {
-            display: flex;
-            align-items: center;
-            gap: 4px;
-            background-color: #f1f1f1;
-            padding: 4px 8px;
-            border-radius: 6px;
+.listLink {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    list-style: none;
+    min-width: 0;
+}
 
-            svg {
-                height: 16px;
-                width: auto;
-            }
+.link {
+    display: flex;
+    align-items: center;
+    gap: 4px;
+    background-color: #f1f1f1;
+    padding: 4px 8px;
+    border-radius: 6px;
+    font-size: 14px;
+    white-space: nowrap;
 
-            &.destaq {
-                background-color: #c5d6eb;
-                color: #034ea7;
-            }
-        }
+    svg {
+        height: 16px;
+        width: auto;
+        display: none;
+    }
+}
+
+.destaq {
+    background-color: #c5d6eb;
+    color: #034ea7;
+
+    svg {
+        display: block;
+    }
+}
+
+.buttonsArea {
+    display: flex;
+    gap: 10px;
+}
+
+.button {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    padding: 10px 16px;
+    border-radius: 8px;
+    background-color: #fdd516;
+    color: #000;
+    font-weight: 400;
+    font-size: 14px;
+    white-space: nowrap;
+}
+
+.cadastro {
+    background-color: #034ea7;
+    color: #fff;
+}
+
+.menuButton {
+    display: none;
+    width: 42px;
+    height: 42px;
+    border: 0;
+    // border-radius: 12px;
+    background-color: #edf2f9;
+    color: #034ea7;
+    place-items: center;
+    cursor: pointer;
+    flex-shrink: 0;
+}
+
+.menuButton svg,
+.closeButton svg {
+    width: 20px;
+    height: 20px;
+}
+
+.menuOverlay {
+    position: fixed;
+    inset: 0;
+    background-color: rgba(2, 17, 40, 0.46);
+    opacity: 0;
+    pointer-events: none;
+    transition: opacity 0.25s ease;
+    z-index: 39;
+}
+
+.menuOverlayVisible {
+    opacity: 1;
+    pointer-events: auto;
+}
+
+.menuDrawer {
+    position: fixed;
+    top: 14px;
+    right: 14px;
+    bottom: 14px;
+    width: min(320px, calc(100vw - 28px));
+    background-color: #fff;
+    border-radius: 22px;
+    overflow: hidden;
+    box-shadow: 0 24px 60px rgba(6, 22, 54, 0.28);
+    transform: translateX(calc(100% + 24px));
+    transition: transform 0.3s ease;
+    z-index: 40;
+    display: none;
+}
+
+.menuDrawerOpen {
+    transform: translateX(0);
+}
+
+.drawerHeader {
+    position: relative;
+    padding: 22px 20px 24px;
+    background-color: #fdd516;
+    color: #000000;
+    height: fit-content;
+}
+
+.drawerProfile {
+    display: flex;
+    align-items: center;
+    gap: 14px;
+    padding-right: 36px;
+}
+
+.avatarWrap {
+    width: 62px;
+    height: 62px;
+    border-radius: 50%;
+    background-color: #fff;
+    display: grid;
+    place-items: center;
+    flex-shrink: 0;
+}
+
+.avatarWrap img {
+    width: 44px;
+    height: 44px;
+    object-fit: contain;
+}
+
+.profileText {
+    strong {
+        display: block;
+        font-size: 20px;
+        font-weight: 600;
+        margin-bottom: 4px;
     }
 
+    span {
+        display: block;
+        font-size: 12px;
+        line-height: 1.4;
+        opacity: 0.92;
+    }
+}
+
+.closeButton {
+    position: absolute;
+    top: 16px;
+    right: 16px;
+    width: 36px;
+    height: 36px;
+    border: 0;
+    // border-radius: 999px;
+    background-color: rgb(255, 255, 255);
+    color: #cf2626;
+    display: grid;
+    place-items: center;
+    cursor: pointer;
+}
+
+.drawerBody {
+    display: flex;
+    flex-direction: column;
+    gap: 18px;
+    padding: 18px 18px 20px;
+    overflow-y: auto;
+    height: calc(100% - 108px);
+}
+
+.drawerSection {
+    display: flex;
+    flex-direction: column;
+    gap: 6px;
+
+    h2 {
+        font-size: 16px;
+        font-weight: 700;
+        color: #111;
+        margin-bottom: 8px;
+    }
+}
+
+.drawerDivider {
+    height: 1px;
+    background-color: #e4e7ee;
+}
+
+.drawerLink {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    padding: 12px 8px;
+    border-radius: 12px;
+    color: #20242b;
+    font-size: 16px;
+    line-height: 1.2;
+}
+
+.drawerLinkFeatured {
+    color: #034ea7;
+    font-weight: 600;
+}
+
+.drawerAccessPrimary {
+    background-color: #edf4ff;
+    color: #034ea7;
+    font-weight: 600;
+}
+
+.drawerIcon {
+    width: 22px;
+    height: 22px;
+    color: #7c8491;
+    display: grid;
+    place-items: center;
+    flex-shrink: 0;
+}
+
+.drawerLinkFeatured .drawerIcon,
+.drawerAccessPrimary .drawerIcon {
+    color: currentColor;
+}
+
+.drawerIcon svg {
+    width: 18px;
+    height: 18px;
+}
+
+@media (max-width: 1280px) {
+    .container {
+        padding-left: 24px;
+        padding-left: 60px;
+    }
+}
+
+@media (max-width: 1100px) {
+    .container {
+        padding: 12px 16px;
+        padding-left: 60px;
+    }
+
+    .listLink,
     .buttonsArea {
+        display: none;
+    }
+
+    .menuButton {
+        display: grid;
+    }
+    .menuDrawer {
         display: flex;
-        gap: 10px;
+        flex-direction: column;
+    }
+}
 
-        .button {
-            padding: 10px 16px;
-            border-radius: 8px;
-            background-color: #fdd516;
-            color: #000000;
-            font-weight: 400;
-            font-size: 14px;
+@media (max-width: 900px) {
+    .container {
+        padding-left: 40px;
+    }
+}
 
-            &.cadastro {
-                background-color: #034ea7;
-                color: #fff;
-            }
+@media (max-width: 520px) {
+    .logo img {
+        height: 34px;
+    }
+
+    .menuDrawer {
+        top: 10px;
+        right: 10px;
+        bottom: 10px;
+        width: calc(100vw - 20px);
+    }
+
+    .drawerHeader {
+        padding: 18px 16px 20px;
+    }
+
+    .drawerBody {
+        padding: 16px;
+    }
+
+    .profileText {
+        strong {
+            font-size: 18px;
         }
     }
 }

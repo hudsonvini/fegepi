@@ -132,10 +132,13 @@
     }
 
     .titleArea {
-        padding: 0 24px;
+        padding: 0px;
 
+        span {
+            font-size: 12px;
+        }
         h2 {
-            font-size: 34px;
+            font-size: 22px;
         }
     }
 
