@@ -22,6 +22,7 @@
 }
 
 .gamePicker {
+    font-family: 'Poppins';
     width: 100%;
     border: 0;
     border-radius: 8px;
@@ -32,7 +33,7 @@
     justify-content: space-between;
     padding: 16px 22px;
     font-size: 16px;
-    font-weight: 600;
+    font-weight: 500;
     cursor: pointer;
 }
 
@@ -170,7 +171,7 @@
 
 .rankingPanel {
     background-color: #e9ecee;
-    border-radius: 20px 20px 0 0;
+    border-radius:20px;
     min-height: 100%;
     overflow: hidden;
     box-shadow: 0 20px 50px rgba(6, 32, 82, 0.14);
@@ -249,6 +250,7 @@
 }
 
 .seasonButton {
+    font-family: 'Poppins';
     width: 100%;
     border: 0;
     border-radius: 8px;
@@ -259,7 +261,7 @@
     justify-content: space-between;
     gap: 12px;
     padding: 12px 14px;
-    font-size: 16px;
+    font-size: 15px;
     font-weight: 500;
     cursor: pointer;
 }
@@ -328,19 +330,11 @@
     position: relative;
     background-color: #fff;
     border-radius: 18px;
-    padding: 18px 20px;
+    padding: 12px 12px  12px 20px;
     display: grid;
-    grid-template-columns: 92px 60px minmax(0, 1fr) auto 52px;
+    grid-template-columns: 92px 60px minmax(0, 1fr) auto 40px;
     align-items: center;
     gap: 14px;
-}
-
-.rankingCard::before {
-    left: 168px;
-}
-
-.rankingCard::after {
-    right: 22px;
 }
 
 .logoBadge {
@@ -386,8 +380,9 @@
 }
 
 .rankArea strong {
-    font-size: 20px;
-    font-weight: 700;
+    font-size: 18px;
+    font-weight: 600;
+    line-height: 100%;
 }
 
 .rankArea span {
@@ -403,7 +398,8 @@
 .teamArea h3 {
     color: #111;
     font-size: 18px;
-    font-weight: 700;
+    font-weight: 600;
+    line-height: 100%;
     margin-bottom: 7px;
     white-space: nowrap;
     overflow: hidden;
@@ -414,6 +410,7 @@
     color: #0f58b5;
     font-size: 15px;
     margin-bottom: 6px;
+    line-height: 100%;
 }
 
 .teamArea small {
@@ -429,14 +426,14 @@
 .scoreArea span {
     display: block;
     color: #111;
-    font-size: 16px;
+    font-size: 14px;
     margin-bottom: 6px;
 }
 
 .scoreArea strong {
     color: #0f58b5;
     font-size: 16px;
-    font-weight: 700;
+    font-weight: 600;
 }
 
 .movementBadge {

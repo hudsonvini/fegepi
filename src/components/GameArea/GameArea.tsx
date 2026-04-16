@@ -63,7 +63,7 @@ const defaultGames: RankingGame[] = [
                 label: 'Temporada 2026',
                 entries: [
                     { id: '1', teamName: 'Alpha Wolves', country: 'Piauí', points: 6770, previousPosition: 2, logoText: 'AW', crestSrc: '/images/GameAreaImages/times/escudoLiquid.png', tone: 'navy' },
-                    { id: '2', teamName: 'Delta Force', country: 'Parnaíba', points: 6540, previousPosition: 1, logoText: 'DF', tone: 'red' },
+                    { id: '2', teamName: 'Delta Force', country: 'Parnaíba', points: 6540, previousPosition: 1, logoText: 'DF', crestSrc: '/images/GameAreaImages/times/escudoImperial.jpg', tone: 'red' },
                     { id: '3', teamName: 'Caatinga Core', country: 'Teresina', points: 6415, previousPosition: 5, logoText: 'CC', tone: 'green' },
                     { id: '4', teamName: 'Nordeste Rush', country: 'Picos', points: 6270, previousPosition: 3, logoText: 'NR', tone: 'red' },
                     { id: '5', teamName: 'Sertao Tactics', country: 'Floriano', points: 6145, previousPosition: 7, logoText: 'ST', tone: 'green' },
