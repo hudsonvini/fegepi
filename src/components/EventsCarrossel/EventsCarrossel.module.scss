@@ -7,173 +7,386 @@
     display: flex;
     justify-content: space-between;
     align-items: flex-end;
+    gap: 24px;
     padding-bottom: 180px;
+}
 
-    .titleArea {
-        color: #fff;
+.titleArea {
+    color: #fff;
 
-        span {
-            font-size: 14px;
-        }
-        h1 {
-            font-size: 36px;
-            font-weight: 500;
-            margin-top: 4px;
-        }
+    span {
+        display: block;
+        font-size: 14px;
+        margin-bottom: 6px;
     }
 
-    .buttonsArea {
-        display: flex;
-        gap: 8px;
-        
-        .button {
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            background-color: #fff;
-            width: 48px;
-            height: 48px;
-            color: #034EA7;
-        }
+    h2 {
+        font-size: clamp(32px, 3vw, 40px);
+        font-weight: 600;
+    }
+}
+
+.buttonsArea {
+    display: flex;
+    gap: 8px;
+}
+
+.button {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    width: 48px;
+    height: 48px;
+    border: 0;
+    background-color: #fff;
+    color: #034ea7;
+    cursor: pointer;
+    transition:
+        opacity 0.2s ease,
+        transform 0.2s ease;
+
+    &:hover:not(:disabled) {
+        transform: translateY(-2px);
+    }
+
+    &:disabled {
+        cursor: not-allowed;
+        opacity: 0.38;
     }
 }
 
 .carrosselArea {
     position: absolute;
-    transform: translateY(-140px);
-    width: calc(100% - 80px);
-    display: grid;
-    grid-template-columns: 1fr 1fr 1fr 1fr;
-    gap: 20px;
+    right: 40px;
+    bottom: -200px;
+    left: 40px;
+    height: 392px;
+    overflow: hidden;
+}
+
+.stage {
+    position: relative;
+    height: 100%;
 }
 
 .card {
+    position: absolute;
+    top: 0;
+    display: flex;
+    flex-direction: column;
+    height: 100%;
     background-color: #fff;
+    overflow: hidden;
+    box-shadow: 0 18px 40px rgba(3, 20, 43, 0.12);
+    transition:
+        left 0.55s ease,
+        width 0.55s ease,
+        opacity 0.35s ease,
+        transform 0.55s ease,
+        box-shadow 0.35s ease;
+}
 
-    &.destaq {
-        grid-column: span 2;
-        .mediaArea {
-            .titleArea {
-                opacity: 1;
-            }
+.positionFeatured {
+    left: 0;
+    width: calc(50% - 10px);
+    z-index: 4;
+    opacity: 1;
+    transform: translateX(0);
+}
+
+.positionSecond {
+    left: calc(50% + 10px);
+    width: calc(25% - 10px);
+    z-index: 3;
+    opacity: 1;
+    transform: translateX(0);
+}
+
+.positionThird {
+    left: calc(75% + 10px);
+    width: calc(25% - 10px);
+    z-index: 2;
+    opacity: 1;
+    transform: translateX(0);
+}
+
+.positionNext {
+    left: calc(100% + 20px);
+    width: calc(25% - 10px);
+    z-index: 1;
+    opacity: 0;
+    transform: translateX(0);
+}
+
+.positionPrevious {
+    left: 0;
+    width: calc(25% - 10px);
+    z-index: 1;
+    opacity: 0;
+    transform: translateX(-90%);
+}
+
+.positionHidden {
+    left: calc(100% + 20px);
+    width: calc(25% - 10px);
+    z-index: 0;
+    opacity: 0;
+    transform: translateX(0);
+}
+
+.destaq {
+    box-shadow: 0 22px 48px rgba(3, 20, 43, 0.18);
+
+    .mediaTitle {
+        opacity: 1;
+        transform: translateY(0);
+    }
+
+    .inscreverButton {
+        width: auto;
+        padding: 8px 8px 8px 14px;
+        background-color: #fdd516;
+
+        span {
+            opacity: 1;
+            transform: translateX(0);
         }
 
-        .textArea {
-            .inscreverButton {
-                background-color: #FDD516;
-                padding: 8px 8px 8px 14px;
-                width: auto;
-
-                span {
-                    display: block;
-                    font-size: 14px;
-                    font-weight: 600;
-                }
-
-                svg {
-                    color: #000;
-                }
-            }
+        svg {
+            color: #000;
         }
+    }
+}
+
+.mediaArea {
+    position: relative;
+    height: 300px;
+    overflow: hidden;
+}
+
+.mediaAsset {
+    display: block;
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    transition: transform 0.55s ease;
+}
+
+.mediaTitle {
+    position: absolute;
+    right: 20px;
+    bottom: 20px;
+    left: 20px;
+    color: #fff;
+    opacity: 0;
+    transform: translateY(12px);
+    transition:
+        opacity 0.35s ease,
+        transform 0.45s ease;
+
+    h3 {
+        font-size: clamp(28px, 2.2vw, 34px);
+        font-weight: 600;
+        margin-bottom: 6px;
+    }
+
+    p {
+        font-size: 14px;
+        line-height: 1.4;
+    }
+}
+
+.textArea {
+    display: flex;
+    justify-content: space-between;
+    align-items: flex-end;
+    gap: 20px;
+    padding: 16px 14px;
+    min-height: 92px;
+}
+
+.leftArea {
+    p {
+        display: flex;
+        align-items: center;
+        gap: 8px;
+        color: #034ea7;
+        font-size: 14px;
+        font-weight: 600;
+        margin-bottom: 10px;
+
+        svg {
+            width: auto;
+            height: 20px;
+            flex-shrink: 0;
+        }
+    }
+}
+
+.status {
+    position: relative;
+    display: block;
+    margin-left: 18px;
+    color: #d84343;
+    font-size: 14px;
+    font-weight: 500;
+    transition: color 0.3s ease;
+
+    &::after {
+        content: '';
+        position: absolute;
+        top: calc(50% - 4px);
+        left: -16px;
+        width: 8px;
+        height: 8px;
+        border-radius: 50%;
+        background-color: currentColor;
+    }
+}
+
+.active {
+    color: #2bb05e;
+}
+
+.inscreverButton {
+    display: inline-flex;
+    justify-content: center;
+    align-items: center;
+    gap: 8px;
+    width: 36px;
+    height: 36px;
+    border-radius: 6px;
+    background-color: #efefef;
+    color: inherit;
+    text-decoration: none;
+    flex-shrink: 0;
+    transition:
+        width 0.4s ease,
+        padding 0.4s ease,
+        background-color 0.3s ease;
+
+    span {
+        display: block;
+        opacity: 0;
+        transform: translateX(-8px);
+        white-space: nowrap;
+        transition:
+            opacity 0.25s ease,
+            transform 0.35s ease;
+    }
+
+    svg {
+        width: auto;
+        height: 20px;
+        color: #acacac;
+        transition: color 0.3s ease;
+    }
+}
+
+@media (hover: hover) {
+    .card:hover {
+        .mediaAsset {
+            transform: scale(1.04);
+        }
+    }
+}
+
+@media (max-width: 1200px) {
+    .titleSection {
+        padding-bottom: 160px;
+    }
+
+    .carrosselArea {
+        height: 372px;
     }
 
     .mediaArea {
-        position: relative;
-        height: 300px;
-
-        img {
-            width: 100%;
-            height: 100%;
-            object-fit: cover;
-        }
-
-        .titleArea {
-            position: absolute;
-            bottom: 20px;
-            left: 20px;
-            color: #fff;
-            opacity: 0;
-
-            h1 {
-                font-size: 32px;
-                font-weight: 600;
-                margin-bottom: 4px;
-            }
-            span {
-                font-size: 14px;
-            }
-        }
-
+        height: 280px;
     }
-    .textArea {
-        display: flex;
-        justify-content: space-between;
-        align-items: flex-end;
-        padding: 14px;
+}
 
-        .leftArea {
-            p {
-                display: flex;
-                align-items: center;
-                gap: 8px;
-                color: #034EA7;
-                font-weight: 600;
-                font-size: 14px;
-                margin-bottom: 10px;
+@media (max-width: 900px) {
+    .container {
+        padding: 32px 24px 0;
+    }
 
-                svg {
-                    height: 20px;
-                    width: auto;
-                }
-            }
-            .status {
-                position: relative;
-                display: block;
-                color: #D84343;
-                font-weight: 500;
-                font-size: 14px;
-                margin-left: 18px;
+    .titleSection {
+        flex-direction: column;
+        align-items: flex-start;
+        padding-bottom: 0;
+    }
 
-                &.active {
-                    color: #2BB05E;
+    .carrosselArea {
+        position: relative;
+        right: auto;
+        bottom: auto;
+        left: auto;
+        height: 356px;
+        margin-top: 28px;
+    }
 
-                    &::after {
-                        background-color: #2BB05E;
-                    }
-                }
+    .positionFeatured,
+    .positionSecond,
+    .positionThird,
+    .positionNext,
+    .positionPrevious,
+    .positionHidden {
+        left: 0;
+        width: 100%;
+    }
 
-                &::after {
-                    content: '';
-                    position: absolute;
-                    top: calc(50% - 4px);
-                    left: -16px;
-                    width: 8px;
-                    height: 8px;
-                    background-color: #D84343;
-                    border-radius: 50%;
-                }
-            }
+    .positionFeatured {
+        opacity: 1;
+        transform: translateX(0);
+    }
+
+    .positionSecond,
+    .positionThird,
+    .positionNext,
+    .positionHidden {
+        opacity: 0;
+        transform: translateX(12%);
+    }
+
+    .positionPrevious {
+        opacity: 0;
+        transform: translateX(-12%);
+    }
+
+    .destaq {
+        .mediaTitle {
+            opacity: 1;
         }
 
         .inscreverButton {
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            gap: 8px;
-            background-color: #EFEFEF;
-            border-radius: 6px;
-            width: 36px;
-            height: 36px;
+            width: auto;
+        }
+    }
+}
 
-            span {
-                display: none;
+@media (max-width: 640px) {
+    .carrosselArea {
+        height: 340px;
+    }
 
-            }
-            svg {
-                color: #ACACAC;
-                height: 20px;
-                width: auto;
-            }
+    .mediaArea {
+        height: 228px;
+    }
+
+    .textArea {
+        flex-direction: column;
+        align-items: stretch;
+    }
+
+    .destaq .inscreverButton,
+    .inscreverButton {
+        width: 100%;
+        padding: 12px 16px;
+        justify-content: space-between;
+
+        span {
+            opacity: 1;
+            transform: translateX(0);
         }
     }
 }

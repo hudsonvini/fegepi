@@ -5,3 +5,9 @@
     border-radius: 16px;
     margin-bottom: 230px;
 }
+
+@media (max-width: 900px) {
+    .internalContainer {
+        margin-bottom: 96px;
+    }
+}

@@ -32,10 +32,8 @@ export default function GameShowcase({
     description = 'Mais do que armas e munição, VALORANT inclui agentes com habilidades adaptativas, rápidas e letais, que criam oportunidades para você exibir sua mecânica de tiro. Cada Agente é único, assim como os momentos de destaque de cada partida!',
     buttonLabel = 'Cadastre sua equipe',
     buttonHref = '#',
-    primaryImageSrc = '/images/EventCarrosselImages/event1.webp',
+    primaryImageSrc = '/images/GameShowCaseImage.webp',
     primaryImageAlt = 'Destaque principal do jogo',
-    secondaryImageSrc = '/images/EventCarrosselImages/event2.webp',
-    secondaryImageAlt = 'Segundo destaque visual do jogo',
     metrics = defaultMetrics,
 }: GameShowcaseProps) {
     return (
@@ -45,27 +43,13 @@ export default function GameShowcase({
 
                 <div className={styles.heroArea}>
                     <div className={styles.mediaArea}>
-                        <div className={`${styles.characterCard} ${styles.primaryCard}`}>
-                            <Image
-                                src={primaryImageSrc}
-                                alt={primaryImageAlt}
-                                fill
-                                sizes="(max-width: 1024px) 100vw, 34vw"
-                                className={styles.characterImage}
-                            />
-                        </div>
-
-                        <div className={`${styles.characterCard} ${styles.secondaryCard}`}>
-                            <Image
-                                src={secondaryImageSrc}
-                                alt={secondaryImageAlt}
-                                fill
-                                sizes="(max-width: 1024px) 100vw, 24vw"
-                                className={styles.characterImage}
-                            />
-                        </div>
-
-                        <div className={styles.mediaGlow}></div>
+                        <Image
+                            src={primaryImageSrc}
+                            alt={primaryImageAlt}
+                            fill
+                            sizes="(max-width: 1024px) 100vw, 34vw"
+                            className={styles.characterImage}
+                        />
                     </div>
 
                     <div className={styles.contentArea}>

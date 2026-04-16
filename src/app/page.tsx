@@ -13,10 +13,10 @@ export default function Home() {
         <Hero />
         <PartnersSlider />
       </div>
+      <GameShowcase />
       <GameArea />
       <div className={styles.container}>
         <LatestEventGallery />
-        <GameShowcase />
       </div>
       <Footer />
     </div>
