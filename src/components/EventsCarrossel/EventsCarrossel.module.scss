@@ -17,12 +17,13 @@
 
     span {
         display: block;
-        font-size: 14px;
+        font-size: 13px;
         margin-bottom: 6px;
+        font-weight: 400;
     }
 
     h2 {
-        font-size: 36px;
+        font-size: 30px;
         font-weight: 500;
         line-height: 100%;
     }
@@ -37,12 +38,13 @@
     display: flex;
     justify-content: center;
     align-items: center;
-    width: 48px;
-    height: 48px;
+    width: 44px;
+    height: 44px;
     border: 0;
     background-color: #fff;
     color: #034ea7;
     cursor: pointer;
+    border-radius: 50%;
     transition:
         opacity 0.2s ease,
         transform 0.2s ease;
@@ -79,7 +81,8 @@
     height: 100%;
     background-color: #fff;
     overflow: hidden;
-    border-radius: 16px;
+    border-radius: 10px;
+    padding: 10px;
     transition:
         left 0.55s ease,
         width 0.55s ease,
@@ -141,6 +144,7 @@
     .mediaTitle {
         opacity: 1;
         transform: translateY(0);
+        // background-color: #fff;
     }
 
     .inscreverButton {
@@ -172,30 +176,37 @@
     width: 100%;
     height: 100%;
     object-fit: cover;
+    border-radius: 6px;
     transition: transform 0.55s ease;
 }
 
 .mediaTitle {
     position: absolute;
     right: 20px;
-    bottom: 20px;
-    left: 20px;
+    bottom: 0px;
+    left: 0px;
     color: #fff;
     opacity: 0;
     transform: translateY(12px);
+    background-color: #ffffff;
+    border-radius: 0px 40px 0px 0px;
+    padding: 10px 20px;
+    max-width: 50%;
     transition:
         opacity 0.35s ease,
         transform 0.45s ease;
 
     h3 {
-        font-size: clamp(28px, 2.2vw, 34px);
+        font-size: 24px;
         font-weight: 600;
-        margin-bottom: 0px;
+        margin-bottom: 2px;
+        color: #034ea7;
     }
 
     p {
-        font-size: 14px;
+        font-size: 13px;
         line-height: 1.4;
+        color: #585858;
     }
 }
 
@@ -213,14 +224,14 @@
         display: flex;
         align-items: center;
         gap: 8px;
-        color: #034ea7;
+        color: #000000;
         font-size: 14px;
-        font-weight: 600;
-        margin-bottom: 6px;
+        font-weight: 500;
+        // margin-bottom: 6px;
 
         svg {
             width: auto;
-            height: 20px;
+            height: 16px;
             flex-shrink: 0;
         }
     }
@@ -234,6 +245,7 @@
     font-size: 14px;
     font-weight: 500;
     transition: color 0.3s ease;
+    background-color: #fdd516;
 
     &::after {
         content: '';
@@ -258,8 +270,9 @@
     gap: 8px;
     width: 36px;
     height: 36px;
-    border-radius: 6px;
+    border-radius: 60px;
     background-color: #efefef;
+    background-color: #fdd516;
     color: inherit;
     text-decoration: none;
     flex-shrink: 0;
@@ -282,7 +295,7 @@
         width: auto;
         height: 20px;
         width: auto;
-        color: #acacac;
+        color: #ffffff;
         transition: color 0.3s ease;
     }
 }
@@ -323,6 +336,7 @@
             span {
                 font-size: 12px;
             }
+
             h2 {
                 font-size: 22px;
             }
