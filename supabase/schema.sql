@@ -10,11 +10,29 @@ end $$;
 create table if not exists public.profiles (
   id uuid primary key references auth.users(id) on delete cascade,
   full_name text not null default '',
+  email text,
   avatar_url text,
+  address text,
+  team text,
+  whatsapp text,
+  gender text not null default 'indiferente',
+  favorite_game text,
   role public.user_role not null default 'member',
   created_at timestamptz not null default now(),
   updated_at timestamptz not null default now()
 );
+
+-- Atualiza projetos que já possuíam a tabela profiles antes deste perfil expandido.
+alter table public.profiles add column if not exists address text;
+alter table public.profiles add column if not exists team text;
+alter table public.profiles add column if not exists whatsapp text;
+alter table public.profiles add column if not exists gender text not null default 'indiferente';
+alter table public.profiles add column if not exists favorite_game text;
+
+do $$ begin
+  alter table public.profiles add constraint profiles_gender_check check (gender in ('masculino', 'feminino', 'indiferente'));
+exception when duplicate_object then null;
+end $$;
 
 create table if not exists public.games (
   id uuid primary key default gen_random_uuid(),
@@ -50,9 +68,18 @@ create table if not exists public.ranking_entries (
   season_id uuid not null references public.ranking_seasons(id) on delete cascade,
   team_id uuid not null references public.teams(id) on delete cascade,
   points integer not null default 0 check (points >= 0),
+  wins integer not null default 0 check (wins >= 0),
+  draws integer not null default 0 check (draws >= 0),
+  losses integer not null default 0 check (losses >= 0),
   previous_position integer not null default 0 check (previous_position >= 0),
   unique(season_id, team_id)
 );
+
+alter table public.profiles add column if not exists team_id uuid references public.teams(id) on delete set null;
+alter table public.profiles add column if not exists email text;
+alter table public.ranking_entries add column if not exists wins integer not null default 0 check (wins >= 0);
+alter table public.ranking_entries add column if not exists draws integer not null default 0 check (draws >= 0);
+alter table public.ranking_entries add column if not exists losses integer not null default 0 check (losses >= 0);
 
 create table if not exists public.events (
   id uuid primary key default gen_random_uuid(),
@@ -95,8 +122,8 @@ create table if not exists public.gallery_photos (
 create or replace function public.handle_new_user()
 returns trigger language plpgsql security definer set search_path = public as $$
 begin
-  insert into public.profiles (id, full_name)
-  values (new.id, coalesce(new.raw_user_meta_data ->> 'full_name', ''));
+  insert into public.profiles (id, full_name, email)
+  values (new.id, coalesce(new.raw_user_meta_data ->> 'full_name', ''), new.email);
   return new;
 end;
 $$;

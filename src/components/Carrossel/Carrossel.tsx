@@ -17,9 +17,14 @@ type CarrosselProps = {
 const defaultSlides: HeroCarouselSlide[] = [
     {
         id: 'hero-1',
-        imageSrc: 'https://cdn1.epicgames.com/offer/cbd5b3d310a54b12bf3fe8c41994174f/EGS_VALORANT_RiotGames_S1_2560x1440-fcc266a074444c3ca10fd9c03a3ae0b9',
+        imageSrc: 'https://themes.kabum.com.br/conteudo/layout/8011/1784300406.gif',
         imageAlt: 'Banner principal do circuito FEGEPI',
     },
+    // {
+    //     id: 'hero-1',
+    //     imageSrc: 'https://cdn1.epicgames.com/offer/cbd5b3d310a54b12bf3fe8c41994174f/EGS_VALORANT_RiotGames_S1_2560x1440-fcc266a074444c3ca10fd9c03a3ae0b9',
+    //     imageAlt: 'Banner principal do circuito FEGEPI',
+    // },
     // {
     //     id: 'hero-2',
     //     imageSrc: '/images/carrosselImages/banner1.png',

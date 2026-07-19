@@ -197,7 +197,7 @@
         transform 0.45s ease;
 
     h3 {
-        font-size: 24px;
+        font-size: 22px;
         font-weight: 600;
         margin-bottom: 2px;
         color: #034ea7;
@@ -216,7 +216,7 @@
     align-items: flex-end;
     gap: 20px;
     padding: 14px;
-    min-height: 92px;
+    // min-height: 92px;
 }
 
 .leftArea {
@@ -242,10 +242,11 @@
     display: block;
     margin-left: 18px;
     color: #d84343;
-    font-size: 14px;
+    font-size: 12px;
+    margin-top: 4px;
     font-weight: 500;
     transition: color 0.3s ease;
-    background-color: #fdd516;
+    // background-color: #fdd516;
 
     &::after {
         content: '';
@@ -270,7 +271,7 @@
     gap: 8px;
     width: 36px;
     height: 36px;
-    border-radius: 60px;
+    border-radius: 8px;
     background-color: #efefef;
     background-color: #fdd516;
     color: inherit;
@@ -289,6 +290,7 @@
         transition:
             opacity 0.25s ease,
             transform 0.35s ease;
+        font-size: 12px;
     }
 
     svg {
