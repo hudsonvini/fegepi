@@ -1,1 +1,164 @@
-.nav { position:relative; z-index:8; display:flex; align-items:center; justify-content:space-between; gap:18px; padding:10px 20px 10px 60px; border-radius:16px 16px 0 0; background:rgba(255,255,255,.97); box-shadow:0 8px 20px rgba(4,36,78,.08); }.logo { display:inline-flex; align-items:center; flex:0 0 auto; }.logo img { height:40px; width:auto; display:block; }.links,.access { display:flex; align-items:center; gap:8px; list-style:none; }.links a { display:inline-flex; align-items:center; gap:5px; padding:7px 10px; border-radius:8px; color:#40536b; background:#f1f4f7; font-size:13px; font-weight:650; transition:.2s ease; }.links a:hover { color:#034ea7; background:#dceaff; }.button,.dashboard { display:inline-flex; align-items:center; justify-content:center; gap:6px; min-height:39px; padding:9px 12px; border-radius:9px; color:#1d2e43; background:#fdd516; font-size:13px; font-weight:750; white-space:nowrap; }.primary { color:#fff; background:#034ea7; }.dashboard { color:#0754a7; background:#e9f3ff; }.account { display:flex; align-items:center; gap:8px; min-height:40px; padding:4px 9px 4px 5px; border:1px solid #e1eaf4; border-radius:11px; color:#193b61; background:#fff; font-size:12px; font-weight:800; }.account img { width:31px; height:31px; border-radius:8px; object-fit:cover; }.account span { display:grid; gap:1px; }.account small { color:#7e8da0; font-size:9px; font-weight:700; }@media(max-width:900px){.nav{padding:10px 16px}.links{display:none}.access{gap:7px}.dashboard span{display:none}.dashboard{padding:9px}.account span{display:none}.account{padding:4px}.account > svg{display:none}}@media(max-width:430px){.button{padding:9px}.button:first-child{font-size:0}.button:first-child svg{width:18px;height:18px}.logo img{height:34px}}
+.nav {
+    position: relative;
+    z-index: 8;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 18px;
+    padding: 10px 10px 10px 40px;
+    border-radius: 12px 12px 0 0;
+    background: rgba(255, 255, 255, .97);
+    box-shadow: 0 8px 20px rgba(4, 36, 78, .08);
+}
+
+.logo {
+    display: inline-flex;
+    align-items: center;
+    flex: 0 0 auto;
+}
+
+.logo img {
+    height: 30px;
+    width: auto;
+    display: block;
+}
+
+.links,
+.access {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    list-style: none;
+}
+
+.links a {
+    display: inline-flex;
+    align-items: center;
+    gap: 5px;
+    padding: 7px 10px;
+    border-radius: 8px;
+    color: #40536b;
+    // background: #f1f4f7;
+    font-size: 13px;
+    font-weight: 500;
+    transition: .2s ease;
+}
+
+.links a:hover {
+    color: #034ea7;
+    background: #dceaff;
+}
+
+.button,
+.dashboard {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    gap: 6px;
+    min-height: 40px;
+    padding: 9px 12px;
+    border-radius: 9px;
+    color: #1d2e43;
+    background: #fdd516;
+    font-size: 13px;
+    font-weight: 600;
+    white-space: nowrap;
+}
+
+.primary {
+    color: #fff;
+    background: #034ea7;
+}
+
+.dashboard {
+    color: #0754a7;
+    background: #e9f3ff;
+}
+
+.account {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    min-height: 40px;
+    padding: 4px 9px 4px 5px;
+    border: 1px solid #e1eaf4;
+    border-radius: 11px;
+    color: #193b61;
+    background: #fff;
+    font-size: 12px;
+    font-weight: 800;
+}
+
+.account img {
+    width: 31px;
+    height: 31px;
+    border-radius: 8px;
+    object-fit: cover;
+}
+
+.account span {
+    display: grid;
+    gap: 1px;
+    font-size: 12px;
+    font-weight: 600;
+    line-height: 100%;
+}
+
+.account small {
+    color: #7e8da0;
+    font-size: 9px;
+    font-weight: 600;
+}
+
+@media(max-width:900px) {
+    .nav {
+        padding: 10px 16px
+    }
+
+    .links {
+        display: none
+    }
+
+    .access {
+        gap: 7px
+    }
+
+    .dashboard span {
+        display: none
+    }
+
+    .dashboard {
+        padding: 9px
+    }
+
+    .account span {
+        display: none
+    }
+
+    .account {
+        padding: 4px
+    }
+
+    .account>svg {
+        display: none
+    }
+}
+
+@media(max-width:430px) {
+    .button {
+        padding: 9px
+    }
+
+    .button:first-child {
+        font-size: 0
+    }
+
+    .button:first-child svg {
+        width: 18px;
+        height: 18px
+    }
+
+    .logo img {
+        height: 34px
+    }
+}

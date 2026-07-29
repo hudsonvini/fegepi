@@ -1,0 +1,13 @@
+{
+  "rules": [
+    {
+      "allowed": {
+        "origins": [
+          "http://localhost:3000",
+          "https://seu-dominio.com"
+        ],
+        "methods": ["GET", "HEAD"]
+      }
+    }
+  ]
+}

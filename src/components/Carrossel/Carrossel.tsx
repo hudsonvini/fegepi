@@ -7,6 +7,7 @@ export type HeroCarouselSlide = {
     id: string
     imageSrc: string
     imageAlt: string
+    href?: string
 }
 
 type CarrosselProps = {
@@ -43,6 +44,7 @@ export default function Carrossel({
 }: CarrosselProps) {
     const [activeSlide, setActiveSlide] = useState(0)
     const totalSlides = slides.length
+    const visibleSlide = Math.min(activeSlide, Math.max(totalSlides - 1, 0))
 
     const advanceSlide = useEffectEvent(() => {
         if (totalSlides <= 1) {
@@ -51,10 +53,6 @@ export default function Carrossel({
 
         setActiveSlide((currentSlide) => (currentSlide + 1) % totalSlides)
     })
-
-    useEffect(() => {
-        setActiveSlide((currentSlide) => Math.min(currentSlide, Math.max(totalSlides - 1, 0)))
-    }, [totalSlides])
 
     useEffect(() => {
         if (totalSlides <= 1 || autoPlayMs <= 0) {
@@ -73,15 +71,17 @@ export default function Carrossel({
             <div className={styles.viewport}>
                 <div
                     className={styles.track}
-                    style={{ transform: `translateX(-${activeSlide * 100}%)` }}
+                    style={{ transform: `translateX(-${visibleSlide * 100}%)` }}
                 >
                     {slides.map((slide) => (
                         <article key={slide.id} className={styles.slide}>
-                            <img
-                                className={styles.slideImage}
-                                src={slide.imageSrc}
-                                alt={slide.imageAlt}
-                            />
+                            {slide.href ? (
+                                <a href={slide.href} aria-label={slide.imageAlt}>
+                                    <img className={styles.slideImage} src={slide.imageSrc} alt={slide.imageAlt} />
+                                </a>
+                            ) : (
+                                <img className={styles.slideImage} src={slide.imageSrc} alt={slide.imageAlt} />
+                            )}
                         </article>
                     ))}
                 </div>
@@ -93,10 +93,10 @@ export default function Carrossel({
                         <button
                             key={slide.id}
                             type="button"
-                            className={`${styles.bullet} ${index === activeSlide ? styles.activeBullet : ''}`}
+                            className={`${styles.bullet} ${index === visibleSlide ? styles.activeBullet : ''}`}
                             onClick={() => setActiveSlide(index)}
                             aria-label={`Ir para o slide ${index + 1}`}
-                            aria-pressed={index === activeSlide}
+                            aria-pressed={index === visibleSlide}
                         />
                     ))}
                 </div>

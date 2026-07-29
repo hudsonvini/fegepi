@@ -1,7 +1,7 @@
 'use client'
 
 import { ChevronLeft, ChevronRight, Calendar } from 'lucide-react'
-import { useEffect, useState } from 'react'
+import { useState } from 'react'
 import styles from './EventsCarrossel.module.scss'
 
 export type EventCarouselItem = {
@@ -98,10 +98,7 @@ export default function EventsCarrossel({
     const [activeIndex, setActiveIndex] = useState(0)
     const [direction, setDirection] = useState<'next' | 'prev'>('next')
     const totalEvents = events.length
-
-    useEffect(() => {
-        setActiveIndex((currentIndex) => Math.min(currentIndex, Math.max(totalEvents - 1, 0)))
-    }, [totalEvents])
+    const visibleEventIndex = Math.min(activeIndex, Math.max(totalEvents - 1, 0))
 
     function goToNextEvent() {
         if (totalEvents <= 1) {
@@ -154,7 +151,7 @@ export default function EventsCarrossel({
             <div className={styles.carrosselArea}>
                 <div className={styles.stage}>
                     {events.map((event, index) => {
-                        const relativeIndex = getRelativeIndex(index, activeIndex, totalEvents)
+                        const relativeIndex = getRelativeIndex(index, visibleEventIndex, totalEvents)
                         const statusClassName = [
                             styles.status,
                             event.statusTone === 'active' ? styles.active : '',

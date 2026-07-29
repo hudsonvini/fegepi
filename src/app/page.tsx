@@ -15,7 +15,7 @@ export default async function Home() {
   return (
     <div className={styles.page}>
       <div className={styles.container}>
-        <ManagedHero user={user} events={content.events} />
+        <ManagedHero user={user} events={content.events} slides={content.heroSlides} />
         <PartnersSlider />
       </div>
       <img src="https://esl.com/wp-content/uploads/2024/08/3D-ESL-STATUES-Natalia-768.png" alt="" />
@@ -28,5 +28,4 @@ export default async function Home() {
     </div>
   );
 }
-
 

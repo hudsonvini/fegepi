@@ -4,6 +4,7 @@ alter table public.profiles add column if not exists email text;
 alter table public.ranking_entries add column if not exists wins integer not null default 0 check (wins >= 0);
 alter table public.ranking_entries add column if not exists draws integer not null default 0 check (draws >= 0);
 alter table public.ranking_entries add column if not exists losses integer not null default 0 check (losses >= 0);
+alter table public.ranking_entries add column if not exists recent_form text[] not null default '{}'::text[];
 
 update public.profiles profile
 set email = auth_user.email

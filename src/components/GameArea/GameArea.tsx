@@ -1,7 +1,7 @@
 'use client'
 
-import { useEffect, useRef, useState, useTransition } from 'react'
-import { ArrowDown, ArrowUp, ChevronDown, Minus } from 'lucide-react'
+import { useState, useTransition } from 'react'
+import { ArrowDown, ArrowUp, Check, ChevronRight, Minus, Trophy, X } from 'lucide-react'
 import styles from './GameArea.module.scss'
 
 type TeamTone = 'navy' | 'green' | 'red' | 'silver' | 'gold'
@@ -16,6 +16,10 @@ type RankingEntry = {
     logoText: string
     crestSrc?: string
     tone: TeamTone
+    wins?: number
+    draws?: number
+    losses?: number
+    recentForm?: RecentResult[]
 }
 
 type RankingSeason = {
@@ -42,6 +46,7 @@ type GameAreaProps = {
 }
 
 type RankingMovement = 'up' | 'down' | 'same'
+type RecentResult = 'win' | 'draw' | 'loss'
 
 type RankedEntry = RankingEntry & {
     currentPosition: number
@@ -283,13 +288,13 @@ function formatPoints(points: number) {
     return new Intl.NumberFormat('pt-BR').format(points)
 }
 
-function RankingCard({ entry }: { entry: RankedEntry }) {
-    const logoMovementClassName = {
-        up: styles.upRing,
-        down: styles.downRing,
-        same: styles.sameRing,
-    }
+const recentResultCopy: Record<RecentResult, string> = {
+    win: 'Vitória',
+    draw: 'Empate',
+    loss: 'Derrota',
+}
 
+function RankingRow({ entry }: { entry: RankedEntry }) {
     const movementCopy = {
         up: `Subiu ${entry.delta} ${entry.delta === 1 ? 'posição' : 'posições'} em relação à última rodada`,
         down: `Desceu ${entry.delta} ${entry.delta === 1 ? 'posição' : 'posições'} em relação à última rodada`,
@@ -297,45 +302,93 @@ function RankingCard({ entry }: { entry: RankedEntry }) {
     }
 
     return (
-        <article className={styles.rankingCard}>
-            <div className={`${styles.logoBadge} ${logoMovementClassName[entry.movement]}`}>
-                {entry.crestSrc ? (
-                    <img src={entry.crestSrc} alt={`Escudo do time ${entry.teamName}`} />
-                ) : (
-                    <span>{entry.logoText}</span>
-                )}
-            </div>
-
-            <div className={styles.rankArea}>
-                <strong>#{entry.currentPosition}</strong>
-                <span>
-                    {entry.delta > 0
-                        ? `${entry.delta > 0 && entry.movement === 'up' ? '+' : '-'}${entry.delta}`
-                        : '0'}
+        <div className={styles.rankingRow} role="row">
+            <div className={styles.positionCell} role="cell">
+                <strong>{entry.currentPosition}</strong>
+                <span
+                    className={`${styles.movement} ${styles[entry.movement]}`}
+                    aria-label={movementCopy[entry.movement]}
+                    title={movementCopy[entry.movement]}
+                >
+                    {entry.movement === 'up' ? <ArrowUp /> : null}
+                    {entry.movement === 'down' ? <ArrowDown /> : null}
+                    {entry.movement === 'same' ? <Minus /> : null}
+                    {entry.delta || '—'}
                 </span>
             </div>
 
-            <div className={styles.teamArea}>
-                <h3>{entry.teamName}</h3>
-                <p>{entry.country}</p>
-                <small>Última rodada: #{entry.previousPosition}</small>
+            <div className={styles.teamCell} role="cell">
+                <div className={styles.logoBadge}>
+                    {entry.crestSrc ? (
+                        <img src={entry.crestSrc} alt="" />
+                    ) : (
+                        <span>{entry.logoText}</span>
+                    )}
+                </div>
+                <div>
+                    <strong>{entry.teamName}</strong>
+                    <span>{entry.country}</span>
+                </div>
             </div>
 
-            <div className={styles.scoreArea}>
-                <span>Score</span>
-                <strong>{formatPoints(entry.points)}</strong>
+            <strong className={styles.pointsCell} role="cell">{formatPoints(entry.points)} <small>pts</small></strong>
+            <span className={styles.recordCell} role="cell">
+                <strong>{entry.wins ?? 0}</strong>
+                <i>—</i>
+                <strong>{entry.losses ?? 0}</strong>
+                {(entry.draws ?? 0) > 0 ? <small>{entry.draws} E</small> : null}
+            </span>
+            <div className={styles.recentFormCell} role="cell" aria-label="Resultados das últimas cinco partidas">
+                {Array.from({ length: 5 }, (_, index) => {
+                    const result = entry.recentForm?.[index]
+                    return (
+                        <span
+                            key={`${entry.id}-recent-${index}`}
+                            className={result ? styles[result] : styles.noResult}
+                            aria-label={result ? `${index + 1}ª partida: ${recentResultCopy[result]}` : `${index + 1}ª partida: sem resultado`}
+                            title={result ? recentResultCopy[result] : 'Sem resultado informado'}
+                        >
+                            {result === 'win' ? <Check /> : null}
+                            {result === 'loss' ? <X /> : null}
+                            {result === 'draw' || !result ? <Minus /> : null}
+                        </span>
+                    )
+                })}
             </div>
+        </div>
+    )
+}
 
+function GameOption({
+    game,
+    selected,
+    onSelect,
+}: {
+    game: RankingGame
+    selected: boolean
+    onSelect: () => void
+}) {
+    return (
+        <button
+            type="button"
+            className={`${styles.gameOption} ${selected ? styles.selectedGame : ''}`}
+            onClick={onSelect}
+            aria-pressed={selected}
+        >
+            <span className={`${styles.gameThumb} ${styles[game.theme]}`}>
+                <img src={game.imageSrc} alt="" />
+            </span>
+            <span className={styles.gameOptionCopy}>
+                <small>{selected ? 'Visualizando agora' : 'Ver classificação'}</small>
+                <strong>{game.name}</strong>
+            </span>
             <div
-                className={`${styles.movementBadge} ${styles[entry.movement]}`}
-                aria-label={movementCopy[entry.movement]}
-                title={movementCopy[entry.movement]}
+                className={styles.gameArrow}
+                aria-hidden="true"
             >
-                {entry.movement === 'up' ? <ArrowUp /> : null}
-                {entry.movement === 'down' ? <ArrowDown /> : null}
-                {entry.movement === 'same' ? <Minus /> : null}
+                <ChevronRight />
             </div>
-        </article>
+        </button>
     )
 }
 
@@ -345,15 +398,11 @@ export default function GameArea({
     defaultSeasonId,
     rankingLabel = 'Piauí Ranking',
 }: GameAreaProps) {
-    const seasonFieldRef = useRef<HTMLDivElement>(null)
     const fallbackGameId = defaultGameId ?? games[0]?.id ?? ''
     const initialGame = games.find((game) => game.id === fallbackGameId) ?? games[0]
 
     const [selectedGameId, setSelectedGameId] = useState(initialGame?.id ?? '')
     const [selectedSeasonId, setSelectedSeasonId] = useState(defaultSeasonId ?? initialGame?.seasons[0]?.id ?? '')
-    const [showAllGames, setShowAllGames] = useState(false)
-    const [isGameListOpen, setIsGameListOpen] = useState(true)
-    const [isSeasonListOpen, setIsSeasonListOpen] = useState(false)
     const [isPending, startTransition] = useTransition()
 
     const selectedGame = games.find((game) => game.id === selectedGameId) ?? games[0]
@@ -369,20 +418,6 @@ export default function GameArea({
     const selectedSeason =
         selectedGame.seasons.find((season) => season.id === resolvedSeasonId) ?? selectedGame.seasons[0]
 
-    useEffect(() => {
-        function handlePointerDown(event: MouseEvent) {
-            if (!seasonFieldRef.current?.contains(event.target as Node)) {
-                setIsSeasonListOpen(false)
-            }
-        }
-
-        document.addEventListener('mousedown', handlePointerDown)
-
-        return () => {
-            document.removeEventListener('mousedown', handlePointerDown)
-        }
-    }, [])
-
     const rankedEntries: RankedEntry[] = [...(selectedSeason?.entries ?? [])]
         .sort((firstEntry, secondEntry) => secondEntry.points - firstEntry.points)
         .map((entry, index) => {
@@ -397,134 +432,79 @@ export default function GameArea({
             }
         })
 
-    const leftColumnEntries = rankedEntries.filter((_, index) => index % 2 === 0)
-    const rightColumnEntries = rankedEntries.filter((_, index) => index % 2 === 1)
-    const visibleGames = showAllGames ? games : games.slice(0, 5)
-
     return (
         <section className={styles.container}>
             <div className={styles.contentArea}>
+                <header className={styles.sectionHeading}>
+                    <span>Ranking oficial FEGEPi</span>
+                    <h2>Classificação dos times</h2>
+                    <p>Acompanhe o desempenho das equipes em cada modalidade e temporada.</p>
+                </header>
+
                 <div className={styles.layout}>
-                    <aside className={styles.filtersColumn}>
-                        <button
-                            type="button"
-                            className={styles.gamePicker}
-                            onClick={() => setIsGameListOpen((currentValue) => !currentValue)}
-                            aria-expanded={isGameListOpen}
-                        >
-                            <span>Escolha o jogo</span>
-                            <ChevronDown className={isGameListOpen ? styles.openIcon : ''} />
-                        </button>
-
-                        {isGameListOpen ? (
-                            <div className={styles.gamesPanel}>
-                                <div className={styles.gamesList}>
-                                    {visibleGames.map((game) => (
-                                        <button
-                                            key={game.id}
-                                            type="button"
-                                            className={`${styles.gameCard} ${styles[game.theme]} ${selectedGame.id === game.id ? styles.selectedGame : ''}`}
-                                            aria-label={`Selecionar ${game.name}`}
-                                            onClick={() => {
-                                                startTransition(() => {
-                                                    setSelectedGameId(game.id)
-                                                    setSelectedSeasonId(game.seasons[0]?.id ?? '')
-                                                })
-                                                setIsSeasonListOpen(false)
-                                            }}
-                                        >
-                                            <div className={styles.gameVisual}>
-                                                <img
-                                                    className={styles.gameImage}
-                                                    src={game.imageSrc}
-                                                    alt={game.name}
-                                                />
-                                            </div>
-                                        </button>
-                                    ))}
-                                </div>
-
-                                {games.length > 5 ? (
-                                    <button
-                                        type="button"
-                                        className={styles.viewAllButton}
-                                        onClick={() => setShowAllGames((currentValue) => !currentValue)}
-                                    >
-                                        {showAllGames ? 'Ver menos' : 'Ver todos'}
-                                        <ArrowDown className={showAllGames ? styles.viewAllOpenIcon : ''} />
-                                    </button>
-                                ) : null}
-                            </div>
-                        ) : null}
-                    </aside>
-
                     <div className={`${styles.rankingPanel} ${isPending ? styles.pending : ''}`}>
                         <div className={styles.panelHeader}>
                             <div className={styles.titleBlock}>
-                                <div className={styles.flagBadge} aria-hidden="true">
-                                    <span className={styles.flagStar}>★</span>
-                                    <span className={styles.flagStripeTop}></span>
-                                    <span className={styles.flagStripeBottom}></span>
+                                <span className={styles.trophyBadge}><Trophy /></span>
+                                <div>
+                                    <small>{rankingLabel}</small>
+                                    <h3>{selectedGame.name}</h3>
                                 </div>
-                                <h2>{rankingLabel}</h2>
                             </div>
 
-                            <div className={styles.seasonField} ref={seasonFieldRef}>
-                                <button
-                                    type="button"
-                                    className={styles.seasonButton}
-                                    onClick={() => setIsSeasonListOpen((currentValue) => !currentValue)}
-                                    aria-haspopup="listbox"
-                                    aria-expanded={isSeasonListOpen}
-                                >
-                                    <span>{selectedSeason?.label ?? 'Selecionar temporada'}</span>
-                                    <ChevronDown className={isSeasonListOpen ? styles.openIcon : ''} />
-                                </button>
-
-                                {isSeasonListOpen ? (
-                                    <div className={styles.seasonList} role="listbox" aria-label="Selecione a temporada">
-                                        {selectedGame.seasons.map((season) => (
-                                            <button
-                                                key={season.id}
-                                                type="button"
-                                                role="option"
-                                                aria-selected={season.id === resolvedSeasonId}
-                                                className={`${styles.seasonOption} ${season.id === resolvedSeasonId ? styles.selectedSeason : ''}`}
-                                                onClick={() => {
-                                                    startTransition(() => {
-                                                        setSelectedSeasonId(season.id)
-                                                    })
-                                                    setIsSeasonListOpen(false)
-                                                }}
-                                            >
-                                                {season.label}
-                                            </button>
-                                        ))}
-                                    </div>
-                                ) : null}
-                            </div>
-                        </div>
-
-                        <div className={styles.rankingColumns}>
-                            <div className={styles.cardsColumn}>
-                                {leftColumnEntries.map((entry) => (
-                                    <RankingCard key={entry.id} entry={entry} />
-                                ))}
-                            </div>
-
-                            <div className={styles.cardsColumn}>
-                                {rightColumnEntries.map((entry) => (
-                                    <RankingCard key={entry.id} entry={entry} />
+                            <div className={styles.seasonTabs} role="tablist" aria-label="Temporadas">
+                                {selectedGame.seasons.map((season) => (
+                                    <button
+                                        key={season.id}
+                                        type="button"
+                                        role="tab"
+                                        aria-selected={season.id === resolvedSeasonId}
+                                        className={season.id === resolvedSeasonId ? styles.selectedSeason : ''}
+                                        onClick={() => startTransition(() => setSelectedSeasonId(season.id))}
+                                    >
+                                        {season.label.replace(/temporada/gi, '').trim()}
+                                    </button>
                                 ))}
                             </div>
                         </div>
 
-                        <div className={styles.footerBars} aria-hidden="true">
-                            <span></span>
-                            <span></span>
-                            <span></span>
+                        <div className={styles.tableHeader} role="row">
+                            <span>#</span>
+                            <span>Equipe</span>
+                            <span>Pontuação</span>
+                            <span>V — D</span>
+                            <span>Últimas 5</span>
+                        </div>
+
+                        <div className={styles.rankingTable} role="table" aria-label={`Classificação de ${selectedGame.name}`}>
+                            {rankedEntries.length ? rankedEntries.map((entry) => (
+                                <RankingRow key={entry.id} entry={entry} />
+                            )) : (
+                                <div className={styles.emptyRanking}>Nenhum time cadastrado nesta temporada.</div>
+                            )}
                         </div>
                     </div>
+
+                    <aside className={styles.gamesAside}>
+                        <div className={styles.asideHeader}>
+                            <small>Modalidades</small>
+                            <h3>Escolha o jogo</h3>
+                            <p>A tabela será atualizada com a classificação da modalidade selecionada.</p>
+                        </div>
+                        <div className={styles.gamesList}>
+                            {games.map((game) => (
+                                <GameOption
+                                    key={game.id}
+                                    game={game}
+                                    selected={selectedGame.id === game.id}
+                                    onSelect={() => startTransition(() => {
+                                        setSelectedGameId(game.id)
+                                        setSelectedSeasonId(game.seasons[0]?.id ?? '')
+                                    })}
+                                />
+                            ))}
+                        </div>
+                    </aside>
                 </div>
             </div>
         </section>

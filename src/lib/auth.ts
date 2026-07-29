@@ -14,6 +14,9 @@ export type CurrentUser = {
   whatsapp: string | null
   gender: string | null
   favoriteGame: string | null
+  playerTag: string | null
+  bio: string | null
+  publicProfile: boolean
   createdAt: string | null
   role: 'admin' | 'member'
 }
@@ -27,7 +30,7 @@ export const getCurrentUser = cache(async (): Promise<CurrentUser | null> => {
 
   const { data: profile } = await supabase
     .from('profiles')
-    .select('full_name, email, avatar_url, address, team, team_id, whatsapp, gender, favorite_game, created_at, role')
+    .select('full_name, email, avatar_url, address, team, team_id, whatsapp, gender, favorite_game, player_tag, bio, public_profile, created_at, role')
     .eq('id', user.id)
     .maybeSingle()
 
@@ -43,6 +46,9 @@ export const getCurrentUser = cache(async (): Promise<CurrentUser | null> => {
     whatsapp: profile?.whatsapp ?? null,
     gender: profile?.gender ?? null,
     favoriteGame: profile?.favorite_game ?? null,
+    playerTag: profile?.player_tag ?? null,
+    bio: profile?.bio ?? null,
+    publicProfile: profile?.public_profile ?? true,
     createdAt: profile?.created_at ?? null,
     role: profile?.role === 'admin' ? 'admin' : 'member',
   }

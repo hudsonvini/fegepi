@@ -1,9 +1,11 @@
 import Link from 'next/link'
 import { redirect } from 'next/navigation'
-import { ArrowLeft, BadgeCheck, Gamepad2, MapPin, MessageCircle, ShieldCheck, Trophy, UserRound } from 'lucide-react'
+import { BadgeCheck, CalendarDays, Eye, Gamepad2, MapPin, MessageCircle, ShieldCheck, Trophy, UserRound } from 'lucide-react'
 import { signOutAction } from '@/app/auth/actions'
 import { getCurrentUser } from '@/lib/auth'
 import { getProfileAvatar } from '@/lib/profile'
+import { getOwnMemberships } from '@/lib/players'
+import ManagedNavbar from '@/components/ManagedNavbar/ManagedNavbar'
 import { updateProfileAction } from './actions'
 import { ProfileAvatarPicker } from './ProfileAvatarPicker'
 import styles from './page.module.scss'
@@ -12,7 +14,8 @@ export default async function ProfilePage({ searchParams }: { searchParams: Prom
   const user = await getCurrentUser()
   if (!user) redirect('/login')
 
-  const params = await searchParams
+  const [params, memberships] = await Promise.all([searchParams, getOwnMemberships(user.id)])
+  const currentMemberships = memberships.filter((item) => !item.ended_at)
   const joinedAt = user.createdAt
     ? new Intl.DateTimeFormat('pt-BR', { month: 'short', year: 'numeric' }).format(new Date(user.createdAt)).replace('.', '')
     : 'Comunidade FEGEPI'
@@ -21,12 +24,7 @@ export default async function ProfilePage({ searchParams }: { searchParams: Prom
   return (
     <main className={styles.page}>
       <div className={styles.shell}>
-        <header className={styles.topbar}>
-          <Link className={styles.brand} href="/" aria-label="Ir para a página inicial da FEGEPI">
-            <img src="/images/logo.png" alt="FEGEPI" />
-          </Link>
-          <Link className={styles.back} href="/"><ArrowLeft size={17} /> Voltar ao site</Link>
-        </header>
+        <div className={styles.profileNav}><ManagedNavbar user={user} /></div>
 
         <section className={styles.profileHero} aria-labelledby="profile-title">
           <div className={styles.heroGlow} />
@@ -37,7 +35,7 @@ export default async function ProfilePage({ searchParams }: { searchParams: Prom
               <h1 id="profile-title">{user.fullName}</h1>
               <p>{user.email}</p>
               <div className={styles.quickMeta}>
-                <span><Trophy size={15} /> {user.team || 'Sem time definido'}</span>
+                <span><Trophy size={15} /> {currentMemberships[0]?.teams?.name || 'Sem time atual'}</span>
                 <span><Gamepad2 size={15} /> {user.favoriteGame || 'Gamer FEGEPI'}</span>
               </div>
             </div>
@@ -62,11 +60,16 @@ export default async function ProfilePage({ searchParams }: { searchParams: Prom
                 <div className={styles.sectionHeading}><div><p className={styles.eyebrow}>Informações pessoais</p><h2>Como a comunidade vê você</h2></div></div>
                 <div className={styles.fieldsGrid}>
                   <label className={`${styles.field} ${styles.fieldWide}`}>Nome completo<input name="fullName" required autoComplete="name" defaultValue={user.fullName} /></label>
+                  <label className={styles.field}>Nick público<input name="playerTag" defaultValue={user.playerTag ?? ''} placeholder="Ex.: hudsonfps" /></label>
                   <label className={styles.field}>WhatsApp<input name="whatsapp" type="tel" inputMode="tel" autoComplete="tel" defaultValue={user.whatsapp ?? ''} placeholder="(86) 99999-9999" /></label>
-                  <label className={styles.field}>Time / organização<input name="team" defaultValue={user.team ?? ''} placeholder="Ex.: Piauí Gaming" /></label>
                   <label className={`${styles.field} ${styles.fieldWide}`}>Endereço<input name="address" autoComplete="street-address" defaultValue={user.address ?? ''} placeholder="Cidade, bairro ou endereço" /></label>
                   <label className={styles.field}>Jogo favorito<input name="favoriteGame" defaultValue={user.favoriteGame ?? ''} placeholder="Ex.: EA FC 26" /></label>
                   <label className={styles.field}>Foto pessoal (opcional)<input name="avatarUrl" type="url" defaultValue={user.avatarUrl ?? ''} placeholder="https://..." /><small>Ao preencher, ela substitui o avatar padrão.</small></label>
+                  <label className={`${styles.field} ${styles.fieldWide}`}>Bio pública<textarea name="bio" rows={4} defaultValue={user.bio ?? ''} placeholder="Conte um pouco sobre sua trajetória competitiva." /></label>
+                  <label className={`${styles.field} ${styles.fieldWide} ${styles.publicToggle}`}>
+                    <input name="publicProfile" type="checkbox" defaultChecked={user.publicProfile} />
+                    <span><Eye size={17} /><strong>Exibir meu perfil na comunidade</strong><small>Seu e-mail, telefone e endereço nunca aparecem publicamente.</small></span>
+                  </label>
                 </div>
               </div>
 
@@ -84,11 +87,27 @@ export default async function ProfilePage({ searchParams }: { searchParams: Prom
                 <div><p className={styles.eyebrow}>Seu espaço</p><h2 id="summary-title">Resumo de jogador</h2></div>
               </div>
               <div className={styles.summaryList}>
-                <div><span className={styles.summaryIcon}><Trophy size={17} /></span><p><small>Time</small><strong>{user.team || 'Ainda não informado'}</strong></p></div>
-                <div><span className={styles.summaryIcon}><MapPin size={17} /></span><p><small>Localização</small><strong>{user.address || 'Ainda não informado'}</strong></p></div>
-                <div><span className={styles.summaryIcon}><MessageCircle size={17} /></span><p><small>WhatsApp</small><strong>{user.whatsapp || 'Ainda não informado'}</strong></p></div>
+                {currentMemberships.map((membership) => (
+                  <div key={membership.id}><span className={styles.summaryIcon}><Trophy size={16} /></span><p><small>{membership.games?.name}</small><strong>{membership.teams?.name}</strong></p></div>
+                ))}
+                {!currentMemberships.length && <div><span className={styles.summaryIcon}><Trophy size={16} /></span><p><small>Times</small><strong>Sem elenco atual</strong></p></div>}
+                <div><span className={styles.summaryIcon}><MapPin size={16} /></span><p><small>Localização</small><strong>{user.address || 'Ainda não informado'}</strong></p></div>
+                <div><span className={styles.summaryIcon}><MessageCircle size={16} /></span><p><small>WhatsApp</small><strong>{user.whatsapp || 'Ainda não informado'}</strong></p></div>
               </div>
               <div className={styles.joined}><span>Na FEGEPI desde</span><strong>{joinedAt}</strong></div>
+              {user.publicProfile && <Link className={styles.secondary} href={`/jogadores/${user.id}`}><Eye size={15} /> Ver meu perfil público</Link>}
+            </section>
+
+            <section className={`${styles.card} ${styles.accountCard}`}>
+              <p className={styles.eyebrow}>Trajetória competitiva</p>
+              <h2><CalendarDays size={18} /> Histórico de times</h2>
+              {memberships.map((membership) => (
+                <p key={membership.id}>
+                  <strong>{membership.teams?.name}</strong><br />
+                  <small>{membership.games?.short_name} · {new Date(`${membership.started_at}T00:00:00`).toLocaleDateString('pt-BR')} {membership.ended_at ? `até ${new Date(`${membership.ended_at}T00:00:00`).toLocaleDateString('pt-BR')}` : 'até hoje'}</small>
+                </p>
+              ))}
+              {!memberships.length && <p>Ainda não há passagens por times.</p>}
             </section>
 
             <section className={`${styles.card} ${styles.accountCard}`} aria-labelledby="account-title">

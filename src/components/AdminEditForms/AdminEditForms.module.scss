@@ -1,0 +1,112 @@
+.form {
+  display: grid;
+  gap: 14px;
+}
+
+.pair {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 12px;
+}
+
+.selectField {
+  display: grid;
+  align-content: start;
+  gap: 6px;
+}
+
+.selectField>span {
+  color: #415873;
+  font-size: 12px;
+  font-weight: 600;
+  letter-spacing: -.01em;
+}
+
+.selectField select {
+  width: 100%;
+  min-height: 43px;
+  border: 1px solid #d7e2ee;
+  outline: 0;
+  border-radius: 11px;
+  padding: 10px 12px;
+  color: #243b56;
+  background: #fbfdff;
+  font: inherit;
+  font-size: 12px;
+  font-weight: 500;
+}
+
+.selectField select:focus {
+  border-color: #1671c9;
+  background: #fff;
+  box-shadow: 0 0 0 4px rgba(22, 113, 201, .1);
+}
+
+.check {
+  display: flex;
+  align-items: flex-start;
+  gap: 10px;
+  border: 1px solid #e0e8f1;
+  border-radius: 12px;
+  padding: 11px 12px;
+  color: #405975;
+  background: #f8fbfe;
+  cursor: pointer;
+}
+
+.check input {
+  width: 16px;
+  height: 16px;
+  flex: 0 0 auto;
+  margin-top: 2px;
+  accent-color: #0b68c3;
+}
+
+.check span,
+.check strong,
+.check small {
+  display: block;
+}
+
+.check strong {
+  font-size: 11.5px;
+  font-weight: 600;
+}
+
+.check small {
+  margin-top: 2px;
+  color: #8190a3;
+  font-size: 9.5px;
+  font-weight: 450;
+  line-height: 1.35;
+}
+
+.submit {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 7px;
+  min-height: 45px;
+  margin-top: 2px;
+  border: 0;
+  border-radius: 11px;
+  padding: 11px 14px;
+  color: #fff;
+  background: linear-gradient(110deg, #034ea7, #0873d0);
+  box-shadow: 0 9px 20px rgba(3, 78, 167, .2);
+  cursor: pointer;
+  font: inherit;
+  font-size: 12px;
+  font-weight: 700;
+}
+
+.submit:disabled {
+  cursor: wait;
+  opacity: .7;
+}
+
+@media (max-width: 600px) {
+  .pair {
+    grid-template-columns: 1fr;
+  }
+}

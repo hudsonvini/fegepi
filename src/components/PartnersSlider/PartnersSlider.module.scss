@@ -28,6 +28,7 @@
     overflow: hidden;
     -webkit-mask-image: linear-gradient(to right, transparent, #000 8%, #000 92%, transparent);
     mask-image: linear-gradient(to right, transparent, #000 8%, #000 92%, transparent);
+    background-color: #fdd516;
 }
 
 .marquee {
@@ -137,6 +138,7 @@
         span {
             font-size: 12px;
         }
+
         h2 {
             font-size: 22px;
         }

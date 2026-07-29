@@ -12,9 +12,10 @@ export default function ManagedNavbar({ user }: { user: CurrentUser | null }) {
       <Link className={styles.logo} href="/"><img src="/images/logo.png" alt="FEGEPI" /></Link>
       <ul className={styles.links}>
         <li><Link href="/">Início</Link></li>
-        <li><a href="#eventos">Eventos</a></li>
-        <li><a href="#ranking"><Trophy size={14} /> Ranking</a></li>
-        <li><a href="#galeria">Galeria</a></li>
+        <li><Link href="/#eventos">Eventos</Link></li>
+        <li><Link href="/#ranking"><Trophy size={14} /> Ranking</Link></li>
+        <li><Link href="/#galeria">Galeria</Link></li>
+        <li><Link href="/jogadores">Jogadores</Link></li>
       </ul>
       <div className={styles.access}>
         {user ? <>

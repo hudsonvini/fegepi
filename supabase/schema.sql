@@ -28,6 +28,9 @@ alter table public.profiles add column if not exists team text;
 alter table public.profiles add column if not exists whatsapp text;
 alter table public.profiles add column if not exists gender text not null default 'indiferente';
 alter table public.profiles add column if not exists favorite_game text;
+alter table public.profiles add column if not exists player_tag text;
+alter table public.profiles add column if not exists bio text;
+alter table public.profiles add column if not exists public_profile boolean not null default true;
 
 do $$ begin
   alter table public.profiles add constraint profiles_gender_check check (gender in ('masculino', 'feminino', 'indiferente'));
@@ -71,8 +74,33 @@ create table if not exists public.ranking_entries (
   wins integer not null default 0 check (wins >= 0),
   draws integer not null default 0 check (draws >= 0),
   losses integer not null default 0 check (losses >= 0),
+  recent_form text[] not null default '{}'::text[],
   previous_position integer not null default 0 check (previous_position >= 0),
+  constraint ranking_recent_form_length check (cardinality(recent_form) <= 5),
+  constraint ranking_recent_form_values check (recent_form <@ array['W', 'D', 'L']::text[]),
   unique(season_id, team_id)
+);
+
+create table if not exists public.team_games (
+  team_id uuid not null references public.teams(id) on delete cascade,
+  game_id uuid not null references public.games(id) on delete cascade,
+  active boolean not null default true,
+  created_at timestamptz not null default now(),
+  primary key (team_id, game_id)
+);
+
+create table if not exists public.player_team_memberships (
+  id uuid primary key default gen_random_uuid(),
+  profile_id uuid not null references public.profiles(id) on delete cascade,
+  team_id uuid not null,
+  game_id uuid not null,
+  role text not null default 'player' check (role in ('player', 'captain', 'coach', 'reserve')),
+  started_at date not null default current_date,
+  ended_at date,
+  created_at timestamptz not null default now(),
+  constraint player_membership_dates check (ended_at is null or ended_at >= started_at),
+  constraint player_membership_team_game foreign key (team_id, game_id)
+    references public.team_games(team_id, game_id) on delete restrict
 );
 
 alter table public.profiles add column if not exists team_id uuid references public.teams(id) on delete set null;
@@ -80,6 +108,7 @@ alter table public.profiles add column if not exists email text;
 alter table public.ranking_entries add column if not exists wins integer not null default 0 check (wins >= 0);
 alter table public.ranking_entries add column if not exists draws integer not null default 0 check (draws >= 0);
 alter table public.ranking_entries add column if not exists losses integer not null default 0 check (losses >= 0);
+alter table public.ranking_entries add column if not exists recent_form text[] not null default '{}'::text[];
 
 create table if not exists public.events (
   id uuid primary key default gen_random_uuid(),
@@ -93,6 +122,16 @@ create table if not exists public.events (
   featured_media_url text,
   registration_url text,
   cta_label text not null default 'Saiba mais',
+  active boolean not null default true,
+  display_order integer not null default 0,
+  created_at timestamptz not null default now()
+);
+
+create table if not exists public.hero_slides (
+  id uuid primary key default gen_random_uuid(),
+  image_url text not null,
+  alt_text text not null default 'Banner principal da FEGEPI',
+  link_url text,
   active boolean not null default true,
   display_order integer not null default 0,
   created_at timestamptz not null default now()
@@ -143,8 +182,11 @@ alter table public.ranking_seasons enable row level security;
 alter table public.teams enable row level security;
 alter table public.ranking_entries enable row level security;
 alter table public.events enable row level security;
+alter table public.hero_slides enable row level security;
 alter table public.gallery_settings enable row level security;
 alter table public.gallery_photos enable row level security;
+alter table public.team_games enable row level security;
+alter table public.player_team_memberships enable row level security;
 
 create policy "profiles visible to owner or admin" on public.profiles for select using (auth.uid() = id or public.is_admin());
 create policy "members update own profile" on public.profiles for update using (auth.uid() = id) with check (auth.uid() = id);
@@ -155,16 +197,42 @@ create policy "public reads seasons" on public.ranking_seasons for select using 
 create policy "public reads teams" on public.teams for select using (true);
 create policy "public reads ranking" on public.ranking_entries for select using (true);
 create policy "public reads events" on public.events for select using (active);
+create policy "public reads hero slides" on public.hero_slides for select using (active);
 create policy "public reads gallery settings" on public.gallery_settings for select using (true);
 create policy "public reads gallery photos" on public.gallery_photos for select using (active);
+create policy "public reads team games" on public.team_games for select using (true);
+create policy "public reads player memberships" on public.player_team_memberships for select using (true);
 
 create policy "admins manage games" on public.games for all using (public.is_admin()) with check (public.is_admin());
 create policy "admins manage seasons" on public.ranking_seasons for all using (public.is_admin()) with check (public.is_admin());
 create policy "admins manage teams" on public.teams for all using (public.is_admin()) with check (public.is_admin());
 create policy "admins manage ranking" on public.ranking_entries for all using (public.is_admin()) with check (public.is_admin());
 create policy "admins manage events" on public.events for all using (public.is_admin()) with check (public.is_admin());
+create policy "admins manage hero slides" on public.hero_slides for all using (public.is_admin()) with check (public.is_admin());
 create policy "admins manage gallery settings" on public.gallery_settings for all using (public.is_admin()) with check (public.is_admin());
 create policy "admins manage gallery photos" on public.gallery_photos for all using (public.is_admin()) with check (public.is_admin());
+create policy "admins manage team games" on public.team_games for all using (public.is_admin()) with check (public.is_admin());
+create policy "admins manage player memberships" on public.player_team_memberships for all using (public.is_admin()) with check (public.is_admin());
+
+create unique index if not exists profiles_player_tag_unique on public.profiles (lower(player_tag))
+  where player_tag is not null and length(trim(player_tag)) > 0;
+create unique index if not exists player_one_current_team_per_game
+  on public.player_team_memberships(profile_id, game_id) where ended_at is null;
+create index if not exists player_memberships_profile_idx on public.player_team_memberships(profile_id, started_at desc);
+create index if not exists player_memberships_team_game_idx on public.player_team_memberships(team_id, game_id, ended_at);
+create index if not exists team_games_game_idx on public.team_games(game_id, active);
+
+insert into public.team_games (team_id, game_id, active)
+select distinct entry.team_id, season.game_id, true
+from public.ranking_entries entry
+join public.ranking_seasons season on season.id = entry.season_id
+on conflict (team_id, game_id) do update set active = true;
+
+create or replace view public.player_directory
+with (security_barrier = true)
+as select id, full_name, player_tag, avatar_url, gender, favorite_game, bio, created_at
+from public.profiles where public_profile = true;
+grant select on public.player_directory to anon, authenticated;
 
 insert into storage.buckets (id, name, public) values ('fegepi-media', 'fegepi-media', true)
 on conflict (id) do update set public = true;
