@@ -8,6 +8,7 @@ import LatestEventGallery from "@/components/LatestEventGallery/LatestEventGalle
 import ManagedGallery from "@/components/ManagedGallery/ManagedGallery";
 import { getCurrentUser } from "@/lib/auth";
 import { getPublicContent } from "@/lib/content";
+import TeamRegistrationHero from "@/components/TeamRegistrationHero/TeamRegistrationHero";
 
 export default async function Home() {
   const [user, content] = await Promise.all([getCurrentUser(), getPublicContent()]);
@@ -18,7 +19,7 @@ export default async function Home() {
         <ManagedHero user={user} events={content.events} slides={content.heroSlides} />
         <PartnersSlider />
       </div>
-      <img src="https://esl.com/wp-content/uploads/2024/08/3D-ESL-STATUES-Natalia-768.png" alt="" />
+      <TeamRegistrationHero />
       <GameShowcase />
       <div id="ranking"><GameArea games={content.games} /></div>
       <div className={styles.container}>

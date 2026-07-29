@@ -55,24 +55,42 @@
     align-items: center;
     justify-content: center;
     gap: 6px;
-    min-height: 40px;
-    padding: 9px 12px;
+    // min-height: 40px;
+    padding: 6px 12px 6px 6px;
     border-radius: 9px;
-    color: #1d2e43;
-    background: #fdd516;
+    color: #ffffff;
+    background: #54a133;
     font-size: 13px;
-    font-weight: 600;
+    font-weight: 500;
     white-space: nowrap;
+
+    svg {
+        color: #54a133;
+        background-color: #fff;
+        // color: #54a133;
+        padding: 6px;
+        width: 26px;
+        height: 26px;
+        border-radius: 4px;
+    }
 }
 
 .primary {
     color: #fff;
     background: #034ea7;
+
+    svg {
+        color: #034ea7;
+    }
 }
 
 .dashboard {
     color: #0754a7;
     background: #e9f3ff;
+
+    svg {
+        color: #0754a7;
+    }
 }
 
 .account {

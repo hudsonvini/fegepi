@@ -42,34 +42,34 @@ export default function GameShowcase({
 
                 <div className={styles.heroArea}>
                     <div className={styles.mediaArea}>
-                        <Image
+                        {/* <Image
                             src={primaryImageSrc}
                             alt={primaryImageAlt}
                             fill
                             sizes="(max-width: 1024px) 100vw, 34vw"
                             className={styles.characterImage}
-                        />
+                        /> */}
                     </div>
 
                     <div className={styles.contentArea}>
                         <h2>{title}</h2>
                         <p>{description}</p>
 
-                        <a className={styles.ctaButton} href={buttonHref}>
+                        {/* <a className={styles.ctaButton} href={buttonHref}>
                             <span>{buttonLabel}</span>
                             <ArrowRight />
-                        </a>
+                        </a> */}
                     </div>
                 </div>
 
-                <div className={styles.metricsArea}>
+                {/* <div className={styles.metricsArea}>
                     {metrics.map((metric) => (
                         <article key={metric.id} className={styles.metricCard}>
                             <span>{metric.label}</span>
                             <strong>{metric.value}</strong>
                         </article>
                     ))}
-                </div>
+                </div> */}
             </div>
         </section>
     )

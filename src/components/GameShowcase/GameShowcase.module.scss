@@ -15,7 +15,7 @@
     grid-template-columns: minmax(320px, 44%) minmax(0, 1fr);
     align-items: center;
     gap: 24px;
-    min-height: 460px;
+    min-height: 200px;
     padding: 34px 44px 0;
     max-width: 1500px;
     margin: 0 auto;
@@ -23,7 +23,7 @@
 
 .mediaArea {
     position: relative;
-    min-height: 420px;
+    min-height: 200px;
 }
 
 .characterCard {
