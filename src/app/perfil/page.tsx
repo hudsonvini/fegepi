@@ -10,11 +10,11 @@ import { updateProfileAction } from './actions'
 import { ProfileAvatarPicker } from './ProfileAvatarPicker'
 import styles from './page.module.scss'
 
-export default async function ProfilePage({ searchParams }: { searchParams: Promise<{ erro?: string; mensagem?: string }> }) {
+export default async function ProfilePage() {
   const user = await getCurrentUser()
   if (!user) redirect('/login')
 
-  const [params, memberships] = await Promise.all([searchParams, getOwnMemberships(user.id)])
+  const memberships = await getOwnMemberships(user.id)
   const currentMemberships = memberships.filter((item) => !item.ended_at)
   const joinedAt = user.createdAt
     ? new Intl.DateTimeFormat('pt-BR', { month: 'short', year: 'numeric' }).format(new Date(user.createdAt)).replace('.', '')
@@ -42,9 +42,6 @@ export default async function ProfilePage({ searchParams }: { searchParams: Prom
           </div>
           <span className={`${styles.role} ${user.role === 'admin' ? styles.adminRole : ''}`}><ShieldCheck size={15} /> {user.role === 'admin' ? 'Administrador' : 'Membro'}</span>
         </section>
-
-        {params.erro && <p className={`${styles.notice} ${styles.error}`} role="alert">{params.erro}</p>}
-        {params.mensagem && <p className={`${styles.notice} ${styles.success}`} role="status">{params.mensagem}</p>}
 
         <div className={styles.contentGrid}>
           <section className={styles.card} aria-labelledby="details-title">

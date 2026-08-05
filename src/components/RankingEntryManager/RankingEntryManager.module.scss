@@ -1,0 +1,206 @@
+.row {
+  transition: background-color .18s ease;
+}
+
+.row:hover {
+  background: #f8fbfe;
+}
+
+.row td {
+  vertical-align: middle;
+}
+
+.position {
+  width: 29px;
+  height: 29px;
+  display: grid;
+  place-items: center;
+  border-radius: 8px;
+  color: #075db7;
+  background: #e9f3fe;
+  font-size: 12px;
+  font-weight: 800;
+}
+
+.team {
+  min-width: 180px;
+  display: flex;
+  align-items: center;
+  gap: 9px;
+}
+
+.crest,
+.crest img,
+.crest > span {
+  width: 38px;
+  height: 38px;
+  border-radius: 10px;
+}
+
+.crest {
+  flex: 0 0 38px;
+  overflow: hidden;
+}
+
+.crest img {
+  object-fit: cover;
+}
+
+.crest > span {
+  display: grid;
+  place-items: center;
+  color: #fff;
+  background: #0865bf;
+  font-size: 9px;
+  font-weight: 800;
+}
+
+.identity h3,
+.identity p {
+  margin: 0;
+}
+
+.identity h3 {
+  color: #29445f;
+  font-size: 12px;
+  white-space: nowrap;
+}
+
+.identity p {
+  margin-top: 2px;
+  color: #8594a6;
+  font-size: 8px;
+}
+
+.stat,
+.points {
+  min-width: 32px;
+  display: inline-grid;
+  place-items: center;
+  padding: 7px 8px;
+  border-radius: 8px;
+  font-size: 12px;
+}
+
+.win {
+  color: #08724d;
+  background: #eaf8f1;
+}
+
+.draw {
+  color: #8c620c;
+  background: #fff8e8;
+}
+
+.loss {
+  color: #a82f38;
+  background: #fff1f2;
+}
+
+.points {
+  color: #075db7;
+  background: #e9f3fe;
+}
+
+.formGuide {
+  min-width: 145px;
+  display: flex;
+  gap: 5px;
+}
+
+.formGuide i {
+  width: 25px;
+  height: 25px;
+  display: grid;
+  place-items: center;
+  flex: 0 0 25px;
+  border-radius: 50%;
+  color: #fff;
+  font-size: 9px;
+  font-style: normal;
+  font-weight: 800;
+}
+
+.resultW { background: #159268; }
+.resultD { background: #d19720; }
+.resultL { background: #c74750; }
+.resultEmpty { background: #dbe3eb; }
+
+.resultActions {
+  min-width: 245px;
+  display: flex;
+  gap: 5px;
+}
+
+.resultActions button,
+.undo {
+  min-height: 34px;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 5px;
+  border: 1px solid;
+  border-radius: 8px;
+  padding: 7px 8px;
+  cursor: pointer;
+  font: inherit;
+  font-size: 8px;
+  font-weight: 700;
+  white-space: nowrap;
+}
+
+.resultActions button[value='W'] {
+  border-color: #b9e4d2;
+  color: #08724d;
+  background: #eaf8f1;
+}
+
+.resultActions button[value='D'] {
+  border-color: #ecd9ac;
+  color: #8c620c;
+  background: #fff8e8;
+}
+
+.resultActions button[value='L'] {
+  border-color: #ecc3c7;
+  color: #a82f38;
+  background: #fff1f2;
+}
+
+.resultActions button:disabled,
+.undo:disabled {
+  cursor: wait;
+  opacity: .58;
+}
+
+.moreActions {
+  min-width: 165px;
+  display: flex;
+  align-items: center;
+  gap: 5px;
+}
+
+.undo {
+  border-color: #d9e3ed;
+  color: #58718a;
+  background: #f2f6fa;
+}
+
+.spinner {
+  animation: spin .8s linear infinite;
+}
+
+@keyframes spin {
+  to { transform: rotate(360deg); }
+}
+
+@media (max-width: 760px) {
+  .resultActions button span,
+  .undo span {
+    display: none;
+  }
+
+  .resultActions {
+    min-width: 120px;
+  }
+}

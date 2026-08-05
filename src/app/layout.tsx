@@ -1,5 +1,7 @@
 ﻿import type { Metadata } from "next";
 import { Poppins } from "next/font/google";
+import { Suspense } from "react";
+import ToastNotifications from "@/components/ToastNotifications/ToastNotifications";
 import "./globals.css";
 
 const poppins = Poppins({
@@ -20,8 +22,10 @@ export default function RootLayout({
 }>) {
   return (
     <html lang="pt-BR" className={`${poppins.variable}`}>
-      <body>{children}</body>
+      <body>
+        <Suspense fallback={null}><ToastNotifications /></Suspense>
+        {children}
+      </body>
     </html>
   );
 }
-

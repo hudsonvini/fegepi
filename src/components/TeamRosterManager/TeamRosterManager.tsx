@@ -2,11 +2,10 @@
 
 import Link from 'next/link'
 import { useMemo, useState } from 'react'
-import { CalendarClock, Gamepad2, Search, UserPlus, UsersRound } from 'lucide-react'
+import { CalendarClock, Search, UserPlus, UsersRound } from 'lucide-react'
 import {
   assignPlayerToTeamGameAction,
   endPlayerMembershipAction,
-  updateTeamGamesAction,
 } from '@/app/admin/actions'
 import AdminModal from '@/components/AdminModal/AdminModal'
 import AdminSubmitButton from '@/components/AdminSubmitButton/AdminSubmitButton'
@@ -66,32 +65,11 @@ export default function TeamRosterManager({
   return (
     <AdminModal
       title={`Elenco · ${team.name}`}
-      description="Defina os jogos do time, encontre jogadores da plataforma e mantenha o histórico por modalidade."
+      description="Encontre jogadores da plataforma, vincule-os por modalidade e acompanhe as passagens pelo time."
       triggerLabel="Elenco"
       triggerIcon="edit"
     >
       <div className={styles.layout}>
-        <section className={styles.section}>
-          <div className={styles.heading}>
-            <span><Gamepad2 size={17} /></span>
-            <div><h3>Jogos do time</h3><p>Um time pode atuar em uma ou várias modalidades.</p></div>
-          </div>
-          <form action={updateTeamGamesAction}>
-            <input type="hidden" name="teamId" value={team.id} />
-            <div className={styles.gameChecks}>
-              {games.map((game) => (
-                <label key={game.id}>
-                  <input name="gameIds" type="checkbox" value={game.id} defaultChecked={activeGameIds.includes(game.id)} />
-                  <span>{game.name}<small>{game.short_name}</small></span>
-                </label>
-              ))}
-            </div>
-            <AdminSubmitButton className={styles.secondaryButton} pendingLabel="Atualizando jogos...">
-              Atualizar modalidades
-            </AdminSubmitButton>
-          </form>
-        </section>
-
         <section className={styles.section}>
           <div className={styles.heading}>
             <span><UserPlus size={17} /></span>
@@ -138,12 +116,16 @@ export default function TeamRosterManager({
                 </label>
                 <label>Entrada<input name="startedAt" type="date" required defaultValue={today} /></label>
               </div>
-              <AdminSubmitButton className={styles.primaryButton} pendingLabel="Vinculando jogador...">
+              <AdminSubmitButton
+                className={styles.primaryButton}
+                pendingLabel="Vinculando jogador..."
+                disabled={!selectedProfileId}
+              >
                 <UserPlus size={15} /> Vincular ao elenco
               </AdminSubmitButton>
             </form>
           ) : (
-            <p className={styles.empty}>Ative pelo menos um jogo para montar o elenco.</p>
+            <p className={styles.empty}>Edite o time e selecione pelo menos uma modalidade antes de montar o elenco.</p>
           )}
         </section>
 

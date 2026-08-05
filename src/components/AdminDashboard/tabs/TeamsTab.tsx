@@ -1,8 +1,9 @@
 import Link from 'next/link'
-import { ChevronRight, Filter, Plus, Trophy, UsersRound } from 'lucide-react'
+import { ChevronRight, Filter, Plus, Trophy } from 'lucide-react'
 import { createTeamAction } from '@/app/admin/actions'
 import styles from '@/app/admin/page.module.scss'
 import { EditTeamModal } from '@/components/AdminEditForms/AdminEditForms'
+import AdminModal from '@/components/AdminModal/AdminModal'
 import MediaUploadField from '@/components/AdminFormControls/MediaUploadField'
 import ValidatedField from '@/components/AdminFormControls/ValidatedField'
 import AdminSubmitButton from '@/components/AdminSubmitButton/AdminSubmitButton'
@@ -16,7 +17,11 @@ export default function TeamsTab({ data }: { data: AdminData }) {
   const visibleTeams = selectedGame
     ? data.teams.filter((team) => data.teamGames.some((item) => item.team_id === team.id && item.game_id === selectedGame.id && item.active))
     : data.teams
-  const userTeamCount = (teamId: string) => data.memberships.filter((membership) => membership.team_id === teamId && !membership.ended_at).length
+  const userTeamCount = (teamId: string) => new Set(
+    data.memberships
+      .filter((membership) => membership.team_id === teamId && !membership.ended_at)
+      .map((membership) => membership.profile_id),
+  ).size
   const teamSeasonCount = (teamId: string) => data.entries.filter((entry) => entry.team_id === teamId).length
   const today = new Date().toISOString().slice(0, 10)
 
@@ -28,12 +33,17 @@ export default function TeamsTab({ data }: { data: AdminData }) {
         description="Mantenha a base de times atualizada antes de incluí-los em uma temporada ou atribuí-los a membros."
       />
 
-      <div className={styles.teamIntro}>
-        <section className={styles.panel}>
-          <div className={styles.panelHead}>
-            <div><p className={styles.eyebrow}>Novo cadastro</p><h2>Criar time</h2></div>
-            <UsersRound size={21} />
-          </div>
+      <div className={styles.teamToolbar}>
+        <div>
+          {/* <p className={styles.eyebrow}>Gestão de times</p> */}
+          <h2>Times cadastrados</h2>
+          <p>Crie uma equipe pelo botão e use os cards para editar seus dados ou administrar o elenco.</p>
+        </div>
+        <AdminModal
+          title="Cadastrar time"
+          description="Informe a identidade da equipe e selecione todas as modalidades em que ela atua."
+          triggerLabel="Novo time"
+        >
           <form action={createTeamAction} className={styles.form}>
             <ValidatedField name="teamName" label="Nome do time" required minLength={2} />
             <div className={styles.pair}>
@@ -57,22 +67,10 @@ export default function TeamsTab({ data }: { data: AdminData }) {
               <Plus size={16} /> Cadastrar time
             </AdminSubmitButton>
           </form>
-        </section>
-
-        <section className={styles.panel}>
-          <div className={styles.panelHead}>
-            <div><p className={styles.eyebrow}>Fluxo recomendado</p><h2>Organize o campeonato</h2></div>
-            <Trophy size={21} />
-          </div>
-          <ol className={styles.steps}>
-            <li><span>1</span> Cadastre o time e o escudo.</li>
-            <li><span>2</span> Abra o elenco e vincule perfis por jogo.</li>
-            <li><span>3</span> Inclua o time na temporada para lançar resultados.</li>
-          </ol>
-          <Link className={styles.secondaryButton} href={adminHref('tabela')}>
-            Ir para temporadas e tabela <ChevronRight size={16} />
-          </Link>
-        </section>
+        </AdminModal>
+        <Link className={styles.teamSeasonLink} href={adminHref('tabela')}>
+          <Trophy size={16} /> Temporadas e tabela <ChevronRight size={15} />
+        </Link>
       </div>
 
       <div className={styles.gameFilterBar}>
@@ -100,34 +98,39 @@ export default function TeamsTab({ data }: { data: AdminData }) {
         {visibleTeams.map((team) => {
           const teamGameIds = data.teamGames.filter((item) => item.team_id === team.id && item.active).map((item) => item.game_id)
           return (
-          <article className={styles.teamCard} key={team.id}>
-            <div className={styles.teamCrest}>
-              {team.crest_url
-                ? <img src={team.crest_url} alt={`Escudo do ${team.name}`} />
-                : <span>{team.initials}</span>}
-            </div>
-            <div className={styles.teamInfo}><h2>{team.name}</h2><p>{team.city}</p></div>
-            <div className={styles.teamGameBadges}>
-              {data.games.filter((game) => teamGameIds.includes(game.id)).map((game) => <span key={game.id}>{game.short_name}</span>)}
-            </div>
-            <div className={styles.teamStats}>
-              <span><strong>{userTeamCount(team.id)}</strong> membros</span>
-              <span><strong>{teamSeasonCount(team.id)}</strong> temporadas</span>
-            </div>
-            <div className={styles.teamCardActions}>
-              <TeamRosterManager
-                team={team}
-                games={data.games}
-                teamGames={data.teamGames}
-                profiles={data.profiles}
-                memberships={data.memberships}
-                today={today}
-              />
-              <EditTeamModal team={team} />
-              <DeleteButton table="teams" id={team.id} tab="times" label="Excluir time" gameId={selectedGame?.id} />
-            </div>
-          </article>
-        )})}
+            <article className={styles.teamCard} key={team.id}>
+              <div className={styles.teamCrest}>
+                {team.crest_url
+                  ? <img src={team.crest_url} alt={`Escudo do ${team.name}`} />
+                  : <span>{team.initials}</span>}
+              </div>
+              <div className={styles.teamInfo}><h2>{team.name}</h2><p>{team.city}</p></div>
+              <div className={styles.teamGameBadges}>
+                {data.games.filter((game) => teamGameIds.includes(game.id)).map((game) => <span key={game.id}>{game.short_name}</span>)}
+              </div>
+              <div className={styles.teamStats}>
+                <span><strong>{userTeamCount(team.id)}</strong> membros</span>
+                <span><strong>{teamSeasonCount(team.id)}</strong> temporadas</span>
+              </div>
+              <div className={styles.teamCardActions}>
+                <TeamRosterManager
+                  team={team}
+                  games={data.games}
+                  teamGames={data.teamGames}
+                  profiles={data.profiles}
+                  memberships={data.memberships}
+                  today={today}
+                />
+                <EditTeamModal
+                  team={team}
+                  games={data.games}
+                  activeGameIds={teamGameIds}
+                />
+                <DeleteButton table="teams" id={team.id} tab="times" label="Excluir time" gameId={selectedGame?.id} />
+              </div>
+            </article>
+          )
+        })}
         {!visibleTeams.length && <div className={styles.empty}><p>Nenhum time cadastrado para este jogo.</p></div>}
       </div>
     </>

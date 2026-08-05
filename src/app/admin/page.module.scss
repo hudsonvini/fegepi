@@ -624,37 +624,50 @@
     white-space: nowrap;
 }
 
-.teamIntro {
-    align-items: stretch;
-    margin-top: 0;
-}
-
-.steps {
+.teamToolbar {
     display: grid;
-    gap: 12px;
-    margin: 18px 0;
-    padding: 0;
-    list-style: none;
-    color: #556a82;
-    font-size: 12px;
-}
-
-.steps li {
-    display: flex;
+    grid-template-columns: minmax(0, 1fr) auto auto;
     align-items: center;
-    gap: 9px;
+    gap: 11px;
+    margin-top: 22px;
+    padding: 16px;
+    border: 1px solid #e2eaf4;
+    border-radius: 14px;
+    background: #fff;
+    box-shadow: 0 8px 19px rgba(30, 70, 116, .045);
 }
 
-.steps span {
-    width: 22px;
-    height: 22px;
-    display: grid;
-    place-items: center;
-    border-radius: 50%;
-    color: #075cb4;
-    background: #e4f0ff;
+.teamToolbar h2,
+.teamToolbar p {
+    margin: 0;
+}
+
+.teamToolbar h2 {
+    color: #223b59;
+    font-size: 16px;
+    font-weight: 600;
+}
+
+.teamToolbar>div>p:last-child {
+    margin-top: 0px;
+    color: #7d8ca0;
     font-size: 10px;
-    font-weight: 850;
+}
+
+.teamSeasonLink {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    gap: 7px;
+    min-height: 40px;
+    border-radius: 9px;
+    padding: 10px 13px;
+    color: #0758ad;
+    background: #eaf3ff;
+    font-size: 11px;
+    font-weight: 700;
+    text-decoration: none;
+    white-space: nowrap;
 }
 
 .teamCards {
@@ -744,6 +757,25 @@
     margin-top: 0;
 }
 
+.automaticHint {
+    margin: 0;
+    border: 1px solid #cfe1f3;
+    border-radius: 11px;
+    padding: 11px 12px;
+    color: #55718d;
+    background: #f1f7fd;
+    font-size: 10px;
+    line-height: 1.5;
+}
+
+.automaticRankingTable {
+    padding: 0 15px 16px;
+}
+
+.automaticRankingTable table {
+    min-width: 1120px;
+}
+
 .statsInputs {
     display: grid;
     grid-template-columns: repeat(4, minmax(0, 1fr));
@@ -770,7 +802,7 @@
     font-weight: 700;
 }
 
-.recentFormLabel > span {
+.recentFormLabel>span {
     color: #8a98a8;
     font-size: 9px;
     font-weight: 500;
@@ -966,7 +998,7 @@
     font-size: 9px;
 }
 
-.tableTeam > div {
+.tableTeam>div {
     display: grid;
     gap: 2px;
 }
@@ -1479,148 +1511,160 @@
     .modalActions :global(button) {
         width: 100%
     }
+
+    .teamToolbar {
+        grid-template-columns: 1fr;
+        align-items: stretch;
+    }
+
+    .teamToolbar :global(button),
+    .teamSeasonLink {
+        width: 100%;
+    }
 }
+
 .gameFieldset {
-  margin: 0;
-  padding: 0;
-  border: 0;
+    margin: 0;
+    padding: 0;
+    border: 0;
 
-  legend {
-    margin-bottom: .2rem;
-    color: #203a59;
-    font-size: .88rem;
-    font-weight: 600;
-  }
+    legend {
+        margin-bottom: .2rem;
+        color: #203a59;
+        font-size: .88rem;
+        font-weight: 600;
+    }
 
-  > p {
-    margin: 0 0 .7rem;
-    color: #7b8da4;
-    font-size: .78rem;
-  }
+    >p {
+        margin: 0 0 .7rem;
+        color: #7b8da4;
+        font-size: .78rem;
+    }
 
-  > div {
-    display: grid;
-    grid-template-columns: repeat(2, minmax(0, 1fr));
-    gap: .55rem;
-  }
+    >div {
+        display: grid;
+        grid-template-columns: repeat(2, minmax(0, 1fr));
+        gap: .55rem;
+    }
 
-  label {
-    display: flex;
-    align-items: center;
-    gap: .65rem;
-    padding: .7rem;
-    border: 1px solid #dbe5f0;
-    border-radius: 12px;
-    cursor: pointer;
-  }
+    label {
+        display: flex;
+        align-items: center;
+        gap: .65rem;
+        padding: .7rem;
+        border: 1px solid #dbe5f0;
+        border-radius: 12px;
+        cursor: pointer;
+    }
 
-  label span {
-    display: flex;
-    flex-direction: column;
-    color: #203a59;
-    font-size: .82rem;
-    font-weight: 600;
-  }
+    label span {
+        display: flex;
+        flex-direction: column;
+        color: #203a59;
+        font-size: .82rem;
+        font-weight: 600;
+    }
 
-  label small {
-    color: #8a9bb0;
-    font-size: .68rem;
-    font-weight: 500;
-  }
+    label small {
+        color: #8a9bb0;
+        font-size: .68rem;
+        font-weight: 500;
+    }
 }
 
 .gameFilterBar {
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  gap: 1rem;
-  margin: 1.25rem 0;
-  padding: .8rem 1rem;
-  border: 1px solid #e0e8f1;
-  border-radius: 16px;
-  background: #fff;
-
-  > span {
     display: flex;
     align-items: center;
-    gap: .45rem;
-    color: #50677f;
-    font-size: .8rem;
-    font-weight: 600;
-  }
+    justify-content: space-between;
+    gap: 1rem;
+    margin: 1.25rem 0;
+    padding: .8rem 1rem;
+    border: 1px solid #e0e8f1;
+    border-radius: 16px;
+    background: #fff;
 
-  > div {
-    display: flex;
-    flex-wrap: wrap;
-    gap: .45rem;
-  }
+    >span {
+        display: flex;
+        align-items: center;
+        gap: .45rem;
+        color: #50677f;
+        font-size: .8rem;
+        font-weight: 600;
+    }
 
-  a {
-    padding: .55rem .85rem;
-    border-radius: 10px;
-    color: #56708d;
-    background: #f1f5f9;
-    font-size: .78rem;
-    font-weight: 600;
-    text-decoration: none;
-  }
+    >div {
+        display: flex;
+        flex-wrap: wrap;
+        gap: .45rem;
+    }
 
-  .activeGameFilter {
-    color: #fff;
-    background: #0869c7;
-  }
+    a {
+        padding: .55rem .85rem;
+        border-radius: 10px;
+        color: #56708d;
+        background: #f1f5f9;
+        font-size: .78rem;
+        font-weight: 600;
+        text-decoration: none;
+    }
+
+    .activeGameFilter {
+        color: #fff;
+        background: #0869c7;
+    }
 }
 
 .teamGameBadges {
-  display: flex;
-  flex-wrap: wrap;
-  gap: .35rem;
+    display: flex;
+    flex-wrap: wrap;
+    gap: .35rem;
 
-  span {
-    padding: .25rem .5rem;
-    border-radius: 999px;
-    color: #0869c7;
-    background: #e9f4ff;
-    font-size: .66rem;
-    font-weight: 700;
-  }
+    span {
+        padding: .25rem .5rem;
+        border-radius: 999px;
+        color: #0869c7;
+        background: #e9f4ff;
+        font-size: .66rem;
+        font-weight: 700;
+    }
 }
 
 .contextInfo {
-  margin: 0;
-  padding: .7rem .85rem;
-  border-radius: 10px;
-  color: #526b85;
-  background: #f1f6fb;
-  font-size: .8rem;
+    margin: 0;
+    padding: .7rem .85rem;
+    border-radius: 10px;
+    color: #526b85;
+    background: #f1f6fb;
+    font-size: .8rem;
 }
 
 .userMemberships {
-  display: flex;
-  flex-wrap: wrap;
-  gap: .4rem;
+    display: flex;
+    flex-wrap: wrap;
+    gap: .4rem;
 
-  span, a {
-    padding: .35rem .55rem;
-    border-radius: 8px;
-    color: #58708a;
-    background: #f1f5f9;
-    font-size: .72rem;
-  }
+    span,
+    a {
+        padding: .35rem .55rem;
+        border-radius: 8px;
+        color: #58708a;
+        background: #f1f5f9;
+        font-size: .72rem;
+    }
 
-  a {
-    color: #0869c7;
-    text-decoration: none;
-  }
+    a {
+        color: #0869c7;
+        text-decoration: none;
+    }
 }
 
 @media (max-width: 720px) {
-  .gameFilterBar {
-    align-items: flex-start;
-    flex-direction: column;
-  }
+    .gameFilterBar {
+        align-items: flex-start;
+        flex-direction: column;
+    }
 
-  .gameFieldset > div {
-    grid-template-columns: 1fr;
-  }
+    .gameFieldset>div {
+        grid-template-columns: 1fr;
+    }
 }

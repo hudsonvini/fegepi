@@ -36,7 +36,7 @@ export async function getAdminData(selectedSeasonId?: string, selectedGameId?: s
     supabase.from('gallery_photos').select('id,alt_text,active,image_url,download_url,display_order').order('display_order'),
     supabase.from('profiles').select('id,full_name,email,avatar_url,team,team_id,role,gender,whatsapp,address,favorite_game,player_tag,bio,public_profile,created_at').order('created_at', { ascending: false }),
     supabase.from('team_games').select('team_id,game_id,active,created_at'),
-    supabase.from('player_team_memberships').select('id,profile_id,team_id,game_id,role,started_at,ended_at,created_at,profiles(id,full_name,avatar_url,gender,favorite_game,player_tag),teams(id,name,city,crest_url,initials),games(id,name,short_name,image_url)').order('started_at', { ascending: false }),
+    supabase.from('player_team_memberships').select('id,profile_id,team_id,game_id,role,started_at,ended_at,created_at').order('started_at', { ascending: false }),
   ])
 
   const entries = entriesWithRecentFormError
@@ -64,17 +64,26 @@ export async function getAdminData(selectedSeasonId?: string, selectedGameId?: s
       .sort((a, b) => b.points - a.points || b.wins - a.wins || (a.teams?.name ?? '').localeCompare(b.teams?.name ?? ''))
     : []
 
+  const allTeams = (teams ?? []) as Team[]
+  const allProfiles = (profiles ?? []) as Profile[]
+  const hydratedMemberships = (memberships ?? []).map((membership) => ({
+    ...membership,
+    profiles: allProfiles.find((profile) => profile.id === membership.profile_id) ?? null,
+    teams: allTeams.find((team) => team.id === membership.team_id) ?? null,
+    games: allGames.find((game) => game.id === membership.game_id) ?? null,
+  })) as unknown as PlayerTeamMembership[]
+
   return {
     heroSlides: (heroSlides ?? []) as HeroSlide[],
     games: allGames,
     seasons: allSeasons,
-    teams: (teams ?? []) as Team[],
+    teams: allTeams,
     entries: allEntries,
     events: (events ?? []) as Event[],
     photos: (photos ?? []) as GalleryPhoto[],
-    profiles: (profiles ?? []) as Profile[],
+    profiles: allProfiles,
     teamGames: (teamGames ?? []) as TeamGame[],
-    memberships: (memberships ?? []) as unknown as PlayerTeamMembership[],
+    memberships: hydratedMemberships,
     selectedGame,
     selectedSeason,
     seasonEntries,

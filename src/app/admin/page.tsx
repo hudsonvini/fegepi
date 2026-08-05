@@ -15,8 +15,6 @@ type AdminSearchParams = {
   secao?: string
   temporada?: string
   jogo?: string
-  erro?: string
-  mensagem?: string
 }
 
 export default async function AdminPage({
@@ -42,8 +40,6 @@ export default async function AdminPage({
       activeContentSection={activeContentSection}
     >
       <div className={styles.mainContent}>
-        {params.erro && <p className={`${styles.notice} ${styles.error}`} role="alert">{params.erro}</p>}
-        {params.mensagem && <p className={`${styles.notice} ${styles.success}`} role="status">{params.mensagem}</p>}
         <AdminTabContent
           activeTab={activeTab}
           activeContentSection={activeContentSection}

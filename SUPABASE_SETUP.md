@@ -1,6 +1,6 @@
 # Configuração do Supabase
 
-1. Crie um projeto gratuito no Supabase e, no **SQL Editor**, execute primeiro `supabase/schema.sql`, depois `supabase/role-protection.sql` e, por fim, `supabase/seed.sql`.
+1. Crie um projeto gratuito no Supabase e, no **SQL Editor**, execute nesta ordem: `supabase/schema.sql`, `supabase/role-protection.sql`, `supabase/seed.sql` e `supabase/ranking-results.sql`.
    - Em um projeto que já possua o schema antigo, execute `supabase/content-integration.sql` antes de `supabase/seed.sql`.
 2. Em **Authentication > URL Configuration**, inclua `http://localhost:3000/auth/callback` e `https://seu-dominio.vercel.app/auth/callback` como URLs de redirecionamento. Ajuste também a Site URL de produção.
 3. Copie `.env.example` para `.env.local` e preencha os valores. Na Vercel, crie as mesmas variáveis em Production, Preview e Development.

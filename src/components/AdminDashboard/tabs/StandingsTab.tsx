@@ -3,13 +3,13 @@ import { CalendarDays, ChartNoAxesCombined, Plus, Trophy, UsersRound } from 'luc
 import {
   addTeamToSeasonAction,
   createSeasonAction,
-  updateRankingEntryAction,
 } from '@/app/admin/actions'
 import styles from '@/app/admin/page.module.scss'
 import AdminSubmitButton from '@/components/AdminSubmitButton/AdminSubmitButton'
+import RankingEntryManager from '@/components/RankingEntryManager/RankingEntryManager'
 import AdminGameSeasonSelector from '../AdminGameSeasonSelector'
 import { adminHref } from '../navigation'
-import { DeleteButton, gameName, SectionTitle } from '../shared'
+import { gameName, SectionTitle } from '../shared'
 import type { AdminData } from '../types'
 
 export default function StandingsTab({ data }: { data: AdminData }) {
@@ -70,27 +70,9 @@ export default function StandingsTab({ data }: { data: AdminData }) {
               <option value="" disabled>Selecione o time</option>
               {eligibleTeams.map((team) => <option key={team.id} value={team.id}>{team.name}</option>)}
             </select>
-            <div className={styles.statsInputs}>
-              <label>Vitórias<input name="wins" type="number" min="0" defaultValue="0" /></label>
-              <label>Empates<input name="draws" type="number" min="0" defaultValue="0" /></label>
-              <label>Derrotas<input name="losses" type="number" min="0" defaultValue="0" /></label>
-              <label>Pontos<input name="points" type="number" min="0" defaultValue="0" /></label>
-            </div>
-            <input name="previousPosition" type="number" min="0" defaultValue="0" placeholder="Posição anterior" />
-            <label className={styles.recentFormLabel}>
-              Últimas 5 partidas
-              <span>V = vitória, E = empate, D = derrota</span>
-              <div className={styles.recentFormEditor}>
-                {Array.from({ length: 5 }, (_, index) => (
-                  <select key={index} name="recentForm" defaultValue="" aria-label={`Resultado da ${index + 1}ª partida mais recente`}>
-                    <option value="">—</option>
-                    <option value="W">V</option>
-                    <option value="D">E</option>
-                    <option value="L">D</option>
-                  </select>
-                ))}
-              </div>
-            </label>
+            <p className={styles.automaticHint}>
+              O time começa com a pontuação zerada. Vitórias, empates, derrotas, pontos e forma recente serão calculados pelo histórico.
+            </p>
             <AdminSubmitButton className={styles.primaryButton} pendingLabel="Incluindo time..." disabled={!selectedSeason || !eligibleTeams.length}>
               <Plus size={16} /> Incluir na tabela
             </AdminSubmitButton>
@@ -107,7 +89,7 @@ export default function StandingsTab({ data }: { data: AdminData }) {
                 ? `${gameName(selectedSeason.games)} — ${selectedSeason.label}`
               : 'Escolha ou crie uma temporada'}
             </h2>
-            <p className={styles.managerHint}>Edite os números abaixo e salve cada linha individualmente.</p>
+            <p className={styles.managerHint}>Registre cada resultado e deixe a classificação ser recalculada automaticamente.</p>
           </div>
           {selectedSeason?.is_current && <span className={styles.currentBadge}>Temporada atual</span>}
         </div>
@@ -132,63 +114,33 @@ export default function StandingsTab({ data }: { data: AdminData }) {
               <span><UsersRound size={16} /><strong>{data.seasonEntries.length}</strong> times participantes</span>
               <span><ChartNoAxesCombined size={16} />Ordenação automática por pontos e vitórias</span>
             </div>
-            <div className={`${styles.tableWrap} ${styles.rankingAdminTable}`}>
-            <table>
-              <thead>
-                <tr><th>#</th><th>Equipe</th><th>Vitórias</th><th>Empates</th><th>Derrotas</th><th>Pontos</th><th>Pos. anterior</th><th>Últimas 5</th><th>Ações</th></tr>
-              </thead>
-              <tbody>
-                {data.seasonEntries.map((entry, index) => (
-                  <tr key={entry.id}>
-                    <td><span className={styles.position}>{index + 1}</span></td>
-                    <td>
-                      <div className={styles.tableTeam}>
-                        {entry.teams?.crest_url
-                          ? <img src={entry.teams.crest_url} alt="" />
-                          : <span>{entry.teams?.initials}</span>}
-                        <div>
-                          <strong>{entry.teams?.name}</strong>
-                          <small>{entry.teams?.city || 'Piauí'}</small>
-                        </div>
-                      </div>
-                    </td>
-                    <td><input form={`entry-${entry.id}`} name="wins" type="number" min="0" defaultValue={entry.wins} aria-label={`Vitórias de ${entry.teams?.name}`} /></td>
-                    <td><input form={`entry-${entry.id}`} name="draws" type="number" min="0" defaultValue={entry.draws} aria-label={`Empates de ${entry.teams?.name}`} /></td>
-                    <td><input form={`entry-${entry.id}`} name="losses" type="number" min="0" defaultValue={entry.losses} aria-label={`Derrotas de ${entry.teams?.name}`} /></td>
-                    <td><input form={`entry-${entry.id}`} name="points" type="number" min="0" defaultValue={entry.points} aria-label={`Pontos de ${entry.teams?.name}`} /></td>
-                    <td><input form={`entry-${entry.id}`} name="previousPosition" type="number" min="0" defaultValue={entry.previous_position} aria-label={`Posição anterior de ${entry.teams?.name}`} /></td>
-                    <td>
-                      <div className={styles.recentFormEditor}>
-                        {Array.from({ length: 5 }, (_, resultIndex) => (
-                          <select
-                            key={resultIndex}
-                            form={`entry-${entry.id}`}
-                            name="recentForm"
-                            defaultValue={entry.recent_form?.[resultIndex] ?? ''}
-                            aria-label={`${resultIndex + 1}º resultado recente de ${entry.teams?.name}`}
-                          >
-                            <option value="">—</option>
-                            <option value="W">V</option>
-                            <option value="D">E</option>
-                            <option value="L">D</option>
-                          </select>
-                        ))}
-                      </div>
-                    </td>
-                    <td>
-                      <form id={`entry-${entry.id}`} action={updateRankingEntryAction}>
-                        <input type="hidden" name="entryId" value={entry.id} />
-                        <input type="hidden" name="seasonId" value={selectedSeason.id} />
-                        <input type="hidden" name="gameId" value={selectedGame?.id ?? ''} />
-                        <button className={styles.saveRow}>Salvar linha</button>
-                      </form>
-                      <DeleteButton table="ranking_entries" id={entry.id} tab="tabela" label="Remover" gameId={selectedGame?.id} />
-                    </td>
+            <div className={`${styles.tableWrap} ${styles.automaticRankingTable}`}>
+              <table>
+                <thead>
+                  <tr>
+                    <th>#</th>
+                    <th>Equipe</th>
+                    <th>V</th>
+                    <th>E</th>
+                    <th>D</th>
+                    <th>Pts</th>
+                    <th>Últimas 5</th>
+                    <th>Registrar resultado</th>
+                    <th>Ações</th>
                   </tr>
-                ))}
-              </tbody>
-            </table>
-          </div>
+                </thead>
+                <tbody>
+                  {data.seasonEntries.map((entry, index) => (
+                    <RankingEntryManager
+                      key={entry.id}
+                      entry={entry}
+                      position={index + 1}
+                      gameId={selectedGame?.id}
+                    />
+                  ))}
+                </tbody>
+              </table>
+            </div>
           </>
         ) : (
           <div className={styles.empty}><p>Nenhum time participa desta temporada ainda.</p></div>

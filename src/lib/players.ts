@@ -21,6 +21,37 @@ export type PublicMembership = {
   games: { id: string; name: string; short_name: string; image_url: string } | null
 }
 
+type MembershipRow = Omit<PublicMembership, 'teams' | 'games'> & {
+  team_id: string
+  game_id: string
+}
+
+async function getHydratedMemberships(profileId: string) {
+  const supabase = await createClient()
+  const [
+    { data: memberships },
+    { data: teams },
+    { data: games },
+  ] = await Promise.all([
+    supabase.from('player_team_memberships')
+      .select('id,profile_id,team_id,game_id,role,started_at,ended_at')
+      .eq('profile_id', profileId)
+      .order('started_at', { ascending: false }),
+    supabase.from('teams').select('id,name,initials,crest_url'),
+    supabase.from('games').select('id,name,short_name,image_url'),
+  ])
+
+  return ((memberships ?? []) as MembershipRow[]).map((membership) => ({
+    id: membership.id,
+    profile_id: membership.profile_id,
+    role: membership.role,
+    started_at: membership.started_at,
+    ended_at: membership.ended_at,
+    teams: teams?.find((team) => team.id === membership.team_id) ?? null,
+    games: games?.find((game) => game.id === membership.game_id) ?? null,
+  })) as PublicMembership[]
+}
+
 export async function getPublicPlayers(query?: string) {
   const supabase = await createClient()
   let request = supabase.from('player_directory').select('*').order('full_name')
@@ -32,24 +63,16 @@ export async function getPublicPlayers(query?: string) {
 
 export async function getPublicPlayer(id: string) {
   const supabase = await createClient()
-  const [{ data: player }, { data: memberships }] = await Promise.all([
+  const [{ data: player }, memberships] = await Promise.all([
     supabase.from('player_directory').select('*').eq('id', id).maybeSingle(),
-    supabase.from('player_team_memberships')
-      .select('id,profile_id,role,started_at,ended_at,teams(id,name,initials,crest_url),games(id,name,short_name,image_url)')
-      .eq('profile_id', id)
-      .order('started_at', { ascending: false }),
+    getHydratedMemberships(id),
   ])
   return {
     player: player as PublicPlayer | null,
-    memberships: (memberships ?? []) as unknown as PublicMembership[],
+    memberships,
   }
 }
 
 export async function getOwnMemberships(profileId: string) {
-  const supabase = await createClient()
-  const { data } = await supabase.from('player_team_memberships')
-    .select('id,profile_id,role,started_at,ended_at,teams(id,name,initials,crest_url),games(id,name,short_name,image_url)')
-    .eq('profile_id', profileId)
-    .order('started_at', { ascending: false })
-  return (data ?? []) as unknown as PublicMembership[]
+  return getHydratedMemberships(profileId)
 }

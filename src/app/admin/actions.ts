@@ -11,12 +11,6 @@ import { createClient } from '@/lib/supabase/server'
 function text(formData: FormData, name: string) { return String(formData.get(name) ?? '').trim() }
 function number(formData: FormData, name: string) { return Math.max(0, Number(formData.get(name) ?? 0) || 0) }
 function checked(formData: FormData, name: string) { return formData.get(name) === 'on' }
-function recentForm(formData: FormData) {
-  return formData.getAll('recentForm')
-    .map(String)
-    .filter((result): result is 'W' | 'D' | 'L' => result === 'W' || result === 'D' || result === 'L')
-    .slice(0, 5)
-}
 function adminPath(tab = 'visao-geral', seasonId?: string, section?: string, gameId?: string) {
   const params = new URLSearchParams({ aba: tab })
   if (seasonId) params.set('temporada', seasonId)
@@ -28,12 +22,29 @@ function done(message: string, tab?: string, seasonId?: string, section?: string
   revalidatePath('/', 'layout')
   revalidatePath('/admin')
   revalidatePath('/perfil')
+  revalidatePath('/jogadores')
+  revalidatePath('/jogadores/[id]', 'page')
   redirect(`${adminPath(tab, seasonId, section, gameId)}&mensagem=${encodeURIComponent(message)}`)
 }
 function fail(message: string, tab?: string, seasonId?: string, section?: string, gameId?: string): never {
   redirect(`${adminPath(tab, seasonId, section, gameId)}&erro=${encodeURIComponent(message)}`)
 }
 function contentSection(formData: FormData) { return text(formData, 'contentSection') || 'jogos' }
+
+export type RankingActionState = {
+  status: 'idle' | 'success' | 'error'
+  message: string
+  nonce: number
+}
+
+function rankingState(status: RankingActionState['status'], message: string): RankingActionState {
+  return { status, message, nonce: Date.now() }
+}
+
+function revalidateRanking() {
+  revalidatePath('/', 'layout')
+  revalidatePath('/admin')
+}
 
 const mediaColumnsByTable: Record<string, string[]> = {
   hero_slides: ['image_url'],
@@ -149,49 +160,88 @@ export async function addTeamToSeasonAction(formData: FormData) {
   if (!season) fail('Temporada não encontrada.', 'tabela')
   const { data: teamGame } = await supabase.from('team_games').select('team_id').eq('team_id', teamId.data).eq('game_id', season.game_id).eq('active', true).maybeSingle()
   if (!teamGame) fail('Esse time não está vinculado ao jogo da temporada.', 'tabela', seasonId.data, undefined, season.game_id)
-  const entry = { season_id: seasonId.data, team_id: teamId.data, points: number(formData, 'points'), wins: number(formData, 'wins'), draws: number(formData, 'draws'), losses: number(formData, 'losses'), recent_form: recentForm(formData), previous_position: number(formData, 'previousPosition') }
-  let { error } = await supabase.from('ranking_entries').insert(entry)
-  if (error?.code === 'PGRST204' || error?.code === '42703') {
-    const { recent_form: _recentForm, ...legacyEntry } = entry
-    void _recentForm
-    error = (await supabase.from('ranking_entries').insert(legacyEntry)).error
-  }
+  const { error } = await supabase.from('ranking_entries').insert({
+    season_id: seasonId.data,
+    team_id: teamId.data,
+    points: 0,
+    wins: 0,
+    draws: 0,
+    losses: 0,
+    previous_position: 0,
+  })
   if (error) fail('Esse time já está nesta temporada ou não pôde ser adicionado.', 'tabela', seasonId.data, undefined, season.game_id)
-  done('Time adicionado à tabela.', 'tabela', seasonId.data, undefined, season.game_id)
+  done('Time adicionado. Registre os resultados para montar a classificação.', 'tabela', seasonId.data, undefined, season.game_id)
 }
 
-export async function updateRankingEntryAction(formData: FormData) {
-  await requireAdmin()
-  const supabase = await createClient()
-  const entryId = z.string().uuid().safeParse(text(formData, 'entryId'))
-  const seasonId = z.string().uuid().safeParse(text(formData, 'seasonId'))
-  if (!entryId.success || !seasonId.success) fail('Registro de classificação inválido.', 'tabela')
-  const changes = { points: number(formData, 'points'), wins: number(formData, 'wins'), draws: number(formData, 'draws'), losses: number(formData, 'losses'), recent_form: recentForm(formData), previous_position: number(formData, 'previousPosition') }
-  let { error } = await supabase.from('ranking_entries').update(changes).eq('id', entryId.data)
-  if (error?.code === 'PGRST204' || error?.code === '42703') {
-    const { recent_form: _recentForm, ...legacyChanges } = changes
-    void _recentForm
-    error = (await supabase.from('ranking_entries').update(legacyChanges).eq('id', entryId.data)).error
+export async function recordRankingResultAction(
+  _previousState: RankingActionState,
+  formData: FormData,
+): Promise<RankingActionState> {
+  try {
+    await requireAdmin()
+    const entryId = z.string().uuid().safeParse(text(formData, 'entryId'))
+    const result = z.enum(['W', 'D', 'L']).safeParse(text(formData, 'result'))
+    if (!entryId.success || !result.success) return rankingState('error', 'Resultado ou participante inválido.')
+
+    const supabase = await createClient()
+    const { error } = await supabase.from('ranking_results').insert({
+      entry_id: entryId.data,
+      result: result.data,
+      played_at: new Date().toISOString().slice(0, 10),
+    })
+    if (error?.code === '42P01' || error?.code === 'PGRST205') {
+      return rankingState('error', 'O histórico automático ainda não foi ativado no banco de dados.')
+    }
+    if (error) return rankingState('error', 'Não foi possível registrar o resultado.')
+
+    revalidateRanking()
+    const label = result.data === 'W' ? 'Vitória' : result.data === 'D' ? 'Empate' : 'Derrota'
+    return rankingState('success', `${label} registrada e classificação recalculada.`)
+  } catch {
+    return rankingState('error', 'Não foi possível registrar o resultado.')
   }
-  if (error) fail('Não foi possível atualizar a tabela.', 'tabela', seasonId.data)
-  done('Classificação atualizada.', 'tabela', seasonId.data, undefined, text(formData, 'gameId') || undefined)
 }
 
-export async function updateTeamGamesAction(formData: FormData) {
-  await requireAdmin()
-  const supabase = await createClient()
-  const teamId = z.string().uuid().safeParse(text(formData, 'teamId'))
-  const gameIds = formData.getAll('gameIds').map(String).filter((value) => z.string().uuid().safeParse(value).success)
-  if (!teamId.success || !gameIds.length) fail('Selecione pelo menos um jogo para o time.', 'times')
+export async function undoLastRankingResultAction(
+  _previousState: RankingActionState,
+  formData: FormData,
+): Promise<RankingActionState> {
+  try {
+    await requireAdmin()
+    const entryId = z.string().uuid().safeParse(text(formData, 'entryId'))
+    if (!entryId.success) return rankingState('error', 'Participante inválido.')
 
-  const { error: deactivateError } = await supabase.from('team_games').update({ active: false }).eq('team_id', teamId.data)
+    const supabase = await createClient()
+    const { data: latest, error: lookupError } = await supabase.from('ranking_results')
+      .select('id')
+      .eq('entry_id', entryId.data)
+      .order('played_at', { ascending: false })
+      .order('created_at', { ascending: false })
+      .limit(1)
+      .maybeSingle()
+    if (lookupError?.code === '42P01' || lookupError?.code === 'PGRST205') {
+      return rankingState('error', 'O histórico automático ainda não foi ativado no banco de dados.')
+    }
+    if (lookupError) return rankingState('error', 'Não foi possível consultar o histórico.')
+    if (!latest) return rankingState('error', 'Ainda não há resultado para desfazer.')
+
+    const { error } = await supabase.from('ranking_results').delete().eq('id', latest.id)
+    if (error) return rankingState('error', 'Não foi possível desfazer o último resultado.')
+    revalidateRanking()
+    return rankingState('success', 'Último resultado desfeito e classificação recalculada.')
+  } catch {
+    return rankingState('error', 'Não foi possível desfazer o último resultado.')
+  }
+}
+
+async function replaceTeamGames(supabase: SupabaseClient, teamId: string, gameIds: string[]) {
+  const { error: deactivateError } = await supabase.from('team_games').update({ active: false }).eq('team_id', teamId)
   if (deactivateError) fail('Não foi possível atualizar os jogos do time.', 'times')
   const { error } = await supabase.from('team_games').upsert(
-    gameIds.map((gameId) => ({ team_id: teamId.data, game_id: gameId, active: true })),
+    gameIds.map((gameId) => ({ team_id: teamId, game_id: gameId, active: true })),
     { onConflict: 'team_id,game_id' },
   )
   if (error) fail('Não foi possível vincular os jogos ao time.', 'times')
-  done('Jogos do time atualizados.', 'times', undefined, undefined, gameIds[0])
 }
 
 export async function assignPlayerToTeamGameAction(formData: FormData) {
@@ -206,33 +256,58 @@ export async function assignPlayerToTeamGameAction(formData: FormData) {
     fail('Selecione jogador, jogo, função e data de entrada.', 'times')
   }
 
-  const [{ data: teamGame }, { data: team }] = await Promise.all([
+  const [{ data: teamGame, error: teamGameError }, { data: team, error: teamError }, { data: profile, error: profileError }] = await Promise.all([
     supabase.from('team_games').select('team_id').eq('team_id', teamId.data).eq('game_id', gameId.data).eq('active', true).maybeSingle(),
     supabase.from('teams').select('name').eq('id', teamId.data).maybeSingle(),
+    supabase.from('profiles').select('id').eq('id', profileId.data).maybeSingle(),
   ])
-  if (!teamGame || !team) fail('O time não está ativo nesse jogo.', 'times', undefined, undefined, gameId.data)
+  if (teamGameError || teamError || !teamGame || !team) fail('O time não está ativo nessa modalidade.', 'times', undefined, undefined, gameId.data)
+  if (profileError || !profile) fail('O perfil selecionado não foi encontrado.', 'times', undefined, undefined, gameId.data)
 
-  const { data: current } = await supabase.from('player_team_memberships')
-    .select('id,team_id')
+  const { data: current, error: currentError } = await supabase.from('player_team_memberships')
+    .select('id,team_id,role,started_at')
     .eq('profile_id', profileId.data)
     .eq('game_id', gameId.data)
     .is('ended_at', null)
+    .order('started_at', { ascending: false })
+    .limit(1)
     .maybeSingle()
-  if (current?.team_id === teamId.data) fail('Esse jogador já está neste time para o jogo selecionado.', 'times', undefined, undefined, gameId.data)
+  if (currentError) fail('Não foi possível consultar o vínculo atual do jogador.', 'times', undefined, undefined, gameId.data)
+
+  if (current?.team_id === teamId.data) {
+    const { error: updateError } = await supabase.from('player_team_memberships').update({
+      role: role.data,
+      started_at: startedAt.data,
+    }).eq('id', current.id)
+    if (updateError) fail('Não foi possível atualizar o vínculo do jogador.', 'times', undefined, undefined, gameId.data)
+    const { error: profileUpdateError } = await supabase.from('profiles')
+      .update({ team_id: teamId.data, team: team.name })
+      .eq('id', profileId.data)
+    if (profileUpdateError) fail('O elenco foi atualizado, mas o perfil do jogador não pôde ser sincronizado.', 'times', undefined, undefined, gameId.data)
+    done('Vínculo do jogador atualizado.', 'times', undefined, undefined, gameId.data)
+  }
+
   if (current) {
     const { error: endError } = await supabase.from('player_team_memberships').update({ ended_at: startedAt.data }).eq('id', current.id)
     if (endError) fail('Não foi possível encerrar o vínculo anterior do jogador.', 'times', undefined, undefined, gameId.data)
   }
 
-  const { error } = await supabase.from('player_team_memberships').insert({
+  const { data: membership, error } = await supabase.from('player_team_memberships').insert({
     profile_id: profileId.data,
     team_id: teamId.data,
     game_id: gameId.data,
     role: role.data,
     started_at: startedAt.data,
-  })
-  if (error) fail('Não foi possível vincular o jogador ao time.', 'times', undefined, undefined, gameId.data)
-  await supabase.from('profiles').update({ team_id: teamId.data, team: team.name }).eq('id', profileId.data)
+  }).select('id').single()
+  if (error || !membership) {
+    if (current) await supabase.from('player_team_memberships').update({ ended_at: null }).eq('id', current.id)
+    fail('Não foi possível salvar o vínculo do jogador. Verifique a data e tente novamente.', 'times', undefined, undefined, gameId.data)
+  }
+
+  const { error: profileUpdateError } = await supabase.from('profiles')
+    .update({ team_id: teamId.data, team: team.name })
+    .eq('id', profileId.data)
+  if (profileUpdateError) fail('O jogador entrou no elenco, mas o perfil não pôde ser sincronizado.', 'times', undefined, undefined, gameId.data)
   done(current ? 'Jogador transferido e histórico atualizado.' : 'Jogador vinculado ao elenco.', 'times', undefined, undefined, gameId.data)
 }
 
@@ -425,9 +500,12 @@ export async function updateTeamAction(formData: FormData) {
   const supabase = await createClient()
   const id = z.string().uuid().safeParse(text(formData, 'id'))
   const name = text(formData, 'teamName')
+  const gameIds = formData.getAll('gameIds').map(String).filter((value) => z.string().uuid().safeParse(value).success)
   if (!id.success || !name) fail('Dados do time inválidos.', 'times')
+  if (!gameIds.length) fail('Selecione pelo menos uma modalidade para o time.', 'times')
   const oldCrestUrl = text(formData, 'oldCrestUrl') || null
   const crestUrl = await mediaUrlOrFail(formData, 'crest', 'times', undefined, oldCrestUrl)
+  await replaceTeamGames(supabase, id.data, gameIds)
   const { error } = await supabase.from('teams').update({
     name,
     city: text(formData, 'city') || 'Piauí',
@@ -436,7 +514,13 @@ export async function updateTeamAction(formData: FormData) {
   }).eq('id', id.data)
   if (error) fail('Não foi possível atualizar o time.', 'times')
   const cleanupFailed = await cleanupReplacedMedia(supabase, [[oldCrestUrl, crestUrl]])
-  done(cleanupFailed ? 'Time atualizado, mas o escudo anterior permaneceu no R2.' : 'Time atualizado.', 'times')
+  done(
+    cleanupFailed ? 'Time atualizado, mas o escudo anterior permaneceu no R2.' : 'Time e modalidades atualizados.',
+    'times',
+    undefined,
+    undefined,
+    gameIds[0],
+  )
 }
 
 export async function deleteContentAction(formData: FormData) {

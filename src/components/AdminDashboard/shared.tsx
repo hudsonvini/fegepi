@@ -1,5 +1,5 @@
 import type { ReactNode } from 'react'
-import { deleteContentAction } from '@/app/admin/actions'
+import ConfirmDeleteButton from '@/components/ConfirmDeleteButton/ConfirmDeleteButton'
 import styles from '@/app/admin/page.module.scss'
 import type { AdminTabId, Season } from './types'
 
@@ -45,16 +45,7 @@ export function DeleteButton({
   gameId?: string
   label?: string
 }) {
-  return (
-    <form action={deleteContentAction}>
-      <input type="hidden" name="table" value={table} />
-      <input type="hidden" name="id" value={id} />
-      <input type="hidden" name="tab" value={tab} />
-      {section && <input type="hidden" name="contentSection" value={section} />}
-      {gameId && <input type="hidden" name="gameId" value={gameId} />}
-      <button className={styles.delete}>{label}</button>
-    </form>
-  )
+  return <ConfirmDeleteButton {...{ table, id, tab, section, gameId, label }} />
 }
 
 export const mediaInputProps = {

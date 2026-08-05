@@ -247,17 +247,29 @@ export function EditGalleryPhotoModal({ photo }: { photo: {
   )
 }
 
-export function EditTeamModal({ team }: { team: {
-  id: string
-  name: string
-  city: string
-  crest_url: string | null
-  initials: string
-} }) {
+export function EditTeamModal({
+  team,
+  games,
+  activeGameIds,
+}: {
+  team: {
+    id: string
+    name: string
+    city: string
+    crest_url: string | null
+    initials: string
+  }
+  games: Array<{
+    id: string
+    name: string
+    short_name: string
+  }>
+  activeGameIds: string[]
+}) {
   return (
     <AdminModal
       title="Editar time"
-      description="Atualize identidade, cidade e escudo da equipe."
+      description="Atualize a identidade da equipe e as modalidades em que ela atua."
       triggerLabel="Editar"
       triggerIcon="edit"
     >
@@ -275,6 +287,23 @@ export function EditTeamModal({ team }: { team: {
           description="Envie PNG, JPG, WebP ou GIF com fundo transparente de preferência."
           defaultUrl={team.crest_url}
         />
+        <fieldset className={styles.gameFieldset}>
+          <legend>Modalidades do time</legend>
+          <p>Selecione pelo menos uma modalidade.</p>
+          <div>
+            {games.map((game) => (
+              <label key={game.id}>
+                <input
+                  name="gameIds"
+                  type="checkbox"
+                  value={game.id}
+                  defaultChecked={activeGameIds.includes(game.id)}
+                />
+                <span>{game.name}<small>{game.short_name}</small></span>
+              </label>
+            ))}
+          </div>
+        </fieldset>
         <AdminSubmitButton className={styles.submit} pendingLabel="Salvando time...">
           Salvar alterações
         </AdminSubmitButton>
