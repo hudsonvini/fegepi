@@ -1,7 +1,7 @@
 'use client'
 
 import { useState, useTransition } from 'react'
-import { ArrowDown, ArrowUp, Check, ChevronRight, Minus, Trophy, X } from 'lucide-react'
+import { ArrowDown, ArrowUp, Check, ChevronRight, Minus, Trophy, Gamepad2, X } from 'lucide-react'
 import styles from './GameArea.module.scss'
 
 type TeamTone = 'navy' | 'green' | 'red' | 'silver' | 'gold'
@@ -379,7 +379,7 @@ function GameOption({
                 <img src={game.imageSrc} alt="" />
             </span>
             <span className={styles.gameOptionCopy}>
-                <small>{selected ? 'Visualizando agora' : 'Ver classificação'}</small>
+                <small>{selected ? 'Selecionado' : ''}</small>
                 <strong>{game.name}</strong>
             </span>
             <div
@@ -445,7 +445,9 @@ export default function GameArea({
                     <div className={`${styles.rankingPanel} ${isPending ? styles.pending : ''}`}>
                         <div className={styles.panelHeader}>
                             <div className={styles.titleBlock}>
-                                <span className={styles.trophyBadge}><Trophy /></span>
+                                <span className={styles.trophyBadge}>
+                                    <img src="http://localhost:3000/images/GameAreaImages/gameAreaCs.png" alt="" />
+                                </span>
                                 <div>
                                     <small>{rankingLabel}</small>
                                     <h3>{selectedGame.name}</h3>
@@ -487,8 +489,8 @@ export default function GameArea({
 
                     <aside className={styles.gamesAside}>
                         <div className={styles.asideHeader}>
-                            <small>Modalidades</small>
-                            <h3>Escolha o jogo</h3>
+                            {/* <small>Modalidades</small> */}
+                            <h3><Gamepad2 /> Escolha o jogo</h3>
                             <p>A tabela será atualizada com a classificação da modalidade selecionada.</p>
                         </div>
                         <div className={styles.gamesList}>

@@ -6,7 +6,7 @@ O dashboard envia arquivos ao bucket R2 pelo servidor e salva no Supabase a URL 
 
 1. Em **R2 Object Storage**, crie o bucket `fegepi-media` (ou escolha outro nome e use-o no ambiente).
 2. Em **Manage API Tokens**, crie um token com **Object Read & Write**, limitado apenas a esse bucket. Copie o **Access Key ID** e o **Secret Access Key**.
-3. Opcionalmente, no bucket, abra **Settings > Custom Domains**, conecte um domínio real e aguarde o status `Active`. Sem domínio público configurado, a aplicação entrega os arquivos pela rota interna `/api/media`.
+3. Opcionalmente, no bucket, abra **Settings > Custom Domains**, conecte um domínio real e aguarde o status `Active`. Sem domínio público configurado, deixe `CLOUDFLARE_R2_PUBLIC_URL` vazio: a aplicação entrega os arquivos pela rota interna `/api/media`. Não use nesse campo o domínio da aplicação na Vercel.
 4. Copie `.env.example` para `.env.local` e preencha todas as variáveis `CLOUDFLARE_R2_*`. Na Vercel, cadastre as mesmas variáveis em Production, Preview e Development.
 5. Em **Settings > CORS Policy**, adapte `cloudflare/r2-cors.json` para o domínio final da aplicação e salve. O upload atual é feito pelo servidor, mas essa regra mantém o CDN pronto para consumo no navegador e futuras URLs pré-assinadas.
 

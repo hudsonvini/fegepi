@@ -1,12 +1,23 @@
 const INTERNAL_MEDIA_PATH = '/api/media/'
+const MANAGED_MEDIA_KEY = /^(?:banner|crest|featured|image|media)\/\d{4}\/[^/]+$/
 
 function fallbackR2Key(value: string) {
   if (value.startsWith(INTERNAL_MEDIA_PATH)) return value.slice(INTERNAL_MEDIA_PATH.length)
 
   try {
     const url = new URL(value)
-    if (!url.hostname.includes('seudominio.com')) return null
-    return url.pathname.replace(/^\/+/, '')
+    const key = url.pathname.replace(/^\/+/, '')
+    const configuredSiteUrl = process.env.NEXT_PUBLIC_SITE_URL
+    const isConfiguredSite = configuredSiteUrl
+      ? url.origin === new URL(configuredSiteUrl).origin
+      : false
+    const isApplicationUrl = url.hostname.includes('seudominio.com')
+      || url.hostname.endsWith('.vercel.app')
+      || isConfiguredSite
+
+    // Corrige URLs antigas gravadas com o domínio da aplicação no lugar do
+    // domínio público do R2, sem transformar outros assets do site em mídia R2.
+    return isApplicationUrl && MANAGED_MEDIA_KEY.test(key) ? key : null
   } catch {
     return null
   }

@@ -18,6 +18,14 @@ function usablePublicUrl(value: string | undefined) {
     const url = new URL(value)
     if (url.protocol !== 'https:' && url.protocol !== 'http:') return null
     if (url.hostname.includes('seudominio.com')) return null
+    // A URL da própria aplicação não expõe o bucket. Usá-la como CDN gera
+    // links como /image/2026/arquivo.png, que são salvos com sucesso no banco,
+    // mas retornam 404 no Next.js.
+    if (url.hostname.endsWith('.vercel.app')) return null
+
+    const siteUrl = process.env.NEXT_PUBLIC_SITE_URL
+    if (siteUrl && url.origin === new URL(siteUrl).origin) return null
+
     return url.toString().replace(/\/$/, '')
   } catch {
     return null

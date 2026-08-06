@@ -1,10 +1,10 @@
 .container {
-    margin: 84px 0 96px;
+    margin: 0px 0 60px;
     color: #132947;
 }
 
 .contentArea {
-    width: min(1500px, calc(100% - 40px));
+    width: min(1380px, calc(100% - 40px));
     margin: 0 auto;
 }
 
@@ -12,22 +12,21 @@
     margin-bottom: 28px;
 }
 
-.sectionHeading > span,
+.sectionHeading>span,
 .asideHeader small,
 .titleBlock small {
     color: #0a61b9;
-    font-size: 12px;
-    font-weight: 700;
-    letter-spacing: .08em;
-    text-transform: uppercase;
+    font-size: 16px;
+    font-weight: 400;
+    margin-bottom: 8px;
 }
 
 .sectionHeading h2 {
     margin: 7px 0 8px;
-    color: #102b50;
-    font-size: clamp(28px, 3vw, 42px);
+    color: #034ea7;
+    font-size: 28px;
+    font-weight: 500;
     line-height: 1.08;
-    letter-spacing: -.045em;
 }
 
 .sectionHeading p,
@@ -63,16 +62,12 @@
 }
 
 .panelHeader {
-    min-height: 112px;
     display: flex;
     align-items: center;
     justify-content: space-between;
     gap: 24px;
-    padding: 22px 25px;
-    border-bottom: 1px solid #e6ecf2;
-    background:
-        radial-gradient(circle at 95% -10%, rgba(28, 126, 216, .14), transparent 42%),
-        linear-gradient(135deg, #fafdff, #f3f8fd);
+    padding: 10px 14px;
+    background: #034ea7;
 }
 
 .titleBlock {
@@ -80,32 +75,43 @@
     display: flex;
     align-items: center;
     gap: 14px;
+
+    small {
+        margin: 0px;
+        font-size: 12px;
+        color: #fff;
+    }
 }
 
 .titleBlock h3 {
-    overflow: hidden;
-    margin: 4px 0 0;
-    color: #112c50;
-    font-size: 23px;
+    // overflow: hidden;
+    margin: 0px 0 0;
+    color: #000000;
+    color: #fff;
+    font-size: 20px;
+    font-weight: 500;
     line-height: 1.1;
     text-overflow: ellipsis;
     white-space: nowrap;
 }
 
 .trophyBadge {
-    width: 48px;
-    height: 48px;
+    width: 100px;
+    height: 52px;
     flex: 0 0 auto;
     display: grid;
     place-items: center;
-    border-radius: 14px;
+    border-radius: 8px;
+    overflow: hidden;
     color: #fff;
     background: linear-gradient(145deg, #0759ad, #0d78d1);
-    box-shadow: 0 10px 20px rgba(7, 89, 173, .22);
+    // box-shadow: 0 10px 20px rgba(7, 89, 173, .22);
 }
 
-.trophyBadge svg {
-    width: 23px;
+.trophyBadge img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
 }
 
 .seasonTabs {
@@ -132,9 +138,8 @@
 }
 
 .seasonTabs .selectedSeason {
-    color: #fff;
-    background: #075eb8;
-    box-shadow: 0 6px 14px rgba(7, 94, 184, .2);
+    color: #070707;
+    background: #fdd516;
 }
 
 .tableHeader,
@@ -150,10 +155,8 @@
     color: #728297;
     background: #f6f8fa;
     border-bottom: 1px solid #e1e7ed;
-    font-size: 11px;
-    font-weight: 700;
-    letter-spacing: .055em;
-    text-transform: uppercase;
+    font-size: 13px;
+    font-weight: 500;
 }
 
 .rankingTable {
@@ -161,8 +164,8 @@
 }
 
 .rankingRow {
-    min-height: 88px;
-    padding: 0 23px;
+    min-height: 80px;
+    padding: 0 24px;
     border-bottom: 1px solid #e7ecf1;
     transition: background-color .18s ease;
 }
@@ -181,10 +184,11 @@
     gap: 10px;
 }
 
-.positionCell > strong {
-    min-width: 21px;
+.positionCell>strong {
+    min-width: 20px;
     color: #142c4c;
-    font-size: 24px;
+    font-size: 20px;
+    font-weight: 600;
     line-height: 1;
 }
 
@@ -196,8 +200,8 @@
     justify-content: center;
     gap: 1px;
     border-radius: 7px;
-    font-size: 10px;
-    font-weight: 800;
+    font-size: 12px;
+    font-weight: 500;
 }
 
 .movement svg {
@@ -235,21 +239,20 @@
     place-items: center;
     overflow: hidden;
     border: 1px solid #dce4ec;
-    border-radius: 12px;
+    border-radius: 50%;
     color: #0b5cae;
     background: #f7fafc;
     font-size: 12px;
-    font-weight: 800;
+    font-weight: 500;
 }
 
 .logoBadge img {
     width: 100%;
     height: 100%;
-    object-fit: contain;
-    padding: 4px;
+    object-fit: cover;
 }
 
-.teamCell > div:last-child {
+.teamCell>div:last-child {
     min-width: 0;
 }
 
@@ -263,24 +266,26 @@
 
 .teamCell strong {
     color: #142c4c;
-    font-size: 15px;
+    font-size: 14px;
+    font-weight: 600;
 }
 
 .teamCell span {
-    margin-top: 4px;
+    margin-top: 0px;
     color: #7a899b;
     font-size: 12px;
 }
 
 .pointsCell {
     color: #0a5fb6;
-    font-size: 17px;
+    font-size: 18px;
+    font-weight: 700;
 }
 
 .pointsCell small {
     color: #8492a3;
     font-size: 10px;
-    font-weight: 600;
+    font-weight: 500;
 }
 
 .recordCell {
@@ -308,7 +313,7 @@
     gap: 6px;
 }
 
-.recentFormCell > span {
+.recentFormCell>span {
     width: 28px;
     height: 28px;
     display: grid;
@@ -325,7 +330,7 @@
 
 .recentFormCell .win {
     background: #24a45c;
-    box-shadow: 0 5px 10px rgba(36, 164, 92, .18);
+    // box-shadow: 0 5px 10px rgba(36, 164, 92, .18);
 }
 
 .recentFormCell .draw {
@@ -334,7 +339,7 @@
 
 .recentFormCell .loss {
     background: #ef4c43;
-    box-shadow: 0 5px 10px rgba(239, 76, 67, .16);
+    // box-shadow: 0 5px 10px rgba(239, 76, 67, .16);
 }
 
 .recentFormCell .noResult {
@@ -354,19 +359,27 @@
 }
 
 .asideHeader {
-    padding: 25px 24px 22px;
+    padding: 20px 20px 14px 20px;
     border-bottom: 1px solid #e6ecf2;
-    background: linear-gradient(145deg, #fafdff, #f4f8fc);
 }
 
 .asideHeader h3 {
-    margin: 5px 0 8px;
+    display: flex;
+    align-items: center;
+    gap: 8px;
     color: #132e51;
-    font-size: 22px;
+    font-size: 20px;
+    font-weight: 600;
+
+    svg {
+        color: #54a133;
+    }
 }
 
 .asideHeader p {
     font-size: 12px;
+    line-height: 140%;
+    margin-top: 2px;
 }
 
 .gamesList {
@@ -383,8 +396,8 @@
     align-items: center;
     gap: 12px;
     border: 1px solid transparent;
-    border-radius: 13px;
-    padding: 9px;
+    border-radius: 10px;
+    padding: 8px;
     color: #203955;
     background: transparent;
     cursor: pointer;
@@ -398,13 +411,13 @@
 }
 
 .gameOption.selectedGame {
-    border-color: #cfe1f3;
+    // border-color: #cfe1f3;
     background: #eef6ff;
 }
 
 .gameThumb {
     width: 70px;
-    height: 48px;
+    height: 44px;
     display: block;
     overflow: hidden;
     border-radius: 9px;
@@ -433,11 +446,12 @@
 .gameOptionCopy small {
     margin-bottom: 3px;
     color: #8290a1;
-    font-size: 9px;
+    font-size: 10px;
 }
 
 .gameOptionCopy strong {
-    font-size: 12px;
+    font-size: 13px;
+    font-weight: 600;
 }
 
 .selectedGame .gameOptionCopy small,
@@ -455,11 +469,25 @@
     width: 17px;
 }
 
-.cs2 { background: #163a80; }
-.valorant { background: #a8243d; }
-.lol { background: #a87316; }
-.freefire { background: #9c281e; }
-.fc26 { background: #075d84; }
+.cs2 {
+    background: #163a80;
+}
+
+.valorant {
+    background: #a8243d;
+}
+
+.lol {
+    background: #a87316;
+}
+
+.freefire {
+    background: #9c281e;
+}
+
+.fc26 {
+    background: #075d84;
+}
 
 @media (max-width: 1120px) {
     .layout {
