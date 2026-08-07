@@ -38,7 +38,7 @@ export default function TeamRegistrationHero() {
       className={`${styles.stage} ${isVisible ? styles.isVisible : ''}`}
       aria-labelledby="team-registration-title"
     >
-      <div className={styles.decorations} aria-hidden="true">
+      {/* <div className={styles.decorations} aria-hidden="true">
         <svg className={styles.decorCanvas} viewBox="0 0 1740 720" preserveAspectRatio="none">
           <defs>
             <mask id="team-green-sweep" maskUnits="userSpaceOnUse" x="0" y="-100" width="1740" height="920">
@@ -124,7 +124,7 @@ export default function TeamRegistrationHero() {
             d="M 1586 376 L 1635 413 L 1698 390 L 1675 454 L 1714 504 L 1647 502 L 1611 558 L 1592 494 L 1528 476 L 1583 437 Z"
           />
         </svg>
-      </div>
+      </div> */}
 
       <div className={styles.panel}>
         <div className={styles.panelSurface} aria-hidden="true" />

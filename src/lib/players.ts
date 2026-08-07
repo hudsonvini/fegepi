@@ -8,7 +8,15 @@ export type PublicPlayer = {
   gender: string | null
   favorite_game: string | null
   bio: string | null
+  is_featured?: boolean
+  featured_order?: number
   created_at: string | null
+}
+
+export type FeaturedPlayer = PublicPlayer & {
+  team: PublicMembership['teams']
+  game: PublicMembership['games']
+  role: PublicMembership['role'] | null
 }
 
 export type PublicMembership = {
@@ -71,6 +79,38 @@ export async function getPublicPlayer(id: string) {
     player: player as PublicPlayer | null,
     memberships,
   }
+}
+
+export async function getFeaturedPlayers(): Promise<FeaturedPlayer[]> {
+  const supabase = await createClient()
+  const { data: directory } = await supabase.from('player_directory').select('*')
+  const players = (directory ?? []) as PublicPlayer[]
+  const featured = players
+    .filter((player) => player.is_featured)
+    .sort((a, b) => (a.featured_order ?? 0) - (b.featured_order ?? 0))
+  const selected = (featured.length ? featured : players).slice(0, 12)
+
+  if (!selected.length) return []
+
+  const [{ data: memberships }, { data: teams }, { data: games }] = await Promise.all([
+    supabase.from('player_team_memberships')
+      .select('id,profile_id,team_id,game_id,role,started_at,ended_at')
+      .in('profile_id', selected.map((player) => player.id))
+      .is('ended_at', null)
+      .order('started_at', { ascending: false }),
+    supabase.from('teams').select('id,name,initials,crest_url'),
+    supabase.from('games').select('id,name,short_name,image_url'),
+  ])
+
+  return selected.map((player) => {
+    const membership = (memberships as MembershipRow[] | null)?.find((item) => item.profile_id === player.id)
+    return {
+      ...player,
+      role: membership?.role ?? null,
+      team: membership ? teams?.find((team) => team.id === membership.team_id) ?? null : null,
+      game: membership ? games?.find((game) => game.id === membership.game_id) ?? null : null,
+    }
+  })
 }
 
 export async function getOwnMemberships(profileId: string) {

@@ -347,6 +347,22 @@ export async function updateUserManagementAction(formData: FormData) {
   done('Permissão atualizada.', 'usuarios')
 }
 
+export async function updateFeaturedPlayerAction(formData: FormData) {
+  await requireAdmin()
+  const supabase = await createClient()
+  const profileId = z.string().uuid().safeParse(text(formData, 'profileId'))
+  const featuredOrder = Math.min(99, number(formData, 'featuredOrder'))
+  if (!profileId.success) fail('Jogador inválido.', 'jogadores')
+
+  const { error } = await supabase.from('profiles').update({
+    is_featured: checked(formData, 'isFeatured'),
+    featured_order: featuredOrder,
+  }).eq('id', profileId.data)
+
+  if (error) fail('Não foi possível atualizar o destaque. Verifique se a migração de jogadores foi aplicada.', 'jogadores')
+  done(checked(formData, 'isFeatured') ? 'Jogador adicionado à vitrine.' : 'Jogador removido da vitrine.', 'jogadores')
+}
+
 export async function createEventAction(formData: FormData) {
   await requireAdmin()
   const supabase = await createClient()

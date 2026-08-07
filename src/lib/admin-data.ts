@@ -34,7 +34,7 @@ export async function getAdminData(selectedSeasonId?: string, selectedGameId?: s
     supabase.from('ranking_entries').select('id,season_id,team_id,points,wins,draws,losses,recent_form,previous_position,teams(id,name,city,crest_url,initials)'),
     supabase.from('events').select('id,title,starts_at,ends_at,subtitle,status_label,status_tone,active,image_url,featured_media_url,registration_url,cta_label,display_order').order('display_order'),
     supabase.from('gallery_photos').select('id,alt_text,active,image_url,download_url,display_order').order('display_order'),
-    supabase.from('profiles').select('id,full_name,email,avatar_url,team,team_id,role,gender,whatsapp,address,favorite_game,player_tag,bio,public_profile,created_at').order('created_at', { ascending: false }),
+    supabase.from('profiles').select('id,full_name,email,avatar_url,team,team_id,role,gender,whatsapp,address,favorite_game,player_tag,bio,public_profile,is_featured,featured_order,created_at').order('created_at', { ascending: false }),
     supabase.from('team_games').select('team_id,game_id,active,created_at'),
     supabase.from('player_team_memberships').select('id,profile_id,team_id,game_id,role,started_at,ended_at,created_at').order('started_at', { ascending: false }),
   ])

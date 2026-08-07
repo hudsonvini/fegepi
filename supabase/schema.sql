@@ -31,6 +31,8 @@ alter table public.profiles add column if not exists favorite_game text;
 alter table public.profiles add column if not exists player_tag text;
 alter table public.profiles add column if not exists bio text;
 alter table public.profiles add column if not exists public_profile boolean not null default true;
+alter table public.profiles add column if not exists is_featured boolean not null default false;
+alter table public.profiles add column if not exists featured_order integer not null default 0 check (featured_order >= 0);
 
 do $$ begin
   alter table public.profiles add constraint profiles_gender_check check (gender in ('masculino', 'feminino', 'indiferente'));
@@ -230,7 +232,7 @@ on conflict (team_id, game_id) do update set active = true;
 
 create or replace view public.player_directory
 with (security_barrier = true)
-as select id, full_name, player_tag, avatar_url, gender, favorite_game, bio, created_at
+as select id, full_name, player_tag, avatar_url, gender, favorite_game, bio, created_at, is_featured, featured_order
 from public.profiles where public_profile = true;
 grant select on public.player_directory to anon, authenticated;
 

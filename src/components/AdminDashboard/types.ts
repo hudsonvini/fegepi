@@ -1,4 +1,4 @@
-export type AdminTabId = 'visao-geral' | 'conteudo' | 'times' | 'tabela' | 'usuarios'
+export type AdminTabId = 'visao-geral' | 'conteudo' | 'times' | 'jogadores' | 'tabela' | 'usuarios'
 export type ContentSectionId = 'banners' | 'jogos' | 'eventos' | 'galeria'
 
 export type HeroSlide = {
@@ -112,6 +112,8 @@ export type Profile = {
   player_tag: string | null
   bio: string | null
   public_profile: boolean
+  is_featured: boolean
+  featured_order: number
   created_at: string | null
 }
 

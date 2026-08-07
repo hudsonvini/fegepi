@@ -6,6 +6,7 @@ import {
   LayoutDashboard,
   PanelsTopLeft,
   Trophy,
+  UserRound,
   Users,
   UsersRound,
 } from 'lucide-react'
@@ -15,6 +16,7 @@ export const adminTabs = [
   { id: 'visao-geral', label: 'Visão geral', icon: LayoutDashboard },
   { id: 'conteudo', label: 'Gestão de conteúdo', icon: FileText },
   { id: 'times', label: 'Times', icon: UsersRound },
+  { id: 'jogadores', label: 'Jogadores', icon: UserRound },
   { id: 'tabela', label: 'Temporadas e tabela', icon: Trophy },
   { id: 'usuarios', label: 'Usuários e permissões', icon: Users },
 ] as const

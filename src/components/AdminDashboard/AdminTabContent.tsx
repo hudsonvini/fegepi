@@ -2,6 +2,7 @@ import ContentTab from './tabs/ContentTab'
 import OverviewTab from './tabs/OverviewTab'
 import StandingsTab from './tabs/StandingsTab'
 import TeamsTab from './tabs/TeamsTab'
+import PlayersTab from './tabs/PlayersTab'
 import UsersTab from './tabs/UsersTab'
 import type { AdminData, AdminTabId, ContentSectionId } from './types'
 
@@ -19,6 +20,8 @@ export default function AdminTabContent({
       return <ContentTab section={activeContentSection} data={data} />
     case 'times':
       return <TeamsTab data={data} />
+    case 'jogadores':
+      return <PlayersTab data={data} />
     case 'tabela':
       return <StandingsTab data={data} />
     case 'usuarios':

@@ -9,9 +9,15 @@ import ManagedGallery from "@/components/ManagedGallery/ManagedGallery";
 import { getCurrentUser } from "@/lib/auth";
 import { getPublicContent } from "@/lib/content";
 import TeamRegistrationHero from "@/components/TeamRegistrationHero/TeamRegistrationHero";
+import FeaturedPlayers from "@/components/FeaturedPlayers/FeaturedPlayers";
+import { getFeaturedPlayers } from "@/lib/players";
 
 export default async function Home() {
-  const [user, content] = await Promise.all([getCurrentUser(), getPublicContent()]);
+  const [user, content, featuredPlayers] = await Promise.all([
+    getCurrentUser(),
+    getPublicContent(),
+    getFeaturedPlayers(),
+  ]);
 
   return (
     <div className={styles.page}>
@@ -22,6 +28,7 @@ export default async function Home() {
       <TeamRegistrationHero />
       <GameShowcase />
       <div id="ranking"><GameArea games={content.games} /></div>
+      <FeaturedPlayers players={featuredPlayers} />
       <div className={styles.container}>
         {content.gallery ? <ManagedGallery {...content.gallery} /> : <LatestEventGallery />}
       </div>

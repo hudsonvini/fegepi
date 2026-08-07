@@ -689,14 +689,15 @@
 }
 
 .teamCrest {
-    width: 51px;
-    height: 51px;
+    width: 50px;
+    height: 50px;
     display: grid;
     place-items: center;
     overflow: hidden;
-    border-radius: 13px;
+    border-radius: 50%;
     color: #fff;
-    background: linear-gradient(135deg, #084e9d, #0e76d3);
+    // background: linear-gradient(135deg, #084e9d, #0e76d3);
+    background: #f7fafc;
     font-size: 13px;
     font-weight: 900;
 }
