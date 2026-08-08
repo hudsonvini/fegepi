@@ -1,12 +1,15 @@
 'use client'
 
-import { ChevronLeft, ChevronRight, Calendar } from 'lucide-react'
-import { useState } from 'react'
+/* eslint-disable @next/next/no-img-element */
+
+import { ArrowUpRight, CalendarDays, Timer } from 'lucide-react'
+import { useEffect, useState } from 'react'
 import styles from './EventsCarrossel.module.scss'
 
 export type EventCarouselItem = {
     id: string
     title: string
+    startsAt?: string
     dateLabel: string
     subtitle?: string
     statusLabel: string
@@ -26,232 +29,248 @@ type EventsCarrosselProps = {
     events?: EventCarouselItem[]
 }
 
+const AUTO_ADVANCE_TIME = 5200
+
 const defaultEvents: EventCarouselItem[] = [
     {
         id: 'cyber-league',
         title: 'Cyber League',
-        dateLabel: 'de 27 a 31 de Outubro',
-        subtitle: 'Final presencial em Sao Paulo',
-        statusLabel: 'Inscricoes abertas',
+        startsAt: '2026-10-27',
+        dateLabel: '27 a 31 de outubro',
+        subtitle: 'Final presencial em São Paulo',
+        statusLabel: 'Inscrições abertas',
         statusTone: 'active',
         imageSrc: '/images/EventCarrosselImages/event1.webp',
         imageAlt: 'Equipe celebrando em um palco de torneio',
-        featuredVideoSrc: 'https://d3h9qea4qy4169.cloudfront.net/THIS_IS_EWC_26_MASTER_ENG_NO_SUBS_1_1e188826bf.mp4',
-        // featuredImageAlt: 'Equipe em destaque durante outro momento do torneio',
         href: '#',
         ctaLabel: 'Inscrever-se',
     },
     {
         id: 'arena-cup',
         title: 'Arena Cup',
-        dateLabel: 'de 12 a 15 de Novembro',
-        subtitle: 'Eliminatorias online',
-        statusLabel: 'Ultimas vagas',
+        startsAt: '2026-11-12',
+        dateLabel: '12 a 15 de novembro',
+        subtitle: 'Eliminatórias online',
+        statusLabel: 'Últimas vagas',
         statusTone: 'active',
-        // imageSrc: '/images/EventCarrosselImages/event2.webp',
-        imageSrc: 'https://www.riotgames.com/darkroom/1440/8d5c497da1c2eeec8cffa99b01abc64b:5329ca773963a5b739e98e715957ab39/ps-f2p-val-console-launch-16x9.jpg',
-        imageAlt: 'Jogadores competindo em cabines iluminadas',
-        featuredImageSrc: '/images/EventCarrosselImages/event2.webp',
-        featuredImageAlt: 'Arena da classificatoria online em close',
+        imageSrc: '/images/EventCarrosselImages/event2.webp',
+        imageAlt: 'Jogadores competindo em uma arena iluminada',
         href: '#',
         ctaLabel: 'Ver regulamento',
     },
     {
         id: 'masters-showdown',
         title: 'Masters Showdown',
-        dateLabel: 'de 03 a 05 de Dezembro',
+        startsAt: '2026-12-03',
+        dateLabel: '03 a 05 de dezembro',
         subtitle: 'Evento especial com convidados',
         statusLabel: 'Em breve',
         statusTone: 'inactive',
         imageSrc: '/images/EventCarrosselImages/event3.webp',
-        imageAlt: 'Arena principal com publico e projetores',
-        featuredImageSrc: '/images/EventCarrosselImages/event3.webp',
-        featuredImageAlt: 'Imagem promocional alternativa do evento especial',
+        imageAlt: 'Arena principal com público e projetores',
         href: '#',
-        ctaLabel: 'Quero participar',
-    },
-    {
-        id: 'campus-clash',
-        title: 'Campus Clash',
-        dateLabel: 'de 10 a 12 de Janeiro',
-        subtitle: 'Confrontos universitarios regionais',
-        statusLabel: 'Inscricoes abertas',
-        statusTone: 'active',
-        imageSrc: '/images/EventCarrosselImages/event1.webp',
-        imageAlt: 'Equipe universitária se preparando para competir',
-        featuredImageSrc: '/images/EventCarrosselImages/event1.webp',
-        featuredImageAlt: 'Imagem alternativa do circuito universitario',
-        href: '#',
-        ctaLabel: 'Garantir vaga',
+        ctaLabel: 'Saiba mais',
     },
 ]
 
-function getRelativeIndex(index: number, activeIndex: number, totalItems: number) {
-    return (index - activeIndex + totalItems) % totalItems
-}
-
 export default function EventsCarrossel({
-    eyebrow = 'Federe o seu time e participe!',
-    title = 'Eventos Oficiais',
+    eyebrow = 'Próximas disputas',
+    title = 'Eventos em destaque',
     events = defaultEvents,
 }: EventsCarrosselProps) {
     const [activeIndex, setActiveIndex] = useState(0)
-    const [direction, setDirection] = useState<'next' | 'prev'>('next')
-    const totalEvents = events.length
-    const visibleEventIndex = Math.min(activeIndex, Math.max(totalEvents - 1, 0))
+    const [interactionIndex, setInteractionIndex] = useState<number | null>(null)
+    const [currentTime, setCurrentTime] = useState<number | null>(null)
+    const visibleEvents = events.filter((event) => event.imageSrc)
+    const totalEvents = visibleEvents.length
 
-    function goToNextEvent() {
-        if (totalEvents <= 1) {
-            return
+    useEffect(() => {
+        if (totalEvents <= 1 || interactionIndex !== null) return
+
+        const timer = window.setInterval(() => {
+            setActiveIndex((currentIndex) => (currentIndex + 1) % totalEvents)
+        }, AUTO_ADVANCE_TIME)
+
+        return () => window.clearInterval(timer)
+    }, [interactionIndex, totalEvents])
+
+    useEffect(() => {
+        const firstTick = window.setTimeout(() => setCurrentTime(Date.now()), 0)
+        const timer = window.setInterval(() => setCurrentTime(Date.now()), 1000)
+
+        return () => {
+            window.clearTimeout(firstTick)
+            window.clearInterval(timer)
         }
+    }, [])
 
-        setDirection('next')
-        setActiveIndex((currentIndex) => (currentIndex + 1) % totalEvents)
-    }
+    if (!totalEvents) return null
 
-    function goToPreviousEvent() {
-        if (totalEvents <= 1) {
-            return
-        }
+    const highlightedIndex = interactionIndex ?? (activeIndex % totalEvents)
+    const datedEvents = visibleEvents
+        .map((event) => ({ event, timestamp: getEventTimestamp(event.startsAt) }))
+        .filter((item): item is { event: EventCarouselItem; timestamp: number } => item.timestamp !== null)
+        .sort((first, second) => first.timestamp - second.timestamp)
+    const nextEvent = currentTime === null
+        ? datedEvents[0]
+        : datedEvents.find((item) => item.timestamp > currentTime)
+    const countdown = nextEvent && currentTime !== null
+        ? getCountdown(nextEvent.timestamp - currentTime)
+        : null
 
-        setDirection('prev')
-        setActiveIndex((currentIndex) => (currentIndex - 1 + totalEvents) % totalEvents)
+    function highlight(index: number) {
+        setActiveIndex(index)
+        setInteractionIndex(index)
     }
 
     return (
         <section className={styles.container} aria-labelledby="events-carrossel-title">
-            <div className={styles.titleSection}>
-                <div className={styles.titleArea}>
+            <header className={styles.heading}>
+                <div>
                     <span>{eyebrow}</span>
                     <h2 id="events-carrossel-title">{title}</h2>
                 </div>
+                <p>Conheça os próximos campeonatos da FEGEPi e garanta sua participação.</p>
+            </header>
 
-                <div className={styles.buttonsArea}>
-                    <button
-                        type="button"
-                        className={styles.button}
-                        onClick={goToPreviousEvent}
-                        aria-label="Ver eventos anteriores"
-                        disabled={totalEvents <= 1}
-                    >
-                        <ChevronLeft />
-                    </button>
-                    <button
-                        type="button"
-                        className={styles.button}
-                        onClick={goToNextEvent}
-                        aria-label="Ver proximos eventos"
-                        disabled={totalEvents <= 1}
-                    >
-                        <ChevronRight />
-                    </button>
-                </div>
-            </div>
+            <div
+                className={styles.cards}
+                onMouseLeave={() => setInteractionIndex(null)}
+                aria-label="Eventos oficiais da FEGEPi"
+            >
+                {visibleEvents.map((event, index) => {
+                    const isHighlighted = index === highlightedIndex
+                    const statusClassName = `${styles.status} ${event.statusTone === 'active' ? styles.activeStatus : styles.inactiveStatus}`
+                    const eventImage = isHighlighted && event.featuredImageSrc
+                        ? event.featuredImageSrc
+                        : event.imageSrc
 
-            <div className={styles.carrosselArea}>
-                <div className={styles.stage}>
-                    {events.map((event, index) => {
-                        const relativeIndex = getRelativeIndex(index, visibleEventIndex, totalEvents)
-                        const statusClassName = [
-                            styles.status,
-                            event.statusTone === 'active' ? styles.active : '',
-                        ].filter(Boolean).join(' ')
+                    return (
+                        <article
+                            key={event.id}
+                            className={`${styles.card} ${isHighlighted ? styles.highlighted : ''}`}
+                            onMouseEnter={() => highlight(index)}
+                            onFocusCapture={() => highlight(index)}
+                            onBlurCapture={(eventBlur) => {
+                                if (!eventBlur.currentTarget.contains(eventBlur.relatedTarget)) {
+                                    setInteractionIndex(null)
+                                }
+                            }}
+                        >
+                            {isHighlighted && event.featuredVideoSrc ? (
+                                <video
+                                    className={styles.media}
+                                    src={event.featuredVideoSrc}
+                                    autoPlay
+                                    muted
+                                    loop
+                                    playsInline
+                                    preload="metadata"
+                                    aria-label={event.featuredImageAlt ?? event.imageAlt}
+                                />
+                            ) : (
+                                <img
+                                    className={styles.media}
+                                    src={eventImage}
+                                    alt={isHighlighted ? (event.featuredImageAlt ?? event.imageAlt) : event.imageAlt}
+                                />
+                            )}
+                            <div className={styles.scrim} aria-hidden="true" />
 
-                        const positionClassName = (() => {
-                            if (relativeIndex === 0) {
-                                return styles.positionFeatured
-                            }
+                            <div className={styles.topline}>
+                                <span className={statusClassName}>{event.statusLabel}</span>
+                                <a
+                                    className={styles.iconLink}
+                                    href={event.href ?? '#'}
+                                    aria-label={`${event.ctaLabel ?? 'Ver evento'}: ${event.title}`}
+                                >
+                                    <ArrowUpRight />
+                                </a>
+                            </div>
 
-                            if (relativeIndex === 1) {
-                                return styles.positionSecond
-                            }
-
-                            if (relativeIndex === 2) {
-                                return styles.positionThird
-                            }
-
-                            if (totalEvents === 4 && relativeIndex === 3) {
-                                return direction === 'prev' ? styles.positionPrevious : styles.positionNext
-                            }
-
-                            if (totalEvents > 3 && relativeIndex === 3) {
-                                return styles.positionNext
-                            }
-
-                            if (totalEvents > 4 && relativeIndex === totalEvents - 1) {
-                                return styles.positionPrevious
-                            }
-
-                            return styles.positionHidden
-                        })()
-
-                        const cardClassName = [
-                            styles.card,
-                            relativeIndex === 0 ? styles.destaq : '',
-                            positionClassName,
-                        ].filter(Boolean).join(' ')
-
-                        return (
-                            <article
-                                key={event.id}
-                                className={cardClassName}
-                                aria-hidden={relativeIndex > 2}
-                            >
-                                {relativeIndex === 0 && event.featuredVideoSrc ? (
-                                    <div className={styles.mediaArea}>
-                                        <video
-                                            className={styles.mediaAsset}
-                                            src={event.featuredVideoSrc}
-                                            autoPlay
-                                            muted
-                                            loop
-                                            playsInline
-                                            preload="metadata"
-                                        />
-
-                                        <div className={styles.mediaTitle}>
-                                            <h3>{event.title}</h3>
-                                            <p>{event.subtitle ?? event.dateLabel}</p>
-                                        </div>
-                                    </div>
-                                ) : (
-                                    <div className={styles.mediaArea}>
-                                        <img
-                                            className={styles.mediaAsset}
-                                            src={relativeIndex === 0
-                                                ? (event.featuredImageSrc ?? event.imageSrc)
-                                                : event.imageSrc}
-                                            alt={relativeIndex === 0
-                                                ? (event.featuredImageAlt ?? event.imageAlt)
-                                                : event.imageAlt}
-                                        />
-
-                                        <div className={styles.mediaTitle}>
-                                            <h3>{event.title}</h3>
-                                            <p>{event.subtitle ?? event.dateLabel}</p>
-                                        </div>
-                                    </div>
-                                )}
-
-                                <div className={styles.textArea}>
-                                    <div className={styles.leftArea}>
-                                        <p>
-                                            <Calendar />
-                                            {event.dateLabel}
-                                        </p>
-                                        <span className={statusClassName}>{event.statusLabel}</span>
-                                    </div>
-
-                                    <a className={styles.inscreverButton} href={event.href ?? '#'}>
-                                        <span>{event.ctaLabel ?? 'Inscrever-se'}</span>
-                                        <ChevronRight />
+                            <div className={styles.eventCopy}>
+                                <h3>{event.title}</h3>
+                                <p>{event.subtitle ?? event.dateLabel}</p>
+                                <div className={styles.details}>
+                                    <span><CalendarDays /> {event.dateLabel}</span>
+                                    <a href={event.href ?? '#'}>
+                                        {event.ctaLabel ?? 'Ver evento'}
+                                        <ArrowUpRight />
                                     </a>
                                 </div>
-                            </article>
-                        )
-                    })}
-                </div>
+                            </div>
+                        </article>
+                    )
+                })}
             </div>
+
+            {totalEvents > 1 ? (
+                <div className={styles.progress} aria-label={`Evento ${highlightedIndex + 1} de ${totalEvents}`}>
+                    {visibleEvents.map((event, index) => (
+                        <button
+                            key={event.id}
+                            type="button"
+                            className={index === highlightedIndex ? styles.currentProgress : ''}
+                            onClick={() => {
+                                setActiveIndex(index)
+                                setInteractionIndex(null)
+                            }}
+                            aria-label={`Destacar ${event.title}`}
+                        />
+                    ))}
+                </div>
+            ) : null}
+
+            {nextEvent ? (
+                <div
+                    className={styles.countdown}
+                    role="timer"
+                    aria-label={countdown
+                        ? `Próximo evento, ${nextEvent.event.title}, em ${countdown.days} dias, ${countdown.hours} horas, ${countdown.minutes} minutos e ${countdown.seconds} segundos`
+                        : `Calculando o tempo para ${nextEvent.event.title}`}
+                >
+                    <div className={styles.countdownIntro}>
+                        <span><Timer /> Próximo evento</span>
+                        <strong>{nextEvent.event.title}</strong>
+                    </div>
+
+                    <div className={styles.countdownClock} aria-hidden="true">
+                        {([
+                            ['Dias', countdown?.days],
+                            ['Horas', countdown?.hours],
+                            ['Min', countdown?.minutes],
+                            ['Seg', countdown?.seconds],
+                        ] as const).map(([label, value], index) => (
+                            <div className={styles.timeGroup} key={label}>
+                                {index > 0 ? <i>:</i> : null}
+                                <div>
+                                    <strong>{value === undefined ? '--' : String(value).padStart(2, '0')}</strong>
+                                    <span>{label}</span>
+                                </div>
+                            </div>
+                        ))}
+                    </div>
+                </div>
+            ) : null}
         </section>
     )
+}
+
+function getEventTimestamp(startsAt?: string) {
+    if (!startsAt) return null
+
+    const normalizedDate = startsAt.includes('T') ? startsAt : `${startsAt}T00:00:00-03:00`
+    const timestamp = new Date(normalizedDate).getTime()
+    return Number.isNaN(timestamp) ? null : timestamp
+}
+
+function getCountdown(distance: number) {
+    const totalSeconds = Math.max(0, Math.floor(distance / 1000))
+
+    return {
+        days: Math.floor(totalSeconds / 86400),
+        hours: Math.floor((totalSeconds % 86400) / 3600),
+        minutes: Math.floor((totalSeconds % 3600) / 60),
+        seconds: totalSeconds % 60,
+    }
 }

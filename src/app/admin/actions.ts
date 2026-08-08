@@ -397,9 +397,19 @@ export async function saveGalleryAction(formData: FormData) {
   const section = contentSection(formData)
   const bannerUrl = await mediaUrlOrFail(formData, 'banner', 'conteudo', section)
   if (!bannerUrl) fail('Informe a imagem de capa da galeria.', 'conteudo', undefined, section)
-  const { error } = await supabase.from('gallery_settings').upsert({ id: true, eyebrow: text(formData, 'eyebrow') || 'Fotos', title: text(formData, 'title') || 'Fotos do último evento', banner_title: text(formData, 'bannerTitle'), banner_description: text(formData, 'bannerDescription'), banner_image_url: bannerUrl, banner_image_alt: text(formData, 'bannerAlt') || 'Galeria de evento', updated_at: new Date().toISOString() })
-  if (error) fail('Não foi possível atualizar a capa da galeria.', 'conteudo', undefined, section)
-  done('Capa da galeria atualizada.', 'conteudo', undefined, section)
+  const { error } = await supabase.from('gallery_settings').upsert({
+    id: true,
+    eyebrow: text(formData, 'eyebrow') || 'Memórias da comunidade',
+    title: text(formData, 'title') || 'Fotos dos eventos',
+    banner_title: text(formData, 'bannerTitle'),
+    banner_description: text(formData, 'bannerDescription'),
+    banner_image_url: bannerUrl,
+    banner_image_alt: text(formData, 'bannerAlt') || 'Galeria de evento',
+    drive_url: text(formData, 'driveUrl') || null,
+    updated_at: new Date().toISOString(),
+  })
+  if (error) fail('Não foi possível atualizar o álbum da galeria.', 'conteudo', undefined, section)
+  done('Álbum da galeria atualizado.', 'conteudo', undefined, section)
 }
 
 export async function createGalleryPhotoAction(formData: FormData) {

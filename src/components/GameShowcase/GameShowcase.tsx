@@ -28,7 +28,7 @@ const defaultMetrics: ShowcaseMetric[] = [
 ]
 
 export default function GameShowcase({
-    title = 'VALORANT',
+    title = 'SOMOS O MAIOR LUGAR DO MUNDO',
     description = 'Mais do que armas e munição, VALORANT inclui agentes com habilidades adaptativas, rápidas e letais, que criam oportunidades para você exibir sua mecânica de tiro. Cada Agente é único, assim como os momentos de destaque de cada partida!',
     buttonLabel = 'Cadastre sua equipe',
     buttonHref = '#',
@@ -49,10 +49,10 @@ export default function GameShowcase({
                             sizes="(max-width: 1024px) 100vw, 34vw"
                             className={styles.characterImage}
                         /> */}
+                        <h2>{title}</h2>
                     </div>
 
                     <div className={styles.contentArea}>
-                        <h2>{title}</h2>
                         <p>{description}</p>
 
                         {/* <a className={styles.ctaButton} href={buttonHref}>

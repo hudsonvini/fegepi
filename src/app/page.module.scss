@@ -1,5 +1,13 @@
 .page {
+    --frame-size: 28px;
+    --frame-radius: 42px;
+    --frame-blue: #0754ae;
+    position: relative;
+    min-height: 100vh;
     background-color: #e9eff7;
+    padding-top: var(--frame-size);
+    padding-bottom: 104px;
+    overflow: clip;
 }
 
 .container {
@@ -7,4 +15,122 @@
     margin: 0 auto;
     padding: 0px 20px;
     padding-top: 0px;
+}
+
+.viewportFrame {
+    position: fixed;
+    z-index: 100;
+    inset: var(--frame-size);
+    border-radius: var(--frame-radius);
+    box-shadow:
+        0 0 0 100vmax var(--frame-blue),
+        inset 0 0 0 1px rgba(255, 255, 255, 0.08);
+    pointer-events: none;
+}
+
+.sideAccent {
+    position: fixed;
+    z-index: 101;
+    top: 49%;
+    right: 0;
+    left: 0;
+    height: 26px;
+    background: linear-gradient(to bottom, #20a657 0 54%, #ffd400 54% 100%);
+    -webkit-mask-image: linear-gradient(to right,
+            #000 0 var(--frame-size),
+            transparent var(--frame-size) calc(100% - var(--frame-size)),
+            #000 calc(100% - var(--frame-size)) 100%);
+    mask-image: linear-gradient(to right,
+            #000 0 var(--frame-size),
+            transparent var(--frame-size) calc(100% - var(--frame-size)),
+            #000 calc(100% - var(--frame-size)) 100%);
+    pointer-events: none;
+}
+
+.topSignature,
+.bottomSignature {
+    position: fixed;
+    z-index: 102;
+    color: rgba(255, 255, 255, 0.84);
+    font-size: 11px;
+    font-weight: 400;
+    letter-spacing: 0.01em;
+    line-height: 1;
+    pointer-events: none;
+}
+
+.topSignature {
+    top: 9px;
+    left: 48px;
+}
+
+.bottomSignature {
+    right: 48px;
+    bottom: 9px;
+}
+
+@keyframes spin {
+    to {
+        transform: rotate(360deg);
+    }
+}
+
+.rollArea {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    position: fixed;
+    left: 100px;
+    bottom: 100px;
+    width: 50px;
+    height: 50px;
+    border-radius: 50%;
+    background-color: #0754ae;
+    z-index: 100;
+
+    .nameSvg {
+        position: absolute;
+        animation: spin 15s linear infinite;
+    }
+
+    .rollStar {
+        display: flex;
+        justify-content: center;
+        align-items: center;
+
+        svg {
+            color: #fff;
+        }
+    }
+}
+
+.anchorSection {
+    scroll-margin-top: 24px;
+}
+
+@media (max-width: 760px) {
+    .page {
+        --frame-size: 10px;
+        --frame-radius: 24px;
+        padding-bottom: 86px;
+    }
+
+    .sideAccent {
+        height: 16px;
+    }
+
+    .topSignature,
+    .bottomSignature {
+        display: none;
+    }
+
+    .container {
+        padding-inline: 18px;
+    }
+}
+
+@media (prefers-reduced-motion: reduce) {
+    .page {
+        scroll-behavior: auto;
+    }
 }

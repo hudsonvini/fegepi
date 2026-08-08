@@ -147,6 +147,7 @@ create table if not exists public.gallery_settings (
   banner_description text not null default '',
   banner_image_url text not null default '',
   banner_image_alt text not null default '',
+  drive_url text,
   updated_at timestamptz not null default now()
 );
 
@@ -198,7 +199,8 @@ create policy "public reads games" on public.games for select using (true);
 create policy "public reads seasons" on public.ranking_seasons for select using (true);
 create policy "public reads teams" on public.teams for select using (true);
 create policy "public reads ranking" on public.ranking_entries for select using (true);
-create policy "public reads events" on public.events for select using (active);
+create policy "public reads events" on public.events for select
+  using (active or coalesce(ends_at, starts_at) < current_date);
 create policy "public reads hero slides" on public.hero_slides for select using (active);
 create policy "public reads gallery settings" on public.gallery_settings for select using (true);
 create policy "public reads gallery photos" on public.gallery_photos for select using (active);

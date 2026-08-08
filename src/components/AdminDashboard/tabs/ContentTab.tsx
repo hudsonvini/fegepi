@@ -17,7 +17,7 @@ export default function ContentTab({
     case 'eventos':
       return <EventsSection events={data.events} />
     case 'galeria':
-      return <GallerySection photos={data.photos} />
+      return <GallerySection photos={data.photos} settings={data.gallerySettings} />
     default:
       return <BannersSection slides={data.heroSlides} />
   }

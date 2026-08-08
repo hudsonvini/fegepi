@@ -127,7 +127,7 @@ on conflict (id) do update set
   display_order = excluded.display_order;
 
 insert into public.gallery_settings (
-  id, eyebrow, title, banner_title, banner_description, banner_image_url, banner_image_alt, updated_at
+  id, eyebrow, title, banner_title, banner_description, banner_image_url, banner_image_alt, drive_url, updated_at
 ) values (
   true,
   'Memórias da comunidade',
@@ -136,6 +136,7 @@ insert into public.gallery_settings (
   'Os melhores momentos, as equipes e a torcida que fizeram parte da última etapa oficial da FEGEPI.',
   '/images/EventCarrosselImages/event1.webp',
   'Equipe celebrando no palco da Cyber League Piauí',
+  null,
   now()
 )
 on conflict (id) do update set
@@ -145,6 +146,7 @@ on conflict (id) do update set
   banner_description = excluded.banner_description,
   banner_image_url = excluded.banner_image_url,
   banner_image_alt = excluded.banner_image_alt,
+  drive_url = excluded.drive_url,
   updated_at = excluded.updated_at;
 
 insert into public.gallery_photos (id, image_url, alt_text, download_url, display_order, active) values

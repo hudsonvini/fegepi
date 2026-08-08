@@ -117,6 +117,17 @@ export type Profile = {
   created_at: string | null
 }
 
+export type GallerySettings = {
+  id: boolean
+  eyebrow: string
+  title: string
+  banner_title: string
+  banner_description: string
+  banner_image_url: string
+  banner_image_alt: string
+  drive_url: string | null
+}
+
 export type AdminData = {
   heroSlides: HeroSlide[]
   games: Game[]
@@ -125,6 +136,7 @@ export type AdminData = {
   entries: RankingEntry[]
   events: Event[]
   photos: GalleryPhoto[]
+  gallerySettings: GallerySettings | null
   profiles: Profile[]
   teamGames: TeamGame[]
   memberships: PlayerTeamMembership[]

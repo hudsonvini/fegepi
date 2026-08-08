@@ -1,11 +1,15 @@
 .container {
     margin: 0px 0 60px;
     color: #132947;
+    max-width: 1400px;
+    margin: 0 auto;
 }
 
 .contentArea {
-    width: min(1380px, calc(100% - 40px));
+    // width: min(1380px, calc(100% - 40px));
     margin: 0 auto;
+    width: 100%;
+    // padding: 0px 8vw;
 }
 
 .sectionHeading {
