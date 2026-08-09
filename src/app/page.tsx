@@ -57,7 +57,11 @@ export default async function Home() {
         <div id="jogadores" className={styles.anchorSection}><FeaturedPlayers players={featuredPlayers} /></div>
         {content.gallery ? <ManagedGallery {...content.gallery} /> : <LatestEventGallery />}
 
-        <div className={styles.bemvindo}></div>
+        {/* <div className={styles.decorator}>
+        </div> */}
+        <svg className={styles.decorator} width="192" height="30" viewBox="0 0 192 30" fill="none" xmlns="http://www.w3.org/2000/svg">
+          <path d="M18.5136 23.819L0 0H192L173.486 23.819C170.455 27.7188 165.793 30 160.854 30H31.1464C26.2071 30 21.5447 27.7188 18.5136 23.819Z" fill="#E9EFF7" />
+        </svg>
       </main>
       <div className={styles.footerStage}>
         <Footer />
