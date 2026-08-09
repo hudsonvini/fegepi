@@ -2,6 +2,7 @@
 import { Poppins } from "next/font/google";
 import { Suspense } from "react";
 import ToastNotifications from "@/components/ToastNotifications/ToastNotifications";
+import SmoothScroll from "@/components/SmoothScroll/SmoothScroll";
 import "./globals.css";
 
 const poppins = Poppins({
@@ -24,7 +25,7 @@ export default function RootLayout({
     <html lang="pt-BR" className={`${poppins.variable}`}>
       <body>
         <Suspense fallback={null}><ToastNotifications /></Suspense>
-        {children}
+        <SmoothScroll>{children}</SmoothScroll>
       </body>
     </html>
   );

@@ -4,10 +4,27 @@
     --frame-blue: #0754ae;
     position: relative;
     min-height: 100vh;
-    background-color: #e9eff7;
+    background-color: #0754ae;
+    overflow: clip;
+}
+
+.contentSurface {
+    position: relative;
+    z-index: 2;
+    min-height: 100vh;
     padding-top: var(--frame-size);
     padding-bottom: 104px;
-    overflow: clip;
+    border-radius: 0 0 38px 38px;
+    background-color: #e9eff7;
+    box-shadow: 0 34px 80px rgba(0, 24, 64, 0.34);
+}
+
+.footerStage {
+    position: relative;
+    z-index: 1;
+    height: 100svh;
+    min-height: 680px;
+    background: #0754ae;
 }
 
 .container {
@@ -112,7 +129,15 @@
     .page {
         --frame-size: 10px;
         --frame-radius: 24px;
+    }
+
+    .contentSurface {
         padding-bottom: 86px;
+        border-radius: 0 0 24px 24px;
+    }
+
+    .footerStage {
+        height: max(100svh, 1080px);
     }
 
     .sideAccent {
@@ -126,6 +151,12 @@
 
     .container {
         padding-inline: 18px;
+    }
+}
+
+@media (min-width: 761px) and (max-width: 1050px) {
+    .footerStage {
+        height: max(100svh, 920px);
     }
 }
 

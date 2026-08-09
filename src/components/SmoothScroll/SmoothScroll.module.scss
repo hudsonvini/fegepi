@@ -1,0 +1,88 @@
+.scrollProgress {
+  --progress-angle: calc(var(--scroll-progress) * 3.6deg);
+  position: fixed;
+  right: 50px;
+  bottom: 50px;
+  z-index: 990;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 10px;
+  color: #0754ae;
+  opacity: 0;
+  pointer-events: none;
+  transform: translateY(8px);
+  transition: opacity 240ms ease, transform 240ms ease;
+}
+
+.visible {
+  opacity: 1;
+  transform: translateY(0);
+}
+
+.value {
+  font-size: 12px;
+  font-weight: 600;
+  font-variant-numeric: tabular-nums;
+  letter-spacing: 0.04em;
+  line-height: 1;
+  // text-shadow: 0 1px 6px rgba(0, 24, 70, 0.4);
+  writing-mode: vertical-rl;
+  transform: rotate(180deg);
+}
+
+.track {
+  position: relative;
+  display: grid;
+  width: 18px;
+  height: 18px;
+  place-items: center;
+  border-radius: 50%;
+  background: conic-gradient(#ffd400 var(--progress-angle), rgba(255, 255, 255, 0.38) 0);
+  background: conic-gradient(#20a657 var(--progress-angle), rgba(255, 255, 255, 0.38) 0);
+  // box-shadow: 0 4px 14px rgba(0, 36, 92, 0.2);
+}
+
+.track::after {
+  content: '';
+  position: absolute;
+  inset: 2px;
+  border-radius: inherit;
+  background: #0754ae;
+  background: #e9eff7;
+  // background: transparent;
+}
+
+.dot {
+  position: relative;
+  z-index: 1;
+  width: 6px;
+  height: 6px;
+  border-radius: 50%;
+  background: #ffd400;
+  background: #20a657;
+  box-shadow: 0 0 0 2px rgba(255, 212, 0, 0.16);
+}
+
+@media (max-width: 760px) {
+  .scrollProgress {
+    right: 20px;
+    bottom: 86px;
+    gap: 7px;
+  }
+
+  .value {
+    font-size: 9px;
+  }
+
+  .track {
+    width: 16px;
+    height: 16px;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .scrollProgress {
+    transition: none;
+  }
+}

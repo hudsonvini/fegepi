@@ -14,16 +14,18 @@
         display: block;
         margin-bottom: 8px;
         color: #034ea7;
-        font-size: 12px;
-        font-weight: 800;
-        letter-spacing: .12em;
-        text-transform: uppercase;
+        font-size: 16px;
+        font-weight: 400;
+        // letter-spacing: .12em;
+        // text-transform: uppercase;
     }
 
     h2 {
         margin: 0;
         color: #0b2441;
-        font-size: clamp(30px, 3vw, 44px);
+        color: #034ea7;
+        font-size: 28px;
+        font-weight: 500;
         line-height: 1;
         letter-spacing: -.04em;
     }
@@ -39,7 +41,7 @@
 
 .albumCover {
     position: relative;
-    min-height: clamp(560px, 66vw, 760px);
+    min-height: 420px;
     overflow: hidden;
     border-radius: 26px;
     isolation: isolate;
@@ -56,8 +58,15 @@
 }
 
 @keyframes albumReveal {
-    from { opacity: .35; transform: scale(1.035); }
-    to { opacity: 1; transform: scale(1); }
+    from {
+        opacity: .35;
+        transform: scale(1.035);
+    }
+
+    to {
+        opacity: 1;
+        transform: scale(1);
+    }
 }
 
 .albumCover:hover .coverImage {
@@ -85,25 +94,30 @@
 
     h3 {
         margin: 22px 0 24px;
-        font-size: clamp(54px, 7vw, 104px);
-        font-weight: 650;
+        font-size: 36px;
+        font-weight: 600;
         letter-spacing: -.065em;
         line-height: .88;
         text-wrap: balance;
     }
 
     >p {
-        max-width: 560px;
+        max-width: 540px;
         margin: 0;
         color: rgba(255, 255, 255, .78);
-        font-size: clamp(14px, 1.3vw, 18px);
+        font-size: 14px;
         line-height: 1.55;
     }
 }
 
 @keyframes copyReveal {
-    from { opacity: 0; }
-    to { opacity: 1; }
+    from {
+        opacity: 0;
+    }
+
+    to {
+        opacity: 1;
+    }
 }
 
 .albumControls {
@@ -128,9 +142,15 @@
         transition: background-color .2s ease, color .2s ease;
 
         &:hover,
-        &:focus-visible { background: #fdd516; color: #0b2441; }
+        &:focus-visible {
+            background: #fdd516;
+            color: #0b2441;
+        }
 
-        svg { width: 19px; height: 19px; }
+        svg {
+            width: 19px;
+            height: 19px;
+        }
     }
 }
 
@@ -140,7 +160,7 @@
     gap: 8px;
     color: #fdd516;
     font-size: 10px;
-    font-weight: 800;
+    font-weight: 400;
     letter-spacing: .14em;
     text-transform: uppercase;
 
@@ -161,7 +181,7 @@
         border: 1px solid rgba(255, 255, 255, .35);
         color: rgba(255, 255, 255, .82);
         font-size: 9px;
-        font-weight: 800;
+        font-weight: 500;
         letter-spacing: .12em;
         text-transform: uppercase;
     }
@@ -169,19 +189,20 @@
 
 .openButton {
     position: relative;
+    font-family: 'Poppins', sans-serif;
     z-index: 3;
     display: inline-flex;
     align-items: center;
-    gap: 20px;
+    gap: 10px;
     margin-top: 32px;
-    padding: 16px 18px 16px 22px;
+    padding: 10px 14px 10px 22px;
     border: 0;
     border-radius: 4px;
     background: #fdd516;
     color: #0b2441;
     cursor: pointer;
     font-size: 11px;
-    font-weight: 900;
+    font-weight: 600;
     letter-spacing: .12em;
     text-transform: uppercase;
     transition: background-color .2s ease, transform .2s ease;
@@ -237,7 +258,7 @@
         margin-left: 18px;
         color: rgba(255, 255, 255, .7);
         font-size: 9px;
-        font-weight: 800;
+        font-weight: 500;
         letter-spacing: .12em;
         text-transform: uppercase;
     }
@@ -545,6 +566,7 @@
 }
 
 @media (prefers-reduced-motion: reduce) {
+
     .coverImage,
     .openButton,
     .photoGrid img {

@@ -43,19 +43,25 @@ export default async function Home() {
         </div>
       </div>
 
-      <div className={styles.container}>
-        {/* <ManagedHero user={user} events={content.events} slides={content.heroSlides} /> */}
-        <PartnersSlider />
+      <main className={styles.contentSurface}>
+        <div className={styles.container}>
+          {/* <ManagedHero user={user} events={content.events} slides={content.heroSlides} /> */}
+          <PartnersSlider />
+        </div>
+        <TeamRegistrationHero />
+        <div className={styles.anchorSection}><GameShowcase /></div>
+        <div id="eventos" className={styles.anchorSection}>
+          <EventsCarrossel events={content.events} />
+        </div>
+        <div id="ranking" className={styles.anchorSection}><GameArea games={content.games} /></div>
+        <div id="jogadores" className={styles.anchorSection}><FeaturedPlayers players={featuredPlayers} /></div>
+        {content.gallery ? <ManagedGallery {...content.gallery} /> : <LatestEventGallery />}
+
+        <div className={styles.bemvindo}></div>
+      </main>
+      <div className={styles.footerStage}>
+        <Footer />
       </div>
-      <TeamRegistrationHero />
-      <div className={styles.anchorSection}><GameShowcase /></div>
-      <div id="eventos" className={styles.anchorSection}>
-        <EventsCarrossel events={content.events} />
-      </div>
-      <div id="ranking" className={styles.anchorSection}><GameArea games={content.games} /></div>
-      <div id="jogadores" className={styles.anchorSection}><FeaturedPlayers players={featuredPlayers} /></div>
-      {content.gallery ? <ManagedGallery {...content.gallery} /> : <LatestEventGallery />}
-      <Footer />
       <FloatingDock accountHref={user ? "/perfil" : "/cadastro"} />
     </div>
   );
