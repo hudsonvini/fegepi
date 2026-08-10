@@ -12,6 +12,7 @@ import FeaturedPlayers from "@/components/FeaturedPlayers/FeaturedPlayers";
 import { getFeaturedPlayers } from "@/lib/players";
 import FloatingDock from "@/components/FloatingDock/FloatingDock";
 import EventsCarrossel from "@/components/EventsCarrossel/EventsCarrossel";
+import FloatingAccessHeader from "@/components/FloatingAccessHeader/FloatingAccessHeader";
 
 export default async function Home() {
   const [user, content, featuredPlayers] = await Promise.all([
@@ -22,6 +23,7 @@ export default async function Home() {
 
   return (
     <div className={styles.page} id="inicio">
+      <FloatingAccessHeader user={user} />
       <div className={styles.viewportFrame} aria-hidden="true" />
       <div className={styles.sideAccent} aria-hidden="true" />
       <span className={styles.topSignature} aria-hidden="true">

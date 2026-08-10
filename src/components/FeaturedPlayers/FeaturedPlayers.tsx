@@ -115,7 +115,7 @@ export default function FeaturedPlayers({ players }: { players: FeaturedPlayer[]
       <div className={styles.ambient} />
       <header className={styles.header}>
         <div>
-          <span className={styles.eyebrow}><ShieldCheck size={15} /> Talentos em destaque</span>
+          <span className={styles.eyebrow}>Talentos em destaque</span>
           <h2 id="featured-players-title"><b>Os players que estão</b><br />fazendo a diferença.</h2>
         </div>
         <div className={styles.intro}>

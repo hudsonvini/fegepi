@@ -1,0 +1,222 @@
+.header {
+  position: fixed;
+  z-index: 100;
+  top: 40px;
+  left: 50%;
+  max-width: calc(100vw - 32px);
+  transform: translateX(-50%);
+  opacity: 1;
+  transition:
+    transform 560ms cubic-bezier(.22, 1, .36, 1),
+    opacity 220ms ease;
+  will-change: transform;
+}
+
+.hidden {
+  transform: translate(-50%, calc(-100% - 56px));
+  opacity: 0;
+  pointer-events: none;
+}
+
+.pill {
+  display: flex;
+  align-items: center;
+  gap: 7px;
+  min-height: 54px;
+  padding: 6px 7px 6px 16px;
+  border: 1px solid rgba(7, 84, 174, .08);
+  border-radius: 999px;
+  background: rgba(255, 255, 255, .96);
+  box-shadow: 0 12px 30px rgba(3, 55, 117, .16);
+  backdrop-filter: blur(14px);
+  -webkit-backdrop-filter: blur(14px);
+}
+
+.logo {
+  display: inline-flex;
+  align-items: center;
+  flex: 0 0 auto;
+  padding-right: 2px;
+}
+
+.logo img {
+  display: block;
+  width: auto;
+  height: 33px;
+}
+
+.divider {
+  width: 1px;
+  height: 28px;
+  margin-inline: 1px;
+  background: #dbe5f0;
+}
+
+.login,
+.signup,
+.profile,
+.dashboard {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  height: 40px;
+  padding: 0 20px;
+  border-radius: 999px;
+  white-space: nowrap;
+  font-size: 13px;
+  font-weight: 500;
+  line-height: 1;
+  transition: transform 180ms ease, box-shadow 180ms ease, background-color 180ms ease;
+}
+
+.login {
+  padding-left: 4px;
+  color: #fff;
+  background: #0754ae;
+}
+
+.iconCircle {
+  display: grid;
+  width: 30px;
+  height: 30px;
+  place-items: center;
+  border-radius: 50%;
+  color: #0754ae;
+  background: #fff;
+}
+
+.iconCircle svg {
+  width: 15px;
+  height: 15px;
+}
+
+.signup {
+  color: #0b1b2d;
+  background: #ffd516;
+}
+
+.signup svg,
+.dashboard svg {
+  width: 16px;
+  height: 16px;
+}
+
+.profile {
+  padding: 4px 13px 4px 4px;
+  color: #173b64;
+  background: #edf4fc;
+}
+
+.profile img {
+  width: 32px;
+  height: 32px;
+  border: 2px solid #fff;
+  border-radius: 50%;
+  object-fit: cover;
+}
+
+.profile>svg {
+  width: 15px;
+  height: 15px;
+  color: #66809d;
+}
+
+.dashboard {
+  color: #fff;
+  background: #0754ae;
+}
+
+.login:hover,
+.signup:hover,
+.profile:hover,
+.dashboard:hover {
+  transform: translateY(-1px);
+  box-shadow: 0 7px 14px rgba(3, 55, 117, .16);
+}
+
+@media (max-width: 560px) {
+  .header {
+    top: 18px;
+    max-width: calc(100vw - 20px);
+  }
+
+  .pill {
+    min-height: 48px;
+    gap: 5px;
+    padding: 5px 5px 5px 12px;
+  }
+
+  .logo img {
+    height: 27px;
+  }
+
+  .divider {
+    height: 24px;
+  }
+
+  .login,
+  .signup,
+  .profile,
+  .dashboard {
+    height: 36px;
+    padding-inline: 11px;
+    font-size: 12px;
+  }
+
+  .login {
+    padding-left: 4px;
+  }
+
+  .iconCircle {
+    width: 28px;
+    height: 28px;
+  }
+
+  .profile {
+    padding-left: 3px;
+  }
+
+  .profile img {
+    width: 30px;
+    height: 30px;
+  }
+
+  .profile>svg {
+    display: none;
+  }
+
+  .dashboard span {
+    display: none;
+  }
+}
+
+@media (max-width: 390px) {
+  .logo {
+    padding-right: 0;
+  }
+
+  .logo img {
+    height: 24px;
+  }
+
+  .signup,
+  .login {
+    padding-inline: 9px;
+  }
+
+  .iconCircle {
+    display: none;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+
+  .header,
+  .login,
+  .signup,
+  .profile,
+  .dashboard {
+    transition-duration: 1ms;
+  }
+}
