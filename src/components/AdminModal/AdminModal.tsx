@@ -41,6 +41,7 @@ export default function AdminModal({ title, description, triggerLabel, triggerIc
         role="dialog"
         aria-modal="true"
         aria-labelledby={titleId}
+        data-lenis-prevent="true"
         onMouseDown={(event) => event.stopPropagation()}
       >
         <header>

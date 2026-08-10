@@ -3,11 +3,20 @@ create table if not exists public.hero_slides (
   id uuid primary key default gen_random_uuid(),
   image_url text not null,
   alt_text text not null default 'Banner principal da FEGEPI',
+  eyebrow text,
+  title text,
+  description text,
+  cta_label text,
   link_url text,
   active boolean not null default true,
   display_order integer not null default 0,
   created_at timestamptz not null default now()
 );
+
+alter table public.hero_slides add column if not exists eyebrow text;
+alter table public.hero_slides add column if not exists title text;
+alter table public.hero_slides add column if not exists description text;
+alter table public.hero_slides add column if not exists cta_label text;
 
 alter table public.hero_slides enable row level security;
 

@@ -17,7 +17,7 @@ import type {
 export async function getAdminData(selectedSeasonId?: string, selectedGameId?: string): Promise<AdminData> {
   const supabase = await createClient()
   const [
-    { data: heroSlides },
+    heroSlidesQuery,
     { data: games },
     { data: seasons },
     { data: teams },
@@ -29,7 +29,7 @@ export async function getAdminData(selectedSeasonId?: string, selectedGameId?: s
     { data: teamGames },
     { data: memberships },
   ] = await Promise.all([
-    supabase.from('hero_slides').select('id,image_url,alt_text,link_url,active,display_order').order('display_order'),
+    supabase.from('hero_slides').select('id,image_url,alt_text,eyebrow,title,description,cta_label,link_url,active,display_order').order('display_order'),
     supabase.from('games').select('id,name,short_name,theme,image_url,active,display_order').order('display_order'),
     supabase.from('ranking_seasons').select('id,label,is_current,game_id,games(name)').order('created_at', { ascending: false }),
     supabase.from('teams').select('id,name,city,crest_url,initials').order('name'),
@@ -41,6 +41,10 @@ export async function getAdminData(selectedSeasonId?: string, selectedGameId?: s
     supabase.from('team_games').select('team_id,game_id,active,created_at'),
     supabase.from('player_team_memberships').select('id,profile_id,team_id,game_id,role,started_at,ended_at,created_at').order('started_at', { ascending: false }),
   ])
+
+  const heroSlides = heroSlidesQuery.error
+    ? (await supabase.from('hero_slides').select('id,image_url,alt_text,link_url,active,display_order').order('display_order')).data
+    : heroSlidesQuery.data
 
   const entries = entriesWithRecentFormError
     ? (await supabase.from('ranking_entries').select('id,season_id,team_id,points,wins,draws,losses,previous_position,teams(id,name,city,crest_url,initials)')).data

@@ -31,6 +31,39 @@ function fail(message: string, tab?: string, seasonId?: string, section?: string
 }
 function contentSection(formData: FormData) { return text(formData, 'contentSection') || 'jogos' }
 
+function missingHeroContentColumns(error: unknown) {
+  if (!error || typeof error !== 'object') return false
+  const details = error as { code?: string; message?: string; details?: string }
+  const message = `${details.message ?? ''} ${details.details ?? ''}`.toLowerCase()
+  const referencesNewColumn = ['eyebrow', 'title', 'description', 'cta_label']
+    .some((column) => message.includes(column))
+  return referencesNewColumn && (
+    details.code === 'PGRST204'
+    || details.code === '42703'
+    || message.includes('schema cache')
+    || message.includes('column')
+  )
+}
+
+function legacyHeroSlideValues(formData: FormData, imageUrl: string) {
+  return {
+    image_url: imageUrl,
+    alt_text: text(formData, 'alt') || 'Banner principal da FEGEPI',
+    link_url: text(formData, 'linkUrl') || null,
+    display_order: number(formData, 'displayOrder'),
+  }
+}
+
+function heroSlideValues(formData: FormData, imageUrl: string) {
+  return {
+    ...legacyHeroSlideValues(formData, imageUrl),
+    eyebrow: text(formData, 'eyebrow') || null,
+    title: text(formData, 'title') || null,
+    description: text(formData, 'description') || null,
+    cta_label: text(formData, 'ctaLabel') || null,
+  }
+}
+
 export type RankingActionState = {
   status: 'idle' | 'success' | 'error'
   message: string
@@ -380,15 +413,14 @@ export async function createHeroSlideAction(formData: FormData) {
   const supabase = await createClient()
   const section = contentSection(formData)
   const imageUrl = await mediaUrlOrFail(formData, 'image', 'conteudo', section)
-  if (!imageUrl) fail('Envie uma imagem para o banner principal.', 'conteudo', undefined, section)
-  const { error } = await supabase.from('hero_slides').insert({
-    image_url: imageUrl,
-    alt_text: text(formData, 'alt') || 'Banner principal da FEGEPI',
-    link_url: text(formData, 'linkUrl') || null,
-    display_order: number(formData, 'displayOrder'),
-  })
-  if (error) fail('Não foi possível publicar o banner.', 'conteudo', undefined, section)
-  done('Banner publicado no topo do site.', 'conteudo', undefined, section)
+  if (!imageUrl) fail('Envie uma imagem, GIF ou vídeo para o banner principal.', 'conteudo', undefined, section)
+  const { error } = await supabase.from('hero_slides').insert(heroSlideValues(formData, imageUrl))
+  if (!error) done('Banner publicado no topo do site.', 'conteudo', undefined, section)
+  if (!missingHeroContentColumns(error)) fail('Não foi possível publicar o banner.', 'conteudo', undefined, section)
+
+  const { error: legacyError } = await supabase.from('hero_slides').insert(legacyHeroSlideValues(formData, imageUrl))
+  if (legacyError) fail('Não foi possível publicar o banner.', 'conteudo', undefined, section)
+  done('Banner publicado. Aplique a migração para também salvar os novos textos.', 'conteudo', undefined, section)
 }
 
 export async function saveGalleryAction(formData: FormData) {
@@ -431,17 +463,30 @@ export async function updateHeroSlideAction(formData: FormData) {
   if (!id.success) fail('Banner inválido.', 'conteudo', undefined, section)
   const oldImageUrl = text(formData, 'oldImageUrl')
   const imageUrl = await mediaUrlOrFail(formData, 'image', 'conteudo', section, oldImageUrl)
-  if (!imageUrl) fail('Informe uma imagem para o banner.', 'conteudo', undefined, section)
-  const { error } = await supabase.from('hero_slides').update({
-    image_url: imageUrl,
-    alt_text: text(formData, 'alt') || 'Banner principal da FEGEPI',
-    link_url: text(formData, 'linkUrl') || null,
+  if (!imageUrl) fail('Informe uma imagem, GIF ou vídeo para o banner.', 'conteudo', undefined, section)
+  const values = {
+    ...heroSlideValues(formData, imageUrl),
     active: checked(formData, 'active'),
-    display_order: number(formData, 'displayOrder'),
-  }).eq('id', id.data)
-  if (error) fail('Não foi possível atualizar o banner.', 'conteudo', undefined, section)
+  }
+  const { error } = await supabase.from('hero_slides').update(values).eq('id', id.data)
+  let usedLegacyColumns = false
+  if (error && missingHeroContentColumns(error)) {
+    const { error: legacyError } = await supabase.from('hero_slides').update({
+      ...legacyHeroSlideValues(formData, imageUrl),
+      active: checked(formData, 'active'),
+    }).eq('id', id.data)
+    if (legacyError) fail('Não foi possível atualizar o banner.', 'conteudo', undefined, section)
+    usedLegacyColumns = true
+  } else if (error) {
+    fail('Não foi possível atualizar o banner.', 'conteudo', undefined, section)
+  }
   const cleanupFailed = await cleanupReplacedMedia(supabase, [[oldImageUrl, imageUrl]])
-  done(cleanupFailed ? 'Banner atualizado, mas a imagem anterior permaneceu no R2.' : 'Banner atualizado.', 'conteudo', undefined, section)
+  const message = usedLegacyColumns
+    ? 'Banner atualizado. Aplique a migração para também salvar os novos textos.'
+    : cleanupFailed
+      ? 'Banner atualizado, mas a imagem anterior permaneceu no R2.'
+      : 'Banner atualizado.'
+  done(message, 'conteudo', undefined, section)
 }
 
 export async function updateGameAction(formData: FormData) {

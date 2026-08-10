@@ -5,6 +5,10 @@ export type HeroSlide = {
   id: string
   image_url: string
   alt_text: string
+  eyebrow: string | null
+  title: string | null
+  description: string | null
+  cta_label: string | null
   link_url: string | null
   active: boolean
   display_order: number

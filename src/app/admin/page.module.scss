@@ -1419,7 +1419,9 @@
     box-shadow: 0 8px 19px rgba(30, 70, 116, .05);
 }
 
-.contentCard>img {
+.contentCard>img,
+.contentCard>video {
+    display: block;
     width: 100%;
     height: 116px;
     border-radius: 6px;

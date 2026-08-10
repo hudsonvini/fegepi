@@ -2,13 +2,13 @@
 import type { EventCarouselItem } from '@/components/EventsCarrossel/EventsCarrossel'
 import type { EventGalleryAlbum, EventGalleryPhoto } from '@/components/LatestEventGallery/LatestEventGallery'
 import type { RankingGame } from '@/components/GameArea/GameArea'
-import type { HeroCarouselSlide } from '@/components/Carrossel/Carrossel'
-import { displayMediaUrl } from './media-url'
+import type { MainBannerSlide } from '@/components/MainBannerCarousel/MainBannerCarousel'
+import { displayMediaUrl, isVideoMediaUrl } from './media-url'
 import { hasSupabaseConfig } from './supabase/config'
 import { createClient } from './supabase/server'
 
 type ContentData = {
-  heroSlides?: HeroCarouselSlide[]
+  heroSlides?: MainBannerSlide[]
   games?: RankingGame[]
   events?: EventCarouselItem[]
   gallery?: { eyebrow: string; title: string; albums: EventGalleryAlbum[] }
@@ -25,8 +25,8 @@ export async function getPublicContent(): Promise<ContentData> {
   if (!hasSupabaseConfig()) return {}
   try {
     const supabase = await createClient()
-    const [heroQuery, gamesWithRecentFormQuery, eventsQuery, galleryEventsQuery, settingsQuery, photosQuery] = await Promise.all([
-      supabase.from('hero_slides').select('id, image_url, alt_text, link_url').eq('active', true).order('display_order'),
+    const [heroContentQuery, gamesWithRecentFormQuery, eventsQuery, galleryEventsQuery, settingsQuery, photosQuery] = await Promise.all([
+      supabase.from('hero_slides').select('id, image_url, alt_text, eyebrow, title, description, cta_label, link_url').eq('active', true).order('display_order'),
       supabase.from('games').select('id, name, short_name, theme, image_url, ranking_seasons(id, label, is_current, ranking_entries(id, points, wins, draws, losses, recent_form, previous_position, teams(id, name, city, crest_url, initials)))').eq('active', true).order('display_order'),
       supabase.from('events').select('*').eq('active', true).order('display_order'),
       supabase.from('events').select('*').order('starts_at', { ascending: false }),
@@ -36,10 +36,18 @@ export async function getPublicContent(): Promise<ContentData> {
     const gamesQuery = gamesWithRecentFormQuery.error
       ? await supabase.from('games').select('id, name, short_name, theme, image_url, ranking_seasons(id, label, is_current, ranking_entries(id, points, wins, draws, losses, previous_position, teams(id, name, city, crest_url, initials)))').eq('active', true).order('display_order')
       : gamesWithRecentFormQuery
-    const heroSlides: HeroCarouselSlide[] = (heroQuery.data ?? []).map((slide: any) => ({
+    const heroQuery = heroContentQuery.error
+      ? await supabase.from('hero_slides').select('id, image_url, alt_text, link_url').eq('active', true).order('display_order')
+      : heroContentQuery
+    const heroSlides: MainBannerSlide[] = (heroQuery.data ?? []).map((slide: any) => ({
       id: slide.id,
       imageSrc: displayMediaUrl(slide.image_url) as string,
+      videoSrc: isVideoMediaUrl(slide.image_url) ? displayMediaUrl(slide.image_url) as string : undefined,
       imageAlt: slide.alt_text,
+      eyebrow: slide.eyebrow || undefined,
+      title: slide.title || slide.alt_text,
+      description: slide.description || undefined,
+      ctaLabel: slide.cta_label || (slide.link_url ? 'Saiba mais' : undefined),
       href: slide.link_url || undefined,
     }))
     const games: RankingGame[] = (gamesQuery.data ?? []).map((game: any) => ({

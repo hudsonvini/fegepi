@@ -13,6 +13,7 @@ import { getFeaturedPlayers } from "@/lib/players";
 import FloatingDock from "@/components/FloatingDock/FloatingDock";
 import EventsCarrossel from "@/components/EventsCarrossel/EventsCarrossel";
 import FloatingAccessHeader from "@/components/FloatingAccessHeader/FloatingAccessHeader";
+import MainBannerCarousel from "@/components/MainBannerCarousel/MainBannerCarousel";
 
 export default async function Home() {
   const [user, content, featuredPlayers] = await Promise.all([
@@ -46,15 +47,16 @@ export default async function Home() {
       </div>
 
       <main className={styles.contentSurface}>
+        <MainBannerCarousel slides={content.heroSlides} />
+        <div id="eventos" className={styles.anchorSection}>
+          <EventsCarrossel events={content.events} />
+        </div>
         <div className={styles.container}>
           {/* <ManagedHero user={user} events={content.events} slides={content.heroSlides} /> */}
           <PartnersSlider />
         </div>
         <TeamRegistrationHero />
         <div className={styles.anchorSection}><GameShowcase /></div>
-        <div id="eventos" className={styles.anchorSection}>
-          <EventsCarrossel events={content.events} />
-        </div>
         <div id="ranking" className={styles.anchorSection}><GameArea games={content.games} /></div>
         <div id="jogadores" className={styles.anchorSection}><FeaturedPlayers players={featuredPlayers} /></div>
         {content.gallery ? <ManagedGallery {...content.gallery} /> : <LatestEventGallery />}

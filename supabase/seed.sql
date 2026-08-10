@@ -2,13 +2,17 @@
 -- Execute depois de supabase/schema.sql.
 begin;
 
-insert into public.hero_slides (id, image_url, alt_text, link_url, active, display_order) values
-  ('10000000-0000-4000-8000-000000000001', '/images/carrosselImages/banner1.png', 'Circuito oficial FEGEPI 2026', '#eventos', true, 0),
-  ('10000000-0000-4000-8000-000000000002', '/images/EventCarrosselImages/event1.webp', 'Inscrições abertas para os eventos FEGEPI', '#eventos', true, 1),
-  ('10000000-0000-4000-8000-000000000003', '/images/GameShowCaseImage.webp', 'Acompanhe os rankings dos jogos oficiais', '#ranking', true, 2)
+insert into public.hero_slides (id, image_url, alt_text, eyebrow, title, description, cta_label, link_url, active, display_order) values
+  ('10000000-0000-4000-8000-000000000001', '/images/carrosselImages/banner1.png', 'Circuito oficial FEGEPI 2026', 'Competições oficiais', 'Circuito FEGEPI 2026', 'Acompanhe os campeonatos que movimentam o cenário de games e e-sports do Piauí.', 'Ver eventos', '#eventos', true, 0),
+  ('10000000-0000-4000-8000-000000000002', '/images/EventCarrosselImages/event1.webp', 'Inscrições abertas para os eventos FEGEPI', 'Faça parte', 'Inscrições abertas', 'Reúna sua equipe e venha disputar os próximos eventos da federação.', 'Ver eventos', '#eventos', true, 1),
+  ('10000000-0000-4000-8000-000000000003', '/images/GameShowCaseImage.webp', 'Acompanhe os rankings dos jogos oficiais', 'Cenário competitivo', 'Os melhores do Piauí', 'Confira a classificação atualizada das modalidades oficiais.', 'Ver ranking', '#ranking', true, 2)
 on conflict (id) do update set
   image_url = excluded.image_url,
   alt_text = excluded.alt_text,
+  eyebrow = excluded.eyebrow,
+  title = excluded.title,
+  description = excluded.description,
+  cta_label = excluded.cta_label,
   link_url = excluded.link_url,
   active = excluded.active,
   display_order = excluded.display_order;

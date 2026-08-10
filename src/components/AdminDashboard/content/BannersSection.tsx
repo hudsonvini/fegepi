@@ -7,7 +7,7 @@ import MediaUploadField from '@/components/AdminFormControls/MediaUploadField'
 import ValidatedField from '@/components/AdminFormControls/ValidatedField'
 import AdminModal from '@/components/AdminModal/AdminModal'
 import AdminSubmitButton from '@/components/AdminSubmitButton/AdminSubmitButton'
-import { displayMediaUrl } from '@/lib/media-url'
+import { displayMediaUrl, isVideoMediaUrl } from '@/lib/media-url'
 import { DeleteButton, SectionTitle } from '../shared'
 import type { HeroSlide } from '../types'
 
@@ -15,17 +15,23 @@ function AddBannerModal({ triggerLabel = 'Adicionar banner' }: { triggerLabel?: 
   return (
     <AdminModal
       title="Adicionar banner principal"
-      description="A imagem será publicada no carrossel do topo conforme a ordem informada."
+      description="Monte um destaque com imagem, texto e botão para o carrossel da página inicial."
       triggerLabel={triggerLabel}
     >
       <form action={createHeroSlideAction} className={styles.form}>
         <input type="hidden" name="contentSection" value="banners" />
-        <ValidatedField name="alt" label="Descrição do banner" required minLength={3} placeholder="Ex.: Campanha Julho Gamer" />
-        <ValidatedField name="linkUrl" label="Link ao clicar" optional kind="url" placeholder="https://... ou /pagina" />
+        <ValidatedField name="eyebrow" label="Chamada superior" optional maxLength={40} placeholder="Ex.: Destaque FEGEPI" />
+        <ValidatedField name="title" label="Título do banner" optional maxLength={90} placeholder="Ex.: Circuito FEGEPI 2026" />
+        <ValidatedField name="description" label="Descrição" optional maxLength={220} placeholder="Uma frase curta para apresentar a campanha." />
+        <ValidatedField name="ctaLabel" label="Texto do botão" optional maxLength={35} placeholder="Ex.: Saiba mais" />
+        <ValidatedField name="linkUrl" label="Link do botão" optional kind="url" placeholder="https://... ou /pagina" />
+        <ValidatedField name="alt" label="Descrição acessível da mídia" required minLength={3} placeholder="Ex.: Campanha Julho Gamer" />
         <MediaUploadField
           name="image"
-          label="Imagem do banner"
-          description="Arraste a arte da campanha ou clique para selecionar."
+          label="Mídia do banner"
+          description="Arraste uma imagem, GIF ou vídeo MP4 da campanha."
+          accept="image/*,.gif,video/mp4"
+          allowVideo
           required
         />
         <ValidatedField name="displayOrder" label="Ordem de exibição" kind="number" type="number" min={0} required defaultValue="0" />
@@ -51,10 +57,14 @@ export default function BannersSection({ slides }: { slides: HeroSlide[] }) {
         <div className={styles.contentCards}>
           {slides.map((slide) => (
             <article key={slide.id} className={styles.contentCard}>
-              <img src={displayMediaUrl(slide.image_url) ?? slide.image_url} alt={slide.alt_text} />
+              {isVideoMediaUrl(slide.image_url) ? (
+                <video src={displayMediaUrl(slide.image_url) ?? slide.image_url} aria-label={slide.alt_text} autoPlay muted loop playsInline />
+              ) : (
+                <img src={displayMediaUrl(slide.image_url) ?? slide.image_url} alt={slide.alt_text} />
+              )}
               <div>
                 <span>Banner #{slide.display_order + 1}</span>
-                <h2>{slide.alt_text}</h2>
+                <h2>{slide.title || slide.alt_text}</h2>
                 <p>{slide.active ? 'Publicado no topo da home' : 'Oculto da home'}</p>
               </div>
               <div className={styles.cardActions}>

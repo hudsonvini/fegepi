@@ -41,3 +41,7 @@ export function displayMediaUrl(value: string | null | undefined) {
   const key = mediaKeyFromFallbackUrl(value)
   return key ? `${INTERNAL_MEDIA_PATH}${key}` : value
 }
+
+export function isVideoMediaUrl(value: string | null | undefined) {
+  return Boolean(value && /\.(mp4|webm|mov)(?:[?#]|$)/i.test(value))
+}

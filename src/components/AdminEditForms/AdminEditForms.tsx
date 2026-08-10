@@ -15,6 +15,10 @@ export function EditHeroSlideModal({ slide }: { slide: {
   id: string
   image_url: string
   alt_text: string
+  eyebrow: string | null
+  title: string | null
+  description: string | null
+  cta_label: string | null
   link_url: string | null
   active: boolean
   display_order: number
@@ -30,27 +34,33 @@ export function EditHeroSlideModal({ slide }: { slide: {
         <input type="hidden" name="id" value={slide.id} />
         <input type="hidden" name="oldImageUrl" value={slide.image_url} />
 
-        <ValidatedField
-          name="alt"
-          label="Descrição do banner"
-          required
-          minLength={3}
-          defaultValue={slide.alt_text}
-          helpText="Usada para acessibilidade e identificação no painel."
-        />
+        <ValidatedField name="eyebrow" label="Chamada superior" optional maxLength={40} defaultValue={slide.eyebrow ?? ''} placeholder="Ex.: Destaque FEGEPI" />
+        <ValidatedField name="title" label="Título do banner" optional maxLength={90} defaultValue={slide.title ?? ''} />
+        <ValidatedField name="description" label="Descrição" optional maxLength={220} defaultValue={slide.description ?? ''} />
+        <ValidatedField name="ctaLabel" label="Texto do botão" optional maxLength={35} defaultValue={slide.cta_label ?? ''} placeholder="Ex.: Saiba mais" />
         <ValidatedField
           name="linkUrl"
-          label="Link ao clicar"
+          label="Link do botão"
           optional
           kind="url"
           defaultValue={slide.link_url ?? ''}
           placeholder="https://... ou /pagina"
         />
+        <ValidatedField
+          name="alt"
+          label="Descrição acessível da mídia"
+          required
+          minLength={3}
+          defaultValue={slide.alt_text}
+          helpText="Usada por leitores de tela e na identificação do painel."
+        />
         <MediaUploadField
           name="image"
-          label="Imagem do banner"
-          description="Visualize a imagem atual ou arraste uma nova para substituí-la."
+          label="Mídia do banner"
+          description="Visualize a mídia atual ou arraste uma imagem, GIF ou vídeo MP4 para substituí-la."
           defaultUrl={slide.image_url}
+          accept="image/*,.gif,video/mp4"
+          allowVideo
           required
         />
         <ValidatedField
