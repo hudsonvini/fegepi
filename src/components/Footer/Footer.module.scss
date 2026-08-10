@@ -281,8 +281,11 @@
 
 @media (max-width: 720px) {
   .footer {
+    position: relative;
+    inset: auto;
     min-height: 100%;
-    padding: 22px 24px 18px;
+    overflow: visible;
+    padding: 22px 24px calc(104px + env(safe-area-inset-bottom));
   }
 
   .topbar {
@@ -299,11 +302,12 @@
   }
 
   .statement h2 {
-    font-size: clamp(36px, 11vw, 58px);
+    font-size: clamp(31px, 9vw, 38px);
   }
 
   .statement p {
     margin-top: 16px;
+    font-size: 12px;
   }
 
   .contactButton {

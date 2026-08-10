@@ -408,3 +408,92 @@
     transform: none;
   }
 }
+
+@media (min-width: 781px) and (max-width: 1050px) {
+  .header,
+  .hint {
+    width: auto;
+    max-width: none;
+    margin-inline: 64px;
+  }
+
+  .viewport {
+    margin-inline: 64px;
+    overflow: hidden;
+  }
+
+  .track {
+    padding-inline: 0;
+  }
+}
+
+@media (min-width: 1051px) and (max-width: 1500px) {
+  .header,
+  .hint {
+    width: auto;
+    max-width: none;
+    margin-inline: calc(20px + clamp(32px, 6vw, 92px));
+  }
+
+  .viewport {
+    margin-inline: calc(20px + clamp(32px, 6vw, 92px));
+    overflow: hidden;
+  }
+
+  .track {
+    padding-inline: 0;
+  }
+}
+
+@media (max-width: 760px) {
+  .section {
+    margin-top: 0;
+    padding: 64px 0 42px;
+    overflow: hidden;
+  }
+
+  .header {
+    width: calc(100% - 48px);
+    gap: 18px;
+    margin-bottom: 22px;
+  }
+
+  .header h2 {
+    margin-top: 12px;
+    font-size: clamp(35px, 10.4vw, 41px);
+    line-height: .94;
+  }
+
+  .intro {
+    width: 100%;
+  }
+
+  .intro p {
+    margin-bottom: 12px;
+    font-size: 12px;
+    line-height: 1.55;
+  }
+
+  .viewport {
+    width: 100%;
+    padding: 18px 0 24px;
+    scroll-snap-type: x mandatory;
+    scroll-padding-inline: 24px;
+  }
+
+  .track {
+    grid-template-rows: 330px;
+    grid-auto-columns: min(72vw, 260px);
+    gap: 14px;
+    padding-inline: 24px;
+  }
+
+  .card {
+    scroll-snap-align: start;
+    border-radius: 18px;
+  }
+
+  .portrait {
+    height: 148px;
+  }
+}

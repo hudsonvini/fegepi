@@ -532,3 +532,91 @@
         transition: none;
     }
 }
+
+@media (min-width: 761px) and (max-width: 1050px) {
+    .container {
+        width: auto;
+        max-width: none;
+        margin-inline: 64px;
+    }
+}
+
+@media (min-width: 1051px) and (max-width: 1500px) {
+    .container {
+        width: auto;
+        max-width: none;
+        margin-inline: calc(20px + clamp(32px, 6vw, 92px));
+    }
+}
+
+@media (max-width: 760px) {
+    .container {
+        width: calc(100% - 48px);
+        margin-top: 12px;
+        margin-bottom: 46px;
+    }
+
+    .heading {
+        gap: 10px;
+        margin-bottom: 20px;
+    }
+
+    .heading h2 {
+        font-size: clamp(25px, 7.2vw, 28px);
+        line-height: 1.05;
+    }
+
+    .heading > div > span {
+        margin-bottom: 5px;
+        font-size: 12px;
+    }
+
+    .heading > p {
+        font-size: 12px;
+        line-height: 1.5;
+    }
+
+    .cards {
+        height: 390px;
+        margin-inline: 0;
+        padding-inline: 0;
+        scroll-padding-inline: 0;
+    }
+
+    .card,
+    .highlighted {
+        min-width: calc(100vw - 88px);
+        flex-basis: calc(100vw - 88px);
+        scroll-snap-align: start;
+    }
+
+    .eventCopy {
+        right: 18px;
+        bottom: 18px;
+        left: 18px;
+    }
+
+    .eventCopy h3,
+    .card:not(.highlighted) .eventCopy h3 {
+        font-size: clamp(22px, 6.4vw, 25px);
+    }
+
+    .countdown {
+        min-height: 0;
+        margin-top: 20px;
+        padding: 22px 12px 18px;
+        gap: 18px;
+    }
+
+    .countdownIntro > strong {
+        font-size: 17px;
+    }
+
+    .timeGroup > div > strong {
+        font-size: clamp(27px, 8.4vw, 34px);
+    }
+
+    .timeGroup > div > span {
+        font-size: 8px;
+    }
+}

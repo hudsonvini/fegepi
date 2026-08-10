@@ -144,7 +144,8 @@
     }
 
     .footerStage {
-        height: max(100svh, 1080px);
+        height: auto;
+        min-height: 0;
     }
 
     .sideAccent {
@@ -157,7 +158,12 @@
     }
 
     .container {
-        padding-inline: 18px;
+        padding-top: 66px;
+        padding-inline: 24px;
+    }
+
+    .rollArea {
+        display: none;
     }
 }
 

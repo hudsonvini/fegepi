@@ -574,3 +574,61 @@
         animation: none;
     }
 }
+
+@media (min-width: 761px) and (max-width: 1050px) {
+    .container {
+        width: auto;
+        max-width: none;
+        margin-inline: 64px;
+    }
+}
+
+@media (min-width: 1051px) and (max-width: 1500px) {
+    .container {
+        width: auto;
+        max-width: none;
+        margin-inline: calc(20px + clamp(32px, 6vw, 92px));
+    }
+}
+
+@media (max-width: 760px) {
+    .container {
+        width: calc(100% - 48px);
+        margin-bottom: 68px;
+    }
+
+    .heading {
+        gap: 9px;
+        margin-bottom: 20px;
+    }
+
+    .heading h2 {
+        font-size: clamp(25px, 7.2vw, 29px);
+        line-height: 1.05;
+    }
+
+    .heading > p {
+        font-size: 12px;
+        line-height: 1.5;
+    }
+
+    .albumCover {
+        min-height: 510px;
+    }
+
+    .coverContent {
+        right: 20px;
+        bottom: 66px;
+        left: 20px;
+    }
+
+    .coverContent h3 {
+        font-size: clamp(34px, 9.8vw, 41px);
+        line-height: .94;
+    }
+
+    .coverContent > p {
+        font-size: 12px;
+        line-height: 1.55;
+    }
+}

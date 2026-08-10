@@ -565,3 +565,177 @@
         padding-left: 18px;
     }
 }
+
+@media (min-width: 761px) and (max-width: 1050px) {
+    .container {
+        width: auto;
+        max-width: none;
+        margin-inline: 64px;
+    }
+}
+
+@media (min-width: 1051px) and (max-width: 1500px) {
+    .container {
+        width: auto;
+        max-width: none;
+        margin-inline: calc(20px + clamp(32px, 6vw, 92px));
+    }
+}
+
+@media (max-width: 760px) {
+    .container {
+        width: 100%;
+        max-width: none;
+        margin: 48px 0 60px;
+    }
+
+    .contentArea {
+        width: calc(100% - 48px);
+    }
+
+    .sectionHeading h2 {
+        font-size: clamp(25px, 7.2vw, 28px);
+    }
+
+    .sectionHeading > span {
+        font-size: 12px;
+    }
+
+    .sectionHeading p {
+        font-size: 12px;
+        line-height: 1.5;
+    }
+
+    .layout {
+        gap: 18px;
+    }
+
+    .gamesAside,
+    .rankingPanel {
+        border-radius: 16px;
+    }
+
+    .gamesList {
+        padding: 6px;
+    }
+
+    .asideHeader {
+        padding: 17px 17px 12px;
+    }
+
+    .asideHeader h3 {
+        font-size: 15px;
+    }
+
+    .asideHeader p {
+        font-size: 11px;
+    }
+
+    .gameOption {
+        grid-template-columns: 58px minmax(0, 1fr) 22px;
+        gap: 10px;
+        min-height: 58px;
+        padding: 6px;
+    }
+
+    .gameThumb {
+        width: 58px;
+        height: 40px;
+    }
+
+    .panelHeader {
+        width: 100%;
+        min-width: 0;
+        flex-wrap: wrap;
+        gap: 14px;
+        padding: 14px;
+    }
+
+    .titleBlock {
+        width: 100%;
+        gap: 10px;
+    }
+
+    .trophyBadge {
+        width: 88px;
+        height: 48px;
+    }
+
+    .titleBlock h3 {
+        overflow: hidden;
+        font-size: 17px;
+        text-overflow: ellipsis;
+    }
+
+    .seasonTabs {
+        width: 100%;
+        max-width: none;
+        overflow: visible;
+    }
+
+    .seasonTabs button {
+        min-width: 0;
+        flex: 1;
+    }
+
+    .rankingPanel {
+        overflow: hidden;
+    }
+
+    .rankingTable {
+        min-width: 0;
+    }
+
+    .tableHeader,
+    .rankingRow {
+        grid-template-columns: 36px minmax(0, 1fr) 54px;
+        column-gap: 8px;
+        min-width: 0;
+        padding-right: 12px;
+        padding-left: 12px;
+    }
+
+    .tableHeader {
+        min-height: 42px;
+        font-size: 11px;
+    }
+
+    .tableHeader > :nth-child(4),
+    .tableHeader > :nth-child(5),
+    .recordCell,
+    .recentFormCell,
+    .movement {
+        display: none;
+    }
+
+    .rankingRow {
+        min-height: 72px;
+    }
+
+    .positionCell > strong {
+        min-width: 0;
+        font-size: 17px;
+    }
+
+    .teamCell {
+        gap: 9px;
+    }
+
+    .logoBadge {
+        width: 40px;
+        height: 40px;
+    }
+
+    .teamCell strong {
+        font-size: 12px;
+    }
+
+    .teamCell span {
+        font-size: 11px;
+    }
+
+    .pointsCell {
+        justify-self: end;
+        font-size: 15px;
+    }
+}

@@ -125,7 +125,7 @@
 
 @media (max-width: 680px) {
   .dock {
-    width: min(390px, calc(100vw - 20px));
+    width: min(360px, calc(100vw - 48px));
     justify-content: center;
     gap: 4px;
     padding: 8px 8px calc(8px + env(safe-area-inset-bottom)) 42px;
@@ -175,7 +175,7 @@
     flex-direction: column;
     gap: 2px;
     padding: 6px 5px;
-    font-size: 9px;
+    font-size: 8px;
 
     svg {
       width: 17px;
