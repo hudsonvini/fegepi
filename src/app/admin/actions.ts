@@ -64,21 +64,6 @@ function heroSlideValues(formData: FormData, imageUrl: string) {
   }
 }
 
-export type RankingActionState = {
-  status: 'idle' | 'success' | 'error'
-  message: string
-  nonce: number
-}
-
-function rankingState(status: RankingActionState['status'], message: string): RankingActionState {
-  return { status, message, nonce: Date.now() }
-}
-
-function revalidateRanking() {
-  revalidatePath('/', 'layout')
-  revalidatePath('/admin')
-}
-
 const mediaColumnsByTable: Record<string, string[]> = {
   hero_slides: ['image_url'],
   games: ['image_url'],
@@ -203,68 +188,7 @@ export async function addTeamToSeasonAction(formData: FormData) {
     previous_position: 0,
   })
   if (error) fail('Esse time já está nesta temporada ou não pôde ser adicionado.', 'tabela', seasonId.data, undefined, season.game_id)
-  done('Time adicionado. Registre os resultados para montar a classificação.', 'tabela', seasonId.data, undefined, season.game_id)
-}
-
-export async function recordRankingResultAction(
-  _previousState: RankingActionState,
-  formData: FormData,
-): Promise<RankingActionState> {
-  try {
-    await requireAdmin()
-    const entryId = z.string().uuid().safeParse(text(formData, 'entryId'))
-    const result = z.enum(['W', 'D', 'L']).safeParse(text(formData, 'result'))
-    if (!entryId.success || !result.success) return rankingState('error', 'Resultado ou participante inválido.')
-
-    const supabase = await createClient()
-    const { error } = await supabase.from('ranking_results').insert({
-      entry_id: entryId.data,
-      result: result.data,
-      played_at: new Date().toISOString().slice(0, 10),
-    })
-    if (error?.code === '42P01' || error?.code === 'PGRST205') {
-      return rankingState('error', 'O histórico automático ainda não foi ativado no banco de dados.')
-    }
-    if (error) return rankingState('error', 'Não foi possível registrar o resultado.')
-
-    revalidateRanking()
-    const label = result.data === 'W' ? 'Vitória' : result.data === 'D' ? 'Empate' : 'Derrota'
-    return rankingState('success', `${label} registrada e classificação recalculada.`)
-  } catch {
-    return rankingState('error', 'Não foi possível registrar o resultado.')
-  }
-}
-
-export async function undoLastRankingResultAction(
-  _previousState: RankingActionState,
-  formData: FormData,
-): Promise<RankingActionState> {
-  try {
-    await requireAdmin()
-    const entryId = z.string().uuid().safeParse(text(formData, 'entryId'))
-    if (!entryId.success) return rankingState('error', 'Participante inválido.')
-
-    const supabase = await createClient()
-    const { data: latest, error: lookupError } = await supabase.from('ranking_results')
-      .select('id')
-      .eq('entry_id', entryId.data)
-      .order('played_at', { ascending: false })
-      .order('created_at', { ascending: false })
-      .limit(1)
-      .maybeSingle()
-    if (lookupError?.code === '42P01' || lookupError?.code === 'PGRST205') {
-      return rankingState('error', 'O histórico automático ainda não foi ativado no banco de dados.')
-    }
-    if (lookupError) return rankingState('error', 'Não foi possível consultar o histórico.')
-    if (!latest) return rankingState('error', 'Ainda não há resultado para desfazer.')
-
-    const { error } = await supabase.from('ranking_results').delete().eq('id', latest.id)
-    if (error) return rankingState('error', 'Não foi possível desfazer o último resultado.')
-    revalidateRanking()
-    return rankingState('success', 'Último resultado desfeito e classificação recalculada.')
-  } catch {
-    return rankingState('error', 'Não foi possível desfazer o último resultado.')
-  }
+  done('Time adicionado. Inclua-o nos campeonatos para somar pontos.', 'tabela', seasonId.data, undefined, season.game_id)
 }
 
 async function replaceTeamGames(supabase: SupabaseClient, teamId: string, gameIds: string[]) {
@@ -384,16 +308,20 @@ export async function updateFeaturedPlayerAction(formData: FormData) {
   await requireAdmin()
   const supabase = await createClient()
   const profileId = z.string().uuid().safeParse(text(formData, 'profileId'))
-  const featuredOrder = Math.min(99, number(formData, 'featuredOrder'))
+  const order = z.coerce.number().int().min(0).max(99).safeParse(formData.get('featuredOrder'))
+  if (!order.success) fail('Informe uma ordem inteira de 0 a 99.', 'jogadores')
+  const featuredOrder = order.data
   if (!profileId.success) fail('Jogador inválido.', 'jogadores')
+  const isFeatured = text(formData, 'operation') === 'remove' ? false : checked(formData, 'isFeatured')
 
-  const { error } = await supabase.from('profiles').update({
-    is_featured: checked(formData, 'isFeatured'),
+  const { data: updated, error } = await supabase.from('profiles').update({
+    is_featured: isFeatured,
     featured_order: featuredOrder,
-  }).eq('id', profileId.data)
+    ...(isFeatured ? { public_profile: true } : {}),
+  }).eq('id', profileId.data).select('id').maybeSingle()
 
-  if (error) fail('Não foi possível atualizar o destaque. Verifique se a migração de jogadores foi aplicada.', 'jogadores')
-  done(checked(formData, 'isFeatured') ? 'Jogador adicionado à vitrine.' : 'Jogador removido da vitrine.', 'jogadores')
+  if (error || !updated) fail('Não foi possível atualizar o destaque. Verifique se a migração de jogadores foi aplicada.', 'jogadores')
+  done(isFeatured ? 'Destaque e ordem salvos na vitrine.' : 'Jogador removido da vitrine.', 'jogadores')
 }
 
 export async function createEventAction(formData: FormData) {
@@ -614,6 +542,7 @@ export async function deleteContentAction(formData: FormData) {
       .filter((url): url is string => typeof url === 'string' && url.length > 0))]
   }
   const { error } = await supabase.from(table).delete().eq('id', id)
+  if (error?.code === '23503' && table === 'ranking_entries') fail('Este time participa de campeonatos. Remova suas participações antes de retirá-lo da temporada.', tab, undefined, section, gameId)
   if (error) fail('Não foi possível remover este item.', tab, undefined, section)
 
   const removableUrls: string[] = []

@@ -1,4 +1,4 @@
-export type AdminTabId = 'visao-geral' | 'conteudo' | 'times' | 'jogadores' | 'tabela' | 'usuarios'
+export type AdminTabId = 'visao-geral' | 'conteudo' | 'times' | 'jogadores' | 'tabela' | 'usuarios' | 'campeonatos'
 export type ContentSectionId = 'banners' | 'jogos' | 'eventos' | 'galeria'
 
 export type HeroSlide = {
@@ -72,6 +72,9 @@ export type RankingEntry = {
   draws: number
   losses: number
   recent_form?: Array<'W' | 'D' | 'L'> | null
+  titles?: number
+  participations?: number
+  recent_placements?: import('@/lib/championships').RecentPlacement[]
   previous_position: number
   teams: Team | null
 }
@@ -142,9 +145,22 @@ export type AdminData = {
   photos: GalleryPhoto[]
   gallerySettings: GallerySettings | null
   profiles: Profile[]
+  featureManagementAvailable: boolean
+  championshipsAvailable: boolean
+  championships: Championship[]
   teamGames: TeamGame[]
   memberships: PlayerTeamMembership[]
   selectedGame?: Game
   selectedSeason?: Season
   seasonEntries: RankingEntry[]
+}
+
+export type Championship = {
+  id: string
+  season_id: string
+  name: string
+  played_at: string
+  status: 'draft' | 'completed' | 'cancelled'
+  version: number
+  championship_results: { team_id: string; placement: number | null }[]
 }

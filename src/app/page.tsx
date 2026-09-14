@@ -47,9 +47,11 @@ export default async function Home() {
       </div>
 
       <main className={styles.contentSurface}>
-        <MainBannerCarousel slides={content.heroSlides} />
-        <div id="eventos" className={styles.anchorSection}>
-          <EventsCarrossel events={content.events} />
+        <div className={styles.topArea}>
+          <MainBannerCarousel slides={content.heroSlides} />
+          <div id="eventos" className={styles.anchorSection}>
+            <EventsCarrossel events={content.events} />
+          </div>
         </div>
         <div className={styles.container}>
           {/* <ManagedHero user={user} events={content.events} slides={content.heroSlides} /> */}

@@ -83,12 +83,14 @@ export async function getPublicPlayer(id: string) {
 
 export async function getFeaturedPlayers(): Promise<FeaturedPlayer[]> {
   const supabase = await createClient()
-  const { data: directory } = await supabase.from('player_directory').select('*')
-  const players = (directory ?? []) as PublicPlayer[]
-  const featured = players
-    .filter((player) => player.is_featured)
-    .sort((a, b) => (a.featured_order ?? 0) - (b.featured_order ?? 0))
-  const selected = (featured.length ? featured : players).slice(0, 12)
+  const { data: directory } = await supabase
+    .from('player_directory')
+    .select('*')
+    .eq('is_featured', true)
+    .order('featured_order')
+    .order('full_name')
+    .limit(12)
+  const selected = (directory ?? []) as PublicPlayer[]
 
   if (!selected.length) return []
 

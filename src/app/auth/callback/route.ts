@@ -10,7 +10,12 @@ export async function GET(request: Request) {
   const { url: supabaseUrl, key } = getSupabaseConfig()
   let response = NextResponse.redirect(new URL(safeNext, url.origin))
 
-  if (!code) return NextResponse.redirect(new URL('/login?erro=Link%20inválido.', url.origin))
+  if (!code) {
+    const destination = safeNext === '/redefinir-senha'
+      ? '/esqueci-a-senha?erro=O%20link%20de%20recuperação%20é%20inválido%20ou%20expirou.%20Solicite%20outro.'
+      : '/login?erro=Link%20inválido.'
+    return NextResponse.redirect(new URL(destination, url.origin))
+  }
 
   const supabase = createServerClient(supabaseUrl, key, {
     cookies: {

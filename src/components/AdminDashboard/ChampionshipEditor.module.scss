@@ -1,0 +1,24 @@
+.editor { margin-top: 20px; }
+.editor label { display: grid; gap: 6px; font-size: 12px; color: #526780; }
+.table table { min-width: 430px; }
+.table td:last-child { display: table-cell; min-width: 0; }
+.table input[type='checkbox'] { width: 18px; height: 18px; padding: 0; accent-color: #0862bc; cursor: pointer; }
+.settings { display: grid; grid-template-columns: 2fr 1fr 1.4fr; gap: 16px; padding-bottom: 22px; border-bottom: 1px solid #e4ebf3; }
+.participantHeader { display: flex; flex-wrap: wrap; justify-content: space-between; align-items: center; gap: 18px; margin-top: 16px; }
+.participantHeader h3 { display: flex; align-items: center; gap: 8px; margin: 0; font-size: 17px; color: #1b3a5a; }
+.participantHeader p { color: #7a8da3; font-size: 12px; margin: 7px 0; }
+.editor .search { display: flex; align-items: center; gap: 8px; border: 1px solid #dce6f1; border-radius: 10px; padding: 0 12px; }
+.editor .search input { border: 0; background: transparent; width: 210px; }
+.table { border: 1px solid #e4ebf4; border-radius: 14px; margin-top: 8px; }
+.table tr[data-selected='true'] { background: #f4f9ff; }
+.table tr[hidden] { display: none; }
+.table table { min-width: 550px; }
+.table th { padding: 15px !important; }.table td { padding: 14px !important; }
+.team { display: flex; align-items: center; gap: 12px; }
+.team strong { display: block; font-size: 13px; color: #1e3c5c; }.team small { display: block; color: #8190a3; font-size: 11px; margin-top: 4px; }
+.crest { display: grid; place-items: center; flex: 0 0 40px; width: 40px; height: 40px; border-radius: 12px; color: #1765b0; background: #eaf2fb; font-size: 11px; font-weight: 700; }
+.crest img { width: 32px; height: 32px; object-fit: contain; }
+.points { color: #075db5; font-size: 16px; font-weight: 700; }.points small { font-size: 10px; font-weight: 400; }
+.footer { display: flex; justify-content: space-between; flex-wrap: wrap; align-items: center; gap: 16px; padding-top: 16px; }
+.footer p { display: flex; align-items: center; gap: 7px; color: #788da3; font-size: 11px; }
+@media(max-width:900px) { .settings { grid-template-columns: 1fr; }.footer { align-items: stretch; flex-direction: column; } }

@@ -204,7 +204,7 @@ export default function EventsCarrossel({
                 })}
             </div>
 
-            {totalEvents > 1 ? (
+            {/* {totalEvents > 1 ? (
                 <div className={styles.progress} aria-label={`Evento ${highlightedIndex + 1} de ${totalEvents}`}>
                     {visibleEvents.map((event, index) => (
                         <button
@@ -251,7 +251,7 @@ export default function EventsCarrossel({
                         ))}
                     </div>
                 </div>
-            ) : null}
+            ) : null} */}
         </section>
     )
 }

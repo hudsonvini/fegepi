@@ -1,0 +1,8 @@
+.placements { display: flex; gap: 6px; align-items: center; }
+.badge { display: inline-flex; align-items: center; justify-content: center; gap: 7px; min-width: 48px; height: 29px; padding: 0 8px; border: 1px solid; border-radius: 30px; font-size: 11px; white-space: nowrap; }
+.place1 { color: #916500; border-color: #d3a329; background: #fff7d8; }
+.place2 { color: #526475; border-color: #97a7b7; background: #edf2f7; }
+.place3 { color: #a05a28; border-color: #c58b57; background: #fff0e3; }
+.place4 { color: #5e4ca2; border-color: #a69aca; background: #f2eeff; }
+.place5 { color: #22688d; border-color: #83b1c9; background: #eaf6fc; }
+.empty { color: #99a3af; border-color: #dce2e9; background: #f5f7f9; }

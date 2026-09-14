@@ -1,8 +1,11 @@
 'use client'
 
 import { useState, useTransition } from 'react'
-import { ArrowDown, ArrowUp, Check, ChevronRight, Minus, Trophy, Gamepad2, X } from 'lucide-react'
+import { ArrowDown, ArrowUp, ChevronRight, Minus, Gamepad2, LockKeyhole } from 'lucide-react'
+import ChampionshipPlacements from '@/components/ChampionshipPlacements/ChampionshipPlacements'
+import type { RecentPlacement } from '@/lib/championships'
 import styles from './GameArea.module.scss'
+import RankingExplainer from './RankingExplainer'
 
 type TeamTone = 'navy' | 'green' | 'red' | 'silver' | 'gold'
 type GameTheme = 'cs2' | 'valorant' | 'lol' | 'freefire' | 'fc26'
@@ -16,6 +19,9 @@ type RankingEntry = {
     logoText: string
     crestSrc?: string
     tone: TeamTone
+    titles?: number
+    participations?: number
+    recentPlacements?: RecentPlacement[]
     wins?: number
     draws?: number
     losses?: number
@@ -264,6 +270,7 @@ const defaultGames: RankingGame[] = [
 ]
 
 function getMovement(currentPosition: number, previousPosition: number): Pick<RankedEntry, 'movement' | 'delta'> {
+    if (!previousPosition) return { movement: 'same', delta: 0 }
     if (previousPosition > currentPosition) {
         return {
             movement: 'up',
@@ -286,12 +293,6 @@ function getMovement(currentPosition: number, previousPosition: number): Pick<Ra
 
 function formatPoints(points: number) {
     return new Intl.NumberFormat('pt-BR').format(points)
-}
-
-const recentResultCopy: Record<RecentResult, string> = {
-    win: 'Vitória',
-    draw: 'Empate',
-    loss: 'Derrota',
 }
 
 function RankingRow({ entry }: { entry: RankedEntry }) {
@@ -332,29 +333,10 @@ function RankingRow({ entry }: { entry: RankedEntry }) {
             </div>
 
             <strong className={styles.pointsCell} role="cell">{formatPoints(entry.points)} <small>pts</small></strong>
-            <span className={styles.recordCell} role="cell">
-                <strong>{entry.wins ?? 0}</strong>
-                <i>—</i>
-                <strong>{entry.losses ?? 0}</strong>
-                {(entry.draws ?? 0) > 0 ? <small>{entry.draws} E</small> : null}
+            <span className={styles.recordCell} role="cell" title="Títulos / campeonatos disputados">
+                <strong>{entry.titles ?? 0}</strong><i>/</i><strong>{entry.participations ?? 0}</strong>
             </span>
-            <div className={styles.recentFormCell} role="cell" aria-label="Resultados das últimas cinco partidas">
-                {Array.from({ length: 5 }, (_, index) => {
-                    const result = entry.recentForm?.[index]
-                    return (
-                        <span
-                            key={`${entry.id}-recent-${index}`}
-                            className={result ? styles[result] : styles.noResult}
-                            aria-label={result ? `${index + 1}ª partida: ${recentResultCopy[result]}` : `${index + 1}ª partida: sem resultado`}
-                            title={result ? recentResultCopy[result] : 'Sem resultado informado'}
-                        >
-                            {result === 'win' ? <Check /> : null}
-                            {result === 'loss' ? <X /> : null}
-                            {result === 'draw' || !result ? <Minus /> : null}
-                        </span>
-                    )
-                })}
-            </div>
+            <div className={styles.placementsCell} role="cell"><ChampionshipPlacements results={entry.recentPlacements} /></div>
         </div>
     )
 }
@@ -363,23 +345,27 @@ function GameOption({
     game,
     selected,
     onSelect,
+    locked = false,
 }: {
     game: RankingGame
     selected: boolean
+    locked?: boolean
     onSelect: () => void
 }) {
     return (
         <button
             type="button"
-            className={`${styles.gameOption} ${selected ? styles.selectedGame : ''}`}
+            className={`${styles.gameOption} ${selected ? styles.selectedGame : ''} ${locked ? styles.lockedGame : ''}`}
             onClick={onSelect}
+            disabled={locked}
+            title={locked ? `${game.name}: em breve` : game.name}
             aria-pressed={selected}
         >
             <span className={`${styles.gameThumb} ${styles[game.theme]}`}>
                 <img src={game.imageSrc} alt="" />
             </span>
             <span className={styles.gameOptionCopy}>
-                <small>{selected ? 'Selecionado' : ''}</small>
+                <small>{locked ? <><LockKeyhole size={11} /> Em breve</> : selected ? 'Selecionado' : ''}</small>
                 <strong>{game.name}</strong>
             </span>
             <div
@@ -394,18 +380,18 @@ function GameOption({
 
 export default function GameArea({
     games = defaultGames,
-    defaultGameId,
     defaultSeasonId,
     rankingLabel = 'Piauí Ranking',
 }: GameAreaProps) {
-    const fallbackGameId = defaultGameId ?? games[0]?.id ?? ''
-    const initialGame = games.find((game) => game.id === fallbackGameId) ?? games[0]
+    const csGame = games.find((game) => game.theme === 'cs2')
+    const fallbackGameId = csGame?.id ?? ''
+    const initialGame = games.find((game) => game.id === fallbackGameId)
 
     const [selectedGameId, setSelectedGameId] = useState(initialGame?.id ?? '')
     const [selectedSeasonId, setSelectedSeasonId] = useState(defaultSeasonId ?? initialGame?.seasons[0]?.id ?? '')
     const [isPending, startTransition] = useTransition()
 
-    const selectedGame = games.find((game) => game.id === selectedGameId) ?? games[0]
+    const selectedGame = games.find((game) => game.id === selectedGameId && game.theme === 'cs2') ?? csGame
 
     if (!selectedGame) {
         return null
@@ -419,7 +405,7 @@ export default function GameArea({
         selectedGame.seasons.find((season) => season.id === resolvedSeasonId) ?? selectedGame.seasons[0]
 
     const rankedEntries: RankedEntry[] = [...(selectedSeason?.entries ?? [])]
-        .sort((firstEntry, secondEntry) => secondEntry.points - firstEntry.points)
+        .sort((firstEntry, secondEntry) => secondEntry.points - firstEntry.points || (secondEntry.titles ?? 0) - (firstEntry.titles ?? 0) || firstEntry.teamName.localeCompare(secondEntry.teamName, 'pt-BR'))
         .map((entry, index) => {
             const currentPosition = index + 1
             const { movement, delta } = getMovement(currentPosition, entry.previousPosition)
@@ -441,12 +427,34 @@ export default function GameArea({
                     <p>Acompanhe o desempenho das equipes em cada modalidade e temporada.</p>
                 </header>
 
+                    <div className={styles.gameSelector}>
+                        <div className={styles.asideHeader}>
+                            {/* <small>Modalidades</small> */}
+                            <h3><Gamepad2 /> Escolha o jogo</h3>
+                            <p>A tabela será atualizada com a classificação da modalidade selecionada.</p>
+                        </div>
+                        <div className={styles.gamesList}>
+                            {games.map((game) => (
+                                <GameOption
+                                    key={game.id}
+                                    game={game}
+                                    locked={game.theme !== 'cs2'}
+                                    selected={selectedGame.id === game.id}
+                                    onSelect={() => startTransition(() => {
+                                        setSelectedGameId(game.id)
+                                        setSelectedSeasonId(game.seasons[0]?.id ?? '')
+                                    })}
+                                />
+                            ))}
+                        </div>
+                    </div>
+
                 <div className={styles.layout}>
                     <div className={`${styles.rankingPanel} ${isPending ? styles.pending : ''}`}>
                         <div className={styles.panelHeader}>
                             <div className={styles.titleBlock}>
                                 <span className={styles.trophyBadge}>
-                                    <img src="http://localhost:3000/images/GameAreaImages/gameAreaCs.png" alt="" />
+                                    <img src="/images/GameAreaImages/gameAreaCs.png" alt="" />
                                 </span>
                                 <div>
                                     <small>{rankingLabel}</small>
@@ -474,8 +482,8 @@ export default function GameArea({
                             <span>#</span>
                             <span>Equipe</span>
                             <span>Pontuação</span>
-                            <span>V — D</span>
-                            <span>Últimas 5</span>
+                            <span>Títulos / Eventos</span>
+                            <span>Últimos 5 campeonatos</span>
                         </div>
 
                         <div className={styles.rankingTable} role="table" aria-label={`Classificação de ${selectedGame.name}`}>
@@ -487,26 +495,7 @@ export default function GameArea({
                         </div>
                     </div>
 
-                    <aside className={styles.gamesAside}>
-                        <div className={styles.asideHeader}>
-                            {/* <small>Modalidades</small> */}
-                            <h3><Gamepad2 /> Escolha o jogo</h3>
-                            <p>A tabela será atualizada com a classificação da modalidade selecionada.</p>
-                        </div>
-                        <div className={styles.gamesList}>
-                            {games.map((game) => (
-                                <GameOption
-                                    key={game.id}
-                                    game={game}
-                                    selected={selectedGame.id === game.id}
-                                    onSelect={() => startTransition(() => {
-                                        setSelectedGameId(game.id)
-                                        setSelectedSeasonId(game.seasons[0]?.id ?? '')
-                                    })}
-                                />
-                            ))}
-                        </div>
-                    </aside>
+                    <RankingExplainer />
                 </div>
             </div>
         </section>

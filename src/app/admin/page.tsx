@@ -15,6 +15,7 @@ type AdminSearchParams = {
   secao?: string
   temporada?: string
   jogo?: string
+  campeonato?: string
 }
 
 export default async function AdminPage({
@@ -44,6 +45,7 @@ export default async function AdminPage({
           activeTab={activeTab}
           activeContentSection={activeContentSection}
           data={data}
+          championshipId={params.campeonato}
         />
       </div>
     </AdminShell>

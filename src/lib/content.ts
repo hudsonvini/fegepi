@@ -25,7 +25,8 @@ export async function getPublicContent(): Promise<ContentData> {
   if (!hasSupabaseConfig()) return {}
   try {
     const supabase = await createClient()
-    const [heroContentQuery, gamesWithRecentFormQuery, eventsQuery, galleryEventsQuery, settingsQuery, photosQuery] = await Promise.all([
+    const [standingsQuery, heroContentQuery, gamesWithRecentFormQuery, eventsQuery, galleryEventsQuery, settingsQuery, photosQuery] = await Promise.all([
+      supabase.from('championship_standings').select('*'),
       supabase.from('hero_slides').select('id, image_url, alt_text, eyebrow, title, description, cta_label, link_url').eq('active', true).order('display_order'),
       supabase.from('games').select('id, name, short_name, theme, image_url, ranking_seasons(id, label, is_current, ranking_entries(id, points, wins, draws, losses, recent_form, previous_position, teams(id, name, city, crest_url, initials)))').eq('active', true).order('display_order'),
       supabase.from('events').select('*').eq('active', true).order('display_order'),
@@ -50,6 +51,7 @@ export async function getPublicContent(): Promise<ContentData> {
       ctaLabel: slide.cta_label || (slide.link_url ? 'Saiba mais' : undefined),
       href: slide.link_url || undefined,
     }))
+    const standings = new Map((standingsQuery.data ?? []).map((row) => [row.id, row]))
     const games: RankingGame[] = (gamesQuery.data ?? []).map((game: any) => ({
       id: game.id, name: game.name, shortName: game.short_name, cardLabel: game.name, theme: game.theme, imageSrc: displayMediaUrl(game.image_url) as string,
       seasons: (game.ranking_seasons ?? []).sort((a: any, b: any) => Number(b.is_current) - Number(a.is_current)).map((season: any) => ({
@@ -58,7 +60,10 @@ export async function getPublicContent(): Promise<ContentData> {
           id: entry.id,
           teamName: entry.teams?.name ?? 'Time',
           country: entry.teams?.city ?? 'Piauí',
-          points: entry.points,
+          points: standings.get(entry.id)?.points ?? 0,
+          titles: standings.get(entry.id)?.titles ?? 0,
+          participations: standings.get(entry.id)?.participations ?? 0,
+          recentPlacements: standings.get(entry.id)?.recent_placements ?? [],
           wins: entry.wins,
           draws: entry.draws,
           losses: entry.losses,
@@ -67,7 +72,7 @@ export async function getPublicContent(): Promise<ContentData> {
             D: 'draw',
             L: 'loss',
           }[result])).filter(Boolean),
-          previousPosition: entry.previous_position,
+          previousPosition: 0,
           logoText: entry.teams?.initials ?? 'TM',
           crestSrc: displayMediaUrl(entry.teams?.crest_url) ?? undefined,
           tone: 'navy',

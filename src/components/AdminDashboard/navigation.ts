@@ -17,6 +17,7 @@ export const adminTabs = [
   { id: 'conteudo', label: 'Gestão de conteúdo', icon: FileText },
   { id: 'times', label: 'Times', icon: UsersRound },
   { id: 'jogadores', label: 'Jogadores', icon: UserRound },
+  { id: 'campeonatos', label: 'Campeonatos', icon: CalendarDays },
   { id: 'tabela', label: 'Temporadas e tabela', icon: Trophy },
   { id: 'usuarios', label: 'Usuários e permissões', icon: Users },
 ] as const

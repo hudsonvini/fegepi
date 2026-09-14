@@ -1,7 +1,7 @@
 'use client'
 
 import { Pencil, Plus, X } from 'lucide-react'
-import { useEffect, useId, useState, type ReactNode } from 'react'
+import { useEffect, useId, useRef, useState, type ReactNode } from 'react'
 import { createPortal } from 'react-dom'
 import styles from './AdminModal.module.scss'
 
@@ -16,6 +16,8 @@ type Props = {
 export default function AdminModal({ title, description, triggerLabel, triggerIcon = 'plus', children }: Props) {
   const [isOpen, setIsOpen] = useState(false)
   const titleId = useId()
+  const dialogRef = useRef<HTMLElement>(null)
+  const triggerRef = useRef<HTMLButtonElement>(null)
   const TriggerIcon = triggerIcon === 'edit' ? Pencil : Plus
 
   useEffect(() => {
@@ -23,20 +25,33 @@ export default function AdminModal({ title, description, triggerLabel, triggerIc
 
     const previousOverflow = document.body.style.overflow
     document.body.style.overflow = 'hidden'
+    const focusable = () => Array.from(dialogRef.current?.querySelectorAll<HTMLElement>('button:not([disabled]), input:not([disabled]):not([type="hidden"]), select:not([disabled]), textarea:not([disabled]), a[href], [tabindex="0"]') ?? []).filter((element) => element.getClientRects().length > 0)
+    const firstInput = dialogRef.current?.querySelector<HTMLElement>('input:not([type="hidden"]), select, textarea')
+    ;(firstInput ?? focusable()[0])?.focus()
+    const trigger = triggerRef.current
     const closeOnEscape = (event: KeyboardEvent) => {
       if (event.key === 'Escape') setIsOpen(false)
+      if (event.key === 'Tab') {
+        const items = focusable()
+        const first = items[0]
+        const last = items[items.length - 1]
+        if (event.shiftKey && document.activeElement === first) { event.preventDefault(); last?.focus() }
+        else if (!event.shiftKey && document.activeElement === last) { event.preventDefault(); first?.focus() }
+      }
     }
     window.addEventListener('keydown', closeOnEscape)
 
     return () => {
       document.body.style.overflow = previousOverflow
       window.removeEventListener('keydown', closeOnEscape)
+      trigger?.focus()
     }
   }, [isOpen])
 
   const modal = isOpen ? createPortal(
     <div className={styles.overlay} role="presentation" onMouseDown={() => setIsOpen(false)}>
       <section
+        ref={dialogRef}
         className={styles.dialog}
         role="dialog"
         aria-modal="true"
@@ -61,7 +76,7 @@ export default function AdminModal({ title, description, triggerLabel, triggerIc
 
   return (
     <>
-      <button className={styles.trigger} type="button" onClick={() => setIsOpen(true)}>
+      <button ref={triggerRef} className={styles.trigger} type="button" aria-haspopup="dialog" onClick={() => setIsOpen(true)}>
         <TriggerIcon size={14} /> {triggerLabel}
       </button>
       {modal}

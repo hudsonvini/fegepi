@@ -1,3 +1,4 @@
+import ChampionshipsTab from './tabs/ChampionshipsTab'
 import ContentTab from './tabs/ContentTab'
 import OverviewTab from './tabs/OverviewTab'
 import StandingsTab from './tabs/StandingsTab'
@@ -10,10 +11,12 @@ export default function AdminTabContent({
   activeTab,
   activeContentSection,
   data,
+  championshipId,
 }: {
   activeTab: AdminTabId
   activeContentSection: ContentSectionId
   data: AdminData
+  championshipId?: string
 }) {
   switch (activeTab) {
     case 'conteudo':
@@ -22,6 +25,8 @@ export default function AdminTabContent({
       return <TeamsTab data={data} />
     case 'jogadores':
       return <PlayersTab data={data} />
+    case 'campeonatos':
+      return <ChampionshipsTab data={data} championshipId={championshipId} />
     case 'tabela':
       return <StandingsTab data={data} />
     case 'usuarios':

@@ -1,7 +1,7 @@
 'use client'
 
 import { useMemo, useState } from 'react'
-import { Search, Sparkles, Star, UsersRound } from 'lucide-react'
+import { AlertTriangle, EyeOff, Search, Sparkles, Star, UsersRound } from 'lucide-react'
 import { updateFeaturedPlayerAction } from '@/app/admin/actions'
 import { getProfileAvatar } from '@/lib/profile'
 import AdminSubmitButton from '@/components/AdminSubmitButton/AdminSubmitButton'
@@ -20,12 +20,12 @@ export default function PlayersTab({ data }: { data: AdminData }) {
   const players = useMemo(() => {
     const normalized = query.trim().toLocaleLowerCase('pt-BR')
     return data.profiles
-      .filter((profile) => profile.public_profile)
       .filter((profile) => {
         const membership = currentMemberships.find((item) => item.profile_id === profile.id)
-        if (teamId !== 'all' && membership?.team_id !== teamId) return false
+        const playerTeamId = membership?.team_id ?? profile.team_id
+        if (teamId !== 'all' && playerTeamId !== teamId) return false
         if (!normalized) return true
-        return [profile.full_name, profile.player_tag, profile.favorite_game, membership?.teams?.name]
+        return [profile.full_name, profile.player_tag, profile.favorite_game, membership?.teams?.name, profile.team]
           .some((value) => value?.toLocaleLowerCase('pt-BR').includes(normalized))
       })
       .sort((a, b) => Number(b.is_featured) - Number(a.is_featured)
@@ -49,6 +49,16 @@ export default function PlayersTab({ data }: { data: AdminData }) {
           <span>em destaque</span>
         </div>
       </header>
+
+      {!data.featureManagementAvailable && (
+        <div className={styles.migrationWarning} role="alert">
+          <AlertTriangle size={19} />
+          <div>
+            <strong>Configuração de destaques pendente no Supabase</strong>
+            <span>Os jogadores já podem ser consultados abaixo, mas é necessário aplicar <code>supabase/featured-players.sql</code> para salvar a vitrine.</span>
+          </div>
+        </div>
+      )}
 
       <div className={styles.toolbar}>
         <label className={styles.search}>
@@ -82,9 +92,12 @@ export default function PlayersTab({ data }: { data: AdminData }) {
                 {player.is_featured && <span><Star size={12} fill="currentColor" /></span>}
               </div>
               <div className={styles.identity}>
-                <small>{player.player_tag ? `@${player.player_tag}` : 'Jogador FEGEPI'}</small>
+                <small>
+                  {player.player_tag ? `@${player.player_tag}` : 'Jogador FEGEPI'}
+                  {!player.public_profile && <span className={styles.privateBadge}><EyeOff size={11} /> Perfil privado</span>}
+                </small>
                 <h2>{player.full_name || 'Jogador sem nome'}</h2>
-                <p>{membership?.teams?.name || 'Sem time'} <i /> {membership?.games?.short_name || player.favorite_game || 'Sem modalidade'}</p>
+                <p>{membership?.teams?.name || player.team || 'Sem time'} <i /> {membership?.games?.short_name || player.favorite_game || 'Sem modalidade'}</p>
               </div>
               <form action={updateFeaturedPlayerAction} className={styles.featureForm}>
                 <input type="hidden" name="profileId" value={player.id} />
@@ -99,14 +112,16 @@ export default function PlayersTab({ data }: { data: AdminData }) {
                     aria-label={`Ordem de ${player.full_name || 'jogador'} na vitrine`}
                   />
                 </label>
-                <input type="hidden" name="isFeatured" value={player.is_featured ? '' : 'on'} />
+                <input type="hidden" name="isFeatured" value="on" />
                 <AdminSubmitButton
-                  className={player.is_featured ? styles.removeButton : styles.featureButton}
+                  className={styles.featureButton}
+                  disabled={!data.featureManagementAvailable}
                   pendingLabel="Salvando..."
                 >
                   <Star size={15} fill={player.is_featured ? 'currentColor' : 'none'} />
-                  {player.is_featured ? 'Remover' : 'Destacar'}
+                  {player.is_featured ? 'Salvar ordem' : 'Destacar'}
                 </AdminSubmitButton>
+                {player.is_featured && <button type="submit" name="operation" value="remove" className={styles.removeButton} disabled={!data.featureManagementAvailable}>Remover destaque</button>}
               </form>
             </article>
           )
@@ -116,6 +131,7 @@ export default function PlayersTab({ data }: { data: AdminData }) {
             <Search size={26} />
             <strong>Nenhum jogador encontrado</strong>
             <span>Tente outro nome ou selecione todos os times.</span>
+            {(query || teamId !== 'all') && <button type="button" onClick={() => { setQuery(''); setTeamId('all') }}>Limpar filtros</button>}
           </div>
         )}
       </div>

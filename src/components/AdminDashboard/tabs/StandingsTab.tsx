@@ -1,5 +1,7 @@
 import Link from 'next/link'
-import { CalendarDays, ChartNoAxesCombined, Plus, Trophy, UsersRound } from 'lucide-react'
+import AdminModal from '@/components/AdminModal/AdminModal'
+import ui from './ChampionshipsTab.module.scss'
+import { ChartNoAxesCombined, Plus, Trophy, UsersRound } from 'lucide-react'
 import {
   addTeamToSeasonAction,
   createSeasonAction,
@@ -28,9 +30,11 @@ export default function StandingsTab({ data }: { data: AdminData }) {
       <SectionTitle
         eyebrow="Campeonatos"
         title="Temporadas e tabela"
-        description="Organize as temporadas e atualize a mesma classificação exibida na página inicial."
+        description="Crie temporadas e inclua times. A pontuação vem dos campeonatos concluídos."
       />
 
+      {!data.championshipsAvailable && <p role="alert">A integração de campeonatos ainda precisa ser ativada no banco. A pontuação será exibida após a configuração.</p>}
+      <Link href={adminHref('campeonatos', selectedSeason?.id, selectedGame?.id)}>Administrar campeonatos →</Link>
       <AdminGameSeasonSelector
         games={data.games}
         seasons={data.seasons}
@@ -38,16 +42,14 @@ export default function StandingsTab({ data }: { data: AdminData }) {
         seasonId={selectedSeason?.id}
       />
 
-      <div className={styles.seasonLayout}>
-        <section className={styles.panel}>
-          <div className={styles.panelHead}>
-            <div><p className={styles.eyebrow}>Nova temporada</p><h2>Preparar campeonato</h2></div>
-            <CalendarDays size={21} />
-          </div>
+      <div className={ui.toolbar}>
+        <div><h2>Organizar temporada</h2><p>Cadastre a temporada e escolha as equipes participantes.</p></div>
+        <div className={ui.actions}>
+        <AdminModal key={`season-${selectedSeason?.id}`} title="Preparar temporada" triggerLabel="Nova temporada" description="Crie uma temporada para a modalidade selecionada.">
           <form action={createSeasonAction} className={styles.form}>
             <input type="hidden" name="gameId" value={selectedGame?.id ?? ''} />
             <p className={styles.contextInfo}>Criando para <strong>{selectedGame?.name ?? 'o jogo selecionado'}</strong></p>
-            <input name="label" required placeholder="Ex.: Temporada 2026" />
+            <label>Nome da temporada<input name="label" required placeholder="Ex.: Temporada 2026" /></label>
             <label className={styles.check}>
               <input name="isCurrent" type="checkbox" /> Definir como temporada atual
             </label>
@@ -55,29 +57,25 @@ export default function StandingsTab({ data }: { data: AdminData }) {
               <Plus size={16} /> Criar temporada
             </AdminSubmitButton>
           </form>
-        </section>
-
-        <section className={styles.panel}>
-          <div className={styles.panelHead}>
-            <div><p className={styles.eyebrow}>Participantes</p><h2>Adicionar time à tabela</h2></div>
-            <UsersRound size={21} />
-          </div>
+        </AdminModal>
+        <AdminModal key={`team-${selectedSeason?.id}-${data.seasonEntries.length}`} title="Adicionar time à tabela" triggerLabel="Adicionar time" description="Selecione uma equipe vinculada à modalidade desta temporada.">
           <form action={addTeamToSeasonAction} className={styles.form}>
             <input type="hidden" name="seasonId" value={selectedSeason?.id ?? ''} />
             <input type="hidden" name="gameId" value={selectedGame?.id ?? ''} />
             <p className={styles.contextInfo}>{selectedSeason ? <>Tabela: <strong>{selectedSeason.label}</strong></> : 'Crie uma temporada primeiro.'}</p>
-            <select name="teamId" required defaultValue="">
+            <select name="teamId" aria-label="Time participante" required defaultValue="">
               <option value="" disabled>Selecione o time</option>
               {eligibleTeams.map((team) => <option key={team.id} value={team.id}>{team.name}</option>)}
             </select>
             <p className={styles.automaticHint}>
-              O time começa com a pontuação zerada. Vitórias, empates, derrotas, pontos e forma recente serão calculados pelo histórico.
+              O time começa com zero pontos. Cadastre os campeonatos e suas colocações na aba Campeonatos.
             </p>
             <AdminSubmitButton className={styles.primaryButton} pendingLabel="Incluindo time..." disabled={!selectedSeason || !eligibleTeams.length}>
               <Plus size={16} /> Incluir na tabela
             </AdminSubmitButton>
           </form>
-        </section>
+        </AdminModal>
+        </div>
       </div>
 
       <section className={`${styles.panel} ${styles.standingsPanel}`}>
@@ -89,7 +87,7 @@ export default function StandingsTab({ data }: { data: AdminData }) {
                 ? `${gameName(selectedSeason.games)} — ${selectedSeason.label}`
               : 'Escolha ou crie uma temporada'}
             </h2>
-            <p className={styles.managerHint}>Registre cada resultado e deixe a classificação ser recalculada automaticamente.</p>
+            <p className={styles.managerHint}>1º: 250 pts · 2º: 125 pts · 3º: 70 pts · 4º: 50 pts. Os resultados são administrados nos campeonatos.</p>
           </div>
           {selectedSeason?.is_current && <span className={styles.currentBadge}>Temporada atual</span>}
         </div>
@@ -112,7 +110,7 @@ export default function StandingsTab({ data }: { data: AdminData }) {
             <div className={styles.rankingSummary}>
               <span><Trophy size={16} /><strong>{data.seasonEntries[0]?.teams?.name}</strong> líder atual</span>
               <span><UsersRound size={16} /><strong>{data.seasonEntries.length}</strong> times participantes</span>
-              <span><ChartNoAxesCombined size={16} />Ordenação automática por pontos e vitórias</span>
+              <span><ChartNoAxesCombined size={16} />Desempate por títulos e nome do time</span>
             </div>
             <div className={`${styles.tableWrap} ${styles.automaticRankingTable}`}>
               <table>
@@ -120,12 +118,10 @@ export default function StandingsTab({ data }: { data: AdminData }) {
                   <tr>
                     <th>#</th>
                     <th>Equipe</th>
-                    <th>V</th>
-                    <th>E</th>
-                    <th>D</th>
+                    <th>Títulos</th>
+                    <th>Participações</th>
                     <th>Pts</th>
-                    <th>Últimas 5</th>
-                    <th>Registrar resultado</th>
+                    <th>Últimos 5 campeonatos</th>
                     <th>Ações</th>
                   </tr>
                 </thead>

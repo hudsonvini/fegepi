@@ -191,7 +191,9 @@
 }
 
 @keyframes indicatorProgress {
-  to { transform: scaleX(1); }
+  to {
+    transform: scaleX(1);
+  }
 }
 
 @keyframes imageReveal {

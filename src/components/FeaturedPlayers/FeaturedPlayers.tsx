@@ -1,7 +1,7 @@
 'use client'
 
 import Link from 'next/link'
-import { ArrowUpRight, Gamepad2, MoveHorizontal, ShieldCheck } from 'lucide-react'
+import { ArrowUpRight, ChevronLeft, ChevronRight, Gamepad2, MoveHorizontal } from 'lucide-react'
 import { useEffect, useRef, useState, type CSSProperties, type PointerEvent as ReactPointerEvent } from 'react'
 import type { FeaturedPlayer } from '@/lib/players'
 import { getProfileAvatar } from '@/lib/profile'
@@ -81,6 +81,7 @@ export default function FeaturedPlayers({ players }: { players: FeaturedPlayer[]
   const viewportRef = useRef<HTMLDivElement>(null)
   const trackRef = useRef<HTMLDivElement>(null)
   const [progress, setProgress] = useState(0.5)
+  const [usesButtons, setUsesButtons] = useState(false)
 
   useEffect(() => {
     const section = sectionRef.current
@@ -94,18 +95,47 @@ export default function FeaturedPlayers({ players }: { players: FeaturedPlayer[]
   }, [])
 
   useEffect(() => {
+    const query = window.matchMedia('(min-width: 781px) and (max-width: 1500px)')
+    const updateNavigation = () => {
+      setUsesButtons(query.matches)
+      setProgress(query.matches ? 0 : 0.5)
+    }
+    updateNavigation()
+    query.addEventListener('change', updateNavigation)
+    return () => query.removeEventListener('change', updateNavigation)
+  }, [])
+
+  useEffect(() => {
+    const viewport = viewportRef.current
+    const track = trackRef.current
+    if (!viewport || !track) return
+
+    const updateTravel = () => {
+      const travel = Math.max(0, track.scrollWidth - viewport.clientWidth)
+      track.style.setProperty('--travel', `${-travel * progress}px`)
+    }
+    updateTravel()
+    const observer = new ResizeObserver(updateTravel)
+    observer.observe(viewport)
+    observer.observe(track)
+    return () => observer.disconnect()
+  }, [progress, players.length])
+
+  function handlePointerMove(event: ReactPointerEvent<HTMLDivElement>) {
+    if (usesButtons || event.pointerType === 'touch') return
+    const bounds = event.currentTarget.getBoundingClientRect()
+    const normalized = Math.min(1, Math.max(0, (event.clientX - bounds.left) / bounds.width))
+    setProgress(normalized)
+  }
+
+  function moveCards(direction: -1 | 1) {
     const viewport = viewportRef.current
     const track = trackRef.current
     if (!viewport || !track) return
     const travel = Math.max(0, track.scrollWidth - viewport.clientWidth)
-    track.style.setProperty('--travel', `${-travel * progress}px`)
-  }, [progress, players.length])
-
-  function handlePointerMove(event: ReactPointerEvent<HTMLDivElement>) {
-    if (event.pointerType === 'touch') return
-    const bounds = event.currentTarget.getBoundingClientRect()
-    const normalized = Math.min(1, Math.max(0, (event.clientX - bounds.left) / bounds.width))
-    setProgress(normalized)
+    if (!travel) return
+    const pageStep = Math.min(1, (viewport.clientWidth * 0.82) / travel)
+    setProgress((current) => Math.min(1, Math.max(0, current + direction * pageStep)))
   }
 
   if (!players.length) return null
@@ -128,7 +158,7 @@ export default function FeaturedPlayers({ players }: { players: FeaturedPlayer[]
         ref={viewportRef}
         className={styles.viewport}
         onPointerMove={handlePointerMove}
-        onPointerLeave={() => setProgress(0.5)}
+        onPointerLeave={() => !usesButtons && setProgress(0.5)}
       >
         <div ref={trackRef} className={styles.track}>
           {players.map((player, index) => <PlayerCard key={player.id} player={player} index={index} />)}
@@ -139,6 +169,17 @@ export default function FeaturedPlayers({ players }: { players: FeaturedPlayer[]
         <MoveHorizontal size={16} />
         <span>Mova o cursor para explorar</span>
         <div><i style={{ transform: `scaleX(${Math.max(.08, progress)})` }} /></div>
+      </div>
+      <div className={styles.navigation} aria-label="Navegação dos jogadores em destaque">
+        <span>Explore os destaques</span>
+        <div>
+          <button type="button" onClick={() => moveCards(-1)} disabled={progress <= 0} aria-label="Ver jogadores anteriores">
+            <ChevronLeft size={19} />
+          </button>
+          <button type="button" onClick={() => moveCards(1)} disabled={progress >= 1} aria-label="Ver próximos jogadores">
+            <ChevronRight size={19} />
+          </button>
+        </div>
       </div>
     </section>
   )

@@ -17,6 +17,8 @@ import type {
 export async function getAdminData(selectedSeasonId?: string, selectedGameId?: string): Promise<AdminData> {
   const supabase = await createClient()
   const [
+    championshipsQuery,
+    standingsQuery,
     heroSlidesQuery,
     { data: games },
     { data: seasons },
@@ -25,10 +27,12 @@ export async function getAdminData(selectedSeasonId?: string, selectedGameId?: s
     { data: events },
     { data: photos },
     { data: gallerySettings },
-    { data: profiles },
+    profilesQuery,
     { data: teamGames },
     { data: memberships },
   ] = await Promise.all([
+    supabase.from('championships').select('id,season_id,name,played_at,status,version,championship_results(team_id,placement)').order('played_at', { ascending: false }).order('created_at', { ascending: false }),
+    supabase.from('championship_standings').select('*'),
     supabase.from('hero_slides').select('id,image_url,alt_text,eyebrow,title,description,cta_label,link_url,active,display_order').order('display_order'),
     supabase.from('games').select('id,name,short_name,theme,image_url,active,display_order').order('display_order'),
     supabase.from('ranking_seasons').select('id,label,is_current,game_id,games(name)').order('created_at', { ascending: false }),
@@ -49,9 +53,28 @@ export async function getAdminData(selectedSeasonId?: string, selectedGameId?: s
   const entries = entriesWithRecentFormError
     ? (await supabase.from('ranking_entries').select('id,season_id,team_id,points,wins,draws,losses,previous_position,teams(id,name,city,crest_url,initials)')).data
     : entriesWithRecentForm
+  let profileRows = profilesQuery.data
+  const featureManagementAvailable = !profilesQuery.error
+  if (profilesQuery.error) {
+    const { data: fallbackProfiles } = await supabase
+      .from('profiles')
+      .select('id,full_name,email,avatar_url,team,team_id,role,gender,whatsapp,address,favorite_game,player_tag,bio,public_profile,created_at')
+      .order('created_at', { ascending: false })
+    profileRows = (fallbackProfiles ?? []).map((profile) => ({
+      ...profile,
+      is_featured: false,
+      featured_order: 0,
+    }))
+  }
+
   const allGames = (games ?? []) as Game[]
   const allSeasons = (seasons ?? []) as unknown as Season[]
-  const allEntries = (entries ?? []) as unknown as RankingEntry[]
+  const standingsByEntry = new Map((standingsQuery.data ?? []).map((row) => [row.id, row]))
+  const allEntries = ((entries ?? []) as unknown as RankingEntry[]).map((entry) => {
+    const standing = standingsByEntry.get(entry.id)
+    return { ...entry, points: standing?.points ?? 0, titles: standing?.titles ?? 0,
+      participations: standing?.participations ?? 0, recent_placements: standing?.recent_placements ?? [], previous_position: 0 }
+  })
   const seasonFromParam = allSeasons.find((season) => season.id === selectedSeasonId)
   const selectedGame = selectedGameId === 'all'
     ? undefined
@@ -68,11 +91,11 @@ export async function getAdminData(selectedSeasonId?: string, selectedGameId?: s
   const seasonEntries = selectedSeason
     ? allEntries
       .filter((entry) => entry.season_id === selectedSeason.id)
-      .sort((a, b) => b.points - a.points || b.wins - a.wins || (a.teams?.name ?? '').localeCompare(b.teams?.name ?? ''))
+      .sort((a, b) => b.points - a.points || (b.titles ?? 0) - (a.titles ?? 0) || (a.teams?.name ?? '').localeCompare(b.teams?.name ?? '', 'pt-BR'))
     : []
 
   const allTeams = (teams ?? []) as Team[]
-  const allProfiles = (profiles ?? []) as Profile[]
+  const allProfiles = (profileRows ?? []) as Profile[]
   const hydratedMemberships = (memberships ?? []).map((membership) => ({
     ...membership,
     profiles: allProfiles.find((profile) => profile.id === membership.profile_id) ?? null,
@@ -90,6 +113,9 @@ export async function getAdminData(selectedSeasonId?: string, selectedGameId?: s
     photos: (photos ?? []) as GalleryPhoto[],
     gallerySettings: (gallerySettings as GallerySettings | null) ?? null,
     profiles: allProfiles,
+    featureManagementAvailable,
+    championshipsAvailable: !championshipsQuery.error && !standingsQuery.error,
+    championships: (championshipsQuery.data ?? []) as import('@/components/AdminDashboard/types').Championship[],
     teamGames: (teamGames ?? []) as TeamGame[],
     memberships: hydratedMemberships,
     selectedGame,
