@@ -7,7 +7,7 @@ export default function ChampionshipPlacements({ results = [] }: { results?: Rec
     {Array.from({ length: 5 }, (_, index) => {
       const result = results[index]
       const place = result?.placement
-      const highlighted = place != null && place >= 1 && place <= 5
+      const highlighted = place != null && place >= 1 && place <= 8
       return <span key={result?.id ?? index} className={`${styles.badge} ${highlighted ? styles[`place${place}`] : styles.empty}`} title={placementLabel(result)} aria-label={placementLabel(result)}>
         <Trophy size={13} aria-hidden="true" /><b>{highlighted ? `${place}º` : '—'}</b>
       </span>

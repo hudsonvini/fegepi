@@ -1,0 +1,11 @@
+{
+  "provider": "Resend",
+  "host": "smtp.resend.com",
+  "port": 465,
+  "username": "resend",
+  "sender_name": "FEGEPI",
+  "sender_email": "nao-responda@notificacoes.fegepi.com.br",
+  "domain_to_verify": "notificacoes.fegepi.com.br",
+  "password_instruction": "Preencher no painel Supabase com a chave API da conta Resend da FEGEPI. Não salvar a chave neste arquivo.",
+  "status": "Aguardando domínio verificado e credencial SMTP; este arquivo é uma referência e não aplica configurações automaticamente."
+}

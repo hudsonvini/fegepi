@@ -174,6 +174,7 @@ export async function addTeamToSeasonAction(formData: FormData) {
   const seasonId = z.string().uuid().safeParse(text(formData, 'seasonId'))
   const teamId = z.string().uuid().safeParse(text(formData, 'teamId'))
   if (!seasonId.success || !teamId.success) fail('Selecione uma temporada e um time.', 'tabela')
+  await requireActiveTeam(supabase, teamId.data)
   const { data: season } = await supabase.from('ranking_seasons').select('game_id').eq('id', seasonId.data).maybeSingle()
   if (!season) fail('Temporada não encontrada.', 'tabela')
   const { data: teamGame } = await supabase.from('team_games').select('team_id').eq('team_id', teamId.data).eq('game_id', season.game_id).eq('active', true).maybeSingle()
@@ -201,15 +202,49 @@ async function replaceTeamGames(supabase: SupabaseClient, teamId: string, gameId
   if (error) fail('Não foi possível vincular os jogos ao time.', 'times')
 }
 
+async function requireActiveTeam(supabase: SupabaseClient, teamId: string) {
+  const { data, error } = await supabase.from('teams').select('active').eq('id', teamId).maybeSingle()
+  if (error || !data) fail('Time não encontrado.', 'times')
+  if (!data.active) fail('Este time está desativado. Reative-o antes de adicionar participantes ou inscrições.', 'times')
+}
+
+export async function setTeamActiveAction(formData: FormData) {
+  await requireAdmin()
+  const id = z.uuid().safeParse(text(formData, 'id'))
+  const active = z.enum(['true', 'false']).safeParse(text(formData, 'active'))
+  if (!id.success || !active.success) fail('Dados do time inválidos.', 'times')
+  const supabase = await createClient()
+  const { data, error } = await supabase.from('teams').update({ active: active.data === 'true' }).eq('id', id.data).select('id').maybeSingle()
+  if (error || !data) fail('Não foi possível alterar a situação do time.', 'times')
+  done(active.data === 'true' ? 'Time reativado.' : 'Time desativado. Elenco, resultados e histórico foram preservados.', 'times')
+}
+
 export async function assignPlayerToTeamGameAction(formData: FormData) {
   await requireAdmin()
   const supabase = await createClient()
+  const targetTeam = z.uuid().safeParse(text(formData, 'teamId'))
+  if (!targetTeam.success) fail('Time inválido.', 'times')
+  await requireActiveTeam(supabase, targetTeam.data)
+  if (!text(formData, 'profileId')) {
+    const parsed = z.object({
+      nickname: z.string().trim().min(1).max(60), team_id: z.uuid(), game_id: z.uuid(),
+      role: z.enum(['player', 'captain', 'coach', 'reserve']), started_at: z.iso.date(),
+    }).safeParse({ nickname: text(formData, 'nickname').replace(/^@+/, ''), team_id: text(formData, 'teamId'),
+      game_id: text(formData, 'gameId'), role: text(formData, 'membershipRole'), started_at: text(formData, 'startedAt') })
+    if (!parsed.success) fail('Informe nick, jogo, função e data válidos.', 'times')
+    const { data: active } = await supabase.from('team_games').select('team_id').eq('team_id', parsed.data.team_id).eq('game_id', parsed.data.game_id).eq('active', true).maybeSingle()
+    if (!active) fail('O time não está ativo nessa modalidade.', 'times')
+    const { error } = await supabase.from('player_team_memberships').insert(parsed.data)
+    if (error) fail('Não foi possível adicionar. Confira se esse nick já está no elenco ativo.', 'times')
+    done('Nick adicionado ao elenco. O vínculo com uma conta é opcional.', 'times')
+  }
   const profileId = z.string().uuid().safeParse(text(formData, 'profileId'))
+  const nickname = z.string().trim().max(60).safeParse(text(formData, 'nickname').replace(/^@+/, ''))
   const teamId = z.string().uuid().safeParse(text(formData, 'teamId'))
   const gameId = z.string().uuid().safeParse(text(formData, 'gameId'))
   const role = z.enum(['player', 'captain', 'coach', 'reserve']).safeParse(text(formData, 'membershipRole'))
   const startedAt = z.string().regex(/^\d{4}-\d{2}-\d{2}$/).safeParse(text(formData, 'startedAt'))
-  if (!profileId.success || !teamId.success || !gameId.success || !role.success || !startedAt.success) {
+  if (!profileId.success || !nickname.success || !teamId.success || !gameId.success || !role.success || !startedAt.success) {
     fail('Selecione jogador, jogo, função e data de entrada.', 'times')
   }
 
@@ -233,6 +268,7 @@ export async function assignPlayerToTeamGameAction(formData: FormData) {
 
   if (current?.team_id === teamId.data) {
     const { error: updateError } = await supabase.from('player_team_memberships').update({
+      ...(nickname.data ? { nickname: nickname.data } : {}),
       role: role.data,
       started_at: startedAt.data,
     }).eq('id', current.id)
@@ -250,6 +286,7 @@ export async function assignPlayerToTeamGameAction(formData: FormData) {
   }
 
   const { data: membership, error } = await supabase.from('player_team_memberships').insert({
+    nickname: nickname.data || null,
     profile_id: profileId.data,
     team_id: teamId.data,
     game_id: gameId.data,
@@ -278,6 +315,7 @@ export async function endPlayerMembershipAction(formData: FormData) {
   if (!membership) fail('Vínculo não encontrado.', 'times')
   const { error } = await supabase.from('player_team_memberships').update({ ended_at: endedAt.data }).eq('id', membershipId.data)
   if (error) fail('Não foi possível encerrar o vínculo.', 'times', undefined, undefined, membership.game_id)
+  if (!membership.profile_id) done('Passagem encerrada e histórico preservado.', 'times', undefined, undefined, membership.game_id)
 
   const { data: anotherCurrent } = await supabase.from('player_team_memberships')
     .select('teams(id,name)')
@@ -289,6 +327,23 @@ export async function endPlayerMembershipAction(formData: FormData) {
   const nextTeam = Array.isArray(anotherCurrent?.teams) ? anotherCurrent.teams[0] : anotherCurrent?.teams
   await supabase.from('profiles').update({ team_id: nextTeam?.id ?? null, team: nextTeam?.name ?? null }).eq('id', membership.profile_id)
   done('Passagem encerrada e histórico preservado.', 'times', undefined, undefined, membership.game_id)
+}
+
+export async function linkRosterProfileAction(formData: FormData) {
+  await requireAdmin()
+  const parsed = z.object({ membershipId: z.uuid(), profileId: z.uuid() }).safeParse({
+    membershipId: text(formData, 'membershipId'), profileId: text(formData, 'profileId'),
+  })
+  if (!parsed.success) fail('Selecione uma conta para vincular ao nick.', 'times')
+  const supabase = await createClient()
+  const { data: membership, error } = await supabase.from('player_team_memberships')
+    .update({ profile_id: parsed.data.profileId }).eq('id', parsed.data.membershipId)
+    .is('profile_id', null).is('ended_at', null).select('team_id').maybeSingle()
+  if (error || !membership) fail('Não foi possível vincular. A conta pode já estar em um elenco ativo desse jogo. Recarregue a página.', 'times')
+  const { data: team } = await supabase.from('teams').select('name').eq('id', membership.team_id).single()
+  const { error: profileError } = await supabase.from('profiles').update({ team_id: membership.team_id, team: team?.name ?? null }).eq('id', parsed.data.profileId)
+  if (profileError) fail('Conta vinculada ao elenco, mas não foi possível sincronizar o time no perfil.', 'times')
+  done('Conta vinculada ao nick, preservando a entrada e o histórico.', 'times')
 }
 
 export async function updateUserManagementAction(formData: FormData) {
@@ -532,6 +587,15 @@ export async function deleteContentAction(formData: FormData) {
   if (!['hero_slides', 'games', 'events', 'gallery_photos', 'ranking_seasons', 'teams', 'ranking_entries'].includes(table)) fail('Ação inválida.', tab, undefined, section)
   const supabase = await createClient()
   const mediaColumns = mediaColumnsByTable[table] ?? []
+  if (table === 'teams') {
+    const references = await Promise.all(['player_team_memberships', 'ranking_entries', 'profiles'].map((source) =>
+      supabase.from(source).select('id', { count: 'exact', head: true }).eq('team_id', id),
+    ))
+    if (references.some((result) => result.error)) fail('Não foi possível verificar os vínculos do time.', 'times')
+    if (references.some((result) => (result.count ?? 0) > 0)) {
+      fail('Este time possui elenco, histórico, temporadas ou contas vinculadas. Use Desativar time para preservar esses registros.', 'times', undefined, undefined, gameId)
+    }
+  }
   let mediaUrls: string[] = []
   if (mediaColumns.length) {
     const { data: item, error: lookupError } = await supabase.from(table).select(mediaColumns.join(',')).eq('id', id).maybeSingle()
@@ -542,6 +606,7 @@ export async function deleteContentAction(formData: FormData) {
       .filter((url): url is string => typeof url === 'string' && url.length > 0))]
   }
   const { error } = await supabase.from(table).delete().eq('id', id)
+  if (error?.code === '23503' && table === 'teams') fail('Este time possui vínculos competitivos. Use Desativar time para preservar o histórico.', 'times', undefined, undefined, gameId)
   if (error?.code === '23503' && table === 'ranking_entries') fail('Este time participa de campeonatos. Remova suas participações antes de retirá-lo da temporada.', tab, undefined, section, gameId)
   if (error) fail('Não foi possível remover este item.', tab, undefined, section)
 

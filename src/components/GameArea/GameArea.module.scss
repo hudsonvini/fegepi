@@ -766,3 +766,4 @@
 .gameSelector .lockedGame { opacity: .42; cursor: not-allowed; filter: saturate(.55); }
 .gameSelector .lockedGame:hover { background: transparent; transform: none; border-color: transparent; }
 .gameSelector .gameOptionCopy small { display: flex; align-items: center; gap: 4px; }
+.pagination { display: flex; flex-wrap: wrap; align-items: center; justify-content: center; gap: 16px; padding: 20px; font-size: 13px; } .pagination button { border: 1px solid #dfe7f0; border-radius: 8px; padding: 10px 16px; background: white; color: #034ea7; cursor: pointer; } .pagination button:disabled { opacity: .4; cursor: default; }

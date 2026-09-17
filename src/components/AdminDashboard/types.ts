@@ -25,6 +25,7 @@ export type Game = {
 }
 
 export type Team = {
+  active: boolean
   id: string
   name: string
   city: string
@@ -43,7 +44,8 @@ export type MembershipRole = 'player' | 'captain' | 'coach' | 'reserve'
 
 export type PlayerTeamMembership = {
   id: string
-  profile_id: string
+  profile_id: string | null
+  nickname: string | null
   team_id: string
   game_id: string
   role: MembershipRole

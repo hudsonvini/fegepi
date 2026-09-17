@@ -73,7 +73,7 @@ export default function PlayersTab({ data }: { data: AdminData }) {
           <UsersRound size={18} />
           <select value={teamId} onChange={(event) => setTeamId(event.target.value)}>
             <option value="all">Todos os times</option>
-            {data.teams.map((team) => <option key={team.id} value={team.id}>{team.name}</option>)}
+            {data.teams.filter((team) => team.active).map((team) => <option key={team.id} value={team.id}>{team.name}</option>)}
           </select>
         </label>
       </div>

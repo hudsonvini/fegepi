@@ -61,6 +61,7 @@ create table if not exists public.ranking_seasons (
 
 create table if not exists public.teams (
   id uuid primary key default gen_random_uuid(),
+  active boolean not null default true,
   name text not null unique,
   city text not null default 'Piauí',
   crest_url text,

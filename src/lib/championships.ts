@@ -1,6 +1,7 @@
 export type RecentPlacement = { id: string; name: string; placement: number | null }
+export const PLACEMENT_POINTS = [250, 200, 100, 80, 60, 40, 20, 10] as const
 export function placementPoints(placement: number | null): number {
-  return ({ 1: 250, 2: 125, 3: 70, 4: 50 } as Record<number, number>)[placement ?? 0] ?? 0
+  return PLACEMENT_POINTS[(placement ?? 0) - 1] ?? 0
 }
 export function placementLabel(result?: RecentPlacement): string {
   if (!result) return 'Sem campeonato concluído'

@@ -78,7 +78,7 @@ export async function getPublicContent(): Promise<ContentData> {
           tone: 'navy',
         })),
       })),
-    })).filter((game) => game.seasons.length > 0)
+    }))
     const events: EventCarouselItem[] = (eventsQuery.data ?? []).map((event: any) => ({
       id: event.id, title: event.title, startsAt: event.starts_at, dateLabel: formatDate(event.starts_at, event.ends_at), subtitle: event.subtitle ?? undefined,
       statusLabel: event.status_label, statusTone: event.status_tone, imageSrc: displayMediaUrl(event.image_url) as string, imageAlt: `Imagem do evento ${event.title}`,
@@ -128,7 +128,7 @@ export async function getPublicContent(): Promise<ContentData> {
     } : undefined
     return {
       heroSlides: heroSlides.length ? heroSlides : undefined,
-      games: games.length ? games : undefined,
+      games,
       events: events.length ? events : undefined,
       gallery,
     }

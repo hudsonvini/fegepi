@@ -685,3 +685,13 @@
         font-size: 17px;
     }
 }
+
+.photoTabs { display: flex; gap: 8px; margin: 20px 0; }
+.photoTabs button, .photoCancel { border: 1px solid #cddbec; border-radius: 9px; padding: 10px 15px; background: white; color: #034ea7; cursor: pointer; font: inherit; }
+.photoTabs button[aria-pressed='true'] { color: white; background: #034ea7; border-color: #034ea7; }
+.photoDropzone { position: relative; display: flex; flex-direction: column; align-items: center; gap: 10px; padding: 30px 18px; text-align: center; border: 2px dashed #9bb8d9; border-radius: 16px; color: #034ea7; background: #f5f9ff; cursor: pointer; }
+.photoDropzone span { font-size: 13px; color: #536781; }
+.photoDropzone input { width: 100%; max-width: 300px; font: inherit; font-size: 13px; }
+.photoDropzone:focus-within, .photoDragging { outline: 3px solid #f9d733; outline-offset: 3px; background: #eaf3ff; }
+.photoError { color: #b42318; font-size: 13px; }
+.photoCancel { margin-top: 10px; font-size: 13px; }

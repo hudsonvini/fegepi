@@ -1,6 +1,7 @@
 .layout {
     display: grid;
     gap: 16px;
+    min-width: 0;
 }
 
 .section {
@@ -10,6 +11,7 @@
     border-radius: 15px;
     padding: 15px;
     background: #fbfdff;
+    min-width: 0;
 }
 
 .heading {
@@ -85,7 +87,8 @@
 }
 
 .assignForm,
-.assignForm label {
+.assignForm label,
+.linkForm label {
     display: grid;
     gap: 6px;
 }
@@ -95,14 +98,17 @@
     gap: 10px;
 }
 
-.assignForm label {
+.assignForm label,
+.linkForm label {
     color: #526a84;
     font-size: 10px;
     font-weight: 600;
+    min-width: 0;
 }
 
-.assignForm input,
-.assignForm select {
+.assignForm input:not([type='checkbox']):not([type='hidden']),
+.assignForm select,
+.linkForm select {
     width: 100%;
     min-height: 40px;
     border: 1px solid #d7e2ee;
@@ -113,6 +119,39 @@
     background: #fff;
     font: inherit;
     font-size: 11px;
+    min-width: 0;
+    box-sizing: border-box;
+}
+
+.assignForm .accountToggle {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    padding: 11px 12px;
+    border: 1px solid #dce7f3;
+    border-radius: 10px;
+    background: #f0f6fd;
+    cursor: pointer;
+    line-height: 1.5;
+}
+
+.accountToggle input {
+    width: 17px;
+    height: 17px;
+    min-height: 0;
+    flex: 0 0 17px;
+    margin: 0;
+    padding: 0;
+    accent-color: #0865bf;
+    cursor: pointer;
+}
+
+.assignForm input:focus-visible,
+.assignForm select:focus-visible,
+.linkForm select:focus-visible,
+.layout button:focus-visible {
+    outline: 2px solid #0865bf;
+    outline-offset: 2px;
 }
 
 .searchField>span {
@@ -224,7 +263,7 @@
 
 .formRow {
     display: grid;
-    grid-template-columns: 1fr 1fr;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
     gap: 9px;
 }
 
@@ -249,6 +288,8 @@
     background: linear-gradient(110deg, #075db6, #0b7bd3);
 }
 
+.primaryButton:disabled { opacity: .5; cursor: not-allowed; }
+
 .secondaryButton {
     width: 100%;
     color: #075daf;
@@ -262,47 +303,67 @@
 }
 
 .roster article {
-    display: flex;
+    display: grid;
+    grid-template-columns: 34px minmax(0, 1fr) auto;
     align-items: center;
     gap: 9px;
     border-radius: 10px;
-    padding: 8px;
+    padding: 12px;
+    border: 1px solid #e6edf5;
     background: #fff;
 }
 
-.roster article>div {
+.playerInfo {
     min-width: 0;
     flex: 1;
 }
 
-.roster a,
-.roster span {
+.playerInfo a,
+.playerInfo > strong,
+.playerInfo > span {
     display: block;
 }
 
-.roster a {
+.playerInfo a,
+.playerInfo > strong {
     color: #284662;
-    font-size: 10.5px;
+    font-size: 13px;
     font-weight: 650;
+    overflow-wrap: anywhere;
 }
 
-.roster span {
+.playerInfo > span {
     margin-top: 2px;
     color: #8494a6;
-    font-size: 8.5px;
+    font-size: 10px;
 }
 
-.roster button {
+.endButton {
     border: 0;
     border-radius: 7px;
-    padding: 6px 8px;
+    padding: 9px 11px;
     color: #b53c48;
     background: #fff0f2;
     cursor: pointer;
     font: inherit;
-    font-size: 8.5px;
+    font-size: 10px;
     font-weight: 650;
 }
+
+.endForm { margin: 0; }
+
+.linkForm {
+    grid-column: 1 / -1;
+    display: grid;
+    grid-template-columns: minmax(0, 1fr) auto;
+    align-items: end;
+    gap: 10px;
+    margin-top: 3px;
+    padding-top: 12px;
+    border-top: 1px solid #e8eef5;
+}
+
+.linkForm .primaryButton { min-height: 40px; }
 
 .history p {
     display: flex;
@@ -322,11 +383,17 @@
 
 @media (max-width: 560px) {
     .gameChecks,
-    .formRow {
+    .formRow,
+    .linkForm {
         grid-template-columns: 1fr;
     }
 
     .history p {
         display: grid;
+        gap: 4px;
     }
+
+    .section { padding: 12px; }
+    .linkForm .primaryButton { width: 100%; }
+    .heading > span { flex-shrink: 0; }
 }

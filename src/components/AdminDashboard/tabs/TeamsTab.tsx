@@ -1,6 +1,6 @@
 import Link from 'next/link'
 import { ChevronRight, Filter, Plus, Trophy } from 'lucide-react'
-import { createTeamAction } from '@/app/admin/actions'
+import { createTeamAction, setTeamActiveAction } from '@/app/admin/actions'
 import styles from '@/app/admin/page.module.scss'
 import { EditTeamModal } from '@/components/AdminEditForms/AdminEditForms'
 import AdminModal from '@/components/AdminModal/AdminModal'
@@ -20,7 +20,7 @@ export default function TeamsTab({ data }: { data: AdminData }) {
   const userTeamCount = (teamId: string) => new Set(
     data.memberships
       .filter((membership) => membership.team_id === teamId && !membership.ended_at)
-      .map((membership) => membership.profile_id),
+      .map((membership) => membership.profile_id ?? membership.nickname?.toLowerCase() ?? membership.id),
   ).size
   const teamSeasonCount = (teamId: string) => data.entries.filter((entry) => entry.team_id === teamId).length
   const today = new Date().toISOString().slice(0, 10)
@@ -104,7 +104,7 @@ export default function TeamsTab({ data }: { data: AdminData }) {
                   ? <img src={team.crest_url} alt={`Escudo do ${team.name}`} />
                   : <span>{team.initials}</span>}
               </div>
-              <div className={styles.teamInfo}><h2>{team.name}</h2><p>{team.city}</p></div>
+              <div className={styles.teamInfo}><h2>{team.name}</h2><p>{team.city} · {team.active ? 'Ativo' : 'Inativo'}</p></div>
               <div className={styles.teamGameBadges}>
                 {data.games.filter((game) => teamGameIds.includes(game.id)).map((game) => <span key={game.id}>{game.short_name}</span>)}
               </div>
@@ -113,20 +113,30 @@ export default function TeamsTab({ data }: { data: AdminData }) {
                 <span><strong>{teamSeasonCount(team.id)}</strong> temporadas</span>
               </div>
               <div className={styles.teamCardActions}>
-                <TeamRosterManager
+                {team.active && <TeamRosterManager
                   team={team}
                   games={data.games}
                   teamGames={data.teamGames}
                   profiles={data.profiles}
                   memberships={data.memberships}
                   today={today}
-                />
+                />}
                 <EditTeamModal
                   team={team}
                   games={data.games}
                   activeGameIds={teamGameIds}
                 />
+                <div className={styles.teamStatusActions}>
                 <DeleteButton table="teams" id={team.id} tab="times" label="Excluir time" gameId={selectedGame?.id} />
+                <form action={setTeamActiveAction}>
+                  <input type="hidden" name="id" value={team.id} />
+                  <input type="hidden" name="active" value={String(!team.active)} />
+                  <AdminSubmitButton className={styles.secondaryButton} pendingLabel="Salvando...">
+                    {team.active ? 'Desativar time' : 'Reativar time'}
+                  </AdminSubmitButton>
+                </form>
+                </div>
+                <p className={styles.formHint}>{team.active ? 'Desativar preserva o histórico e bloqueia novas inscrições e entradas no elenco.' : 'Histórico preservado. Reative para novas inscrições e entradas no elenco.'}</p>
               </div>
             </article>
           )

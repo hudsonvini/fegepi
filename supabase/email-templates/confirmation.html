@@ -7,7 +7,7 @@
         <tr><td style="padding:36px;line-height:1.6;">
           <h1 style="margin:0 0 16px;font-size:24px;color:#062b59;">Confirme seu e-mail</h1>
           <p style="margin:0 0 20px;">Falta pouco para concluir seu cadastro na FEGEPI.</p>
-          <p style="margin:0 0 28px;"><a href="{{ .ConfirmationURL }}" style="display:inline-block;padding:13px 20px;border-radius:8px;background:#034ea7;color:#ffffff;font-weight:700;text-decoration:none;">Confirmar meu e-mail</a></p>
+          <p style="margin:0 0 28px;"><a href="{{ .SiteURL }}/auth/callback?token_hash={{ .TokenHash }}&amp;type=email" style="display:inline-block;padding:13px 20px;border-radius:8px;background:#034ea7;color:#ffffff;font-weight:700;text-decoration:none;">Confirmar meu e-mail</a></p>
           <p style="margin:0;font-size:14px;color:#5d6878;">Se você não criou esta conta, pode ignorar este e-mail.</p>
         </td></tr>
       </table>

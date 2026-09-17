@@ -4,6 +4,18 @@ import { headers } from 'next/headers'
 import { redirect } from 'next/navigation'
 import { z } from 'zod'
 import { createClient } from '@/lib/supabase/server'
+import { authEmailError, authSiteOrigin } from '@/lib/auth-email'
+
+async function emailCallback(path: string, next: '/perfil' | '/redefinir-senha') {
+  let origin: string
+  try {
+    origin = authSiteOrigin(process.env.NEXT_PUBLIC_SITE_URL, (await headers()).get('origin'), process.env.NODE_ENV === 'production')
+  } catch {
+    console.error('[auth-email]', { operation: 'configuration', code: 'invalid_site_url' })
+    redirect(withMessage(path, 'O acesso por e-mail está temporariamente indisponível. A equipe FEGEPI precisa revisar a configuração do site.'))
+  }
+  return `${origin}/auth/callback?next=${next}`
+}
 
 const credentialsSchema = z.object({
   email: z.string().trim().email('Informe um e-mail válido.'),
@@ -24,6 +36,7 @@ export async function signInAction(formData: FormData) {
 
   const supabase = await createClient()
   const { error } = await supabase.auth.signInWithPassword(parsed.data)
+  if (error?.code === 'email_not_confirmed') redirect(withMessage('/confirmar-email', 'Confirme seu e-mail para entrar. Você pode solicitar outro link abaixo.'))
   if (error) redirect(withMessage('/login', 'E-mail ou senha inválidos.'))
   redirect('/perfil')
 }
@@ -38,31 +51,42 @@ export async function signUpAction(formData: FormData) {
   })
   if (!parsed.success) redirect(withMessage('/cadastro', parsed.error.issues[0].message))
 
-  const origin = (await headers()).get('origin') ?? process.env.NEXT_PUBLIC_SITE_URL ?? 'http://localhost:3000'
+  const emailRedirectTo = await emailCallback('/cadastro', '/perfil')
   const supabase = await createClient()
-  const { error } = await supabase.auth.signUp({
+  const { data, error } = await supabase.auth.signUp({
     email: parsed.data.email,
     password: parsed.data.password,
     options: {
       data: { full_name: parsed.data.fullName },
-      emailRedirectTo: `${origin}/auth/callback?next=/perfil`,
+      emailRedirectTo,
     },
   })
-  if (error) redirect(withMessage('/cadastro', error.message))
-  redirect('/login?mensagem=Confira seu e-mail para confirmar o cadastro.')
+  if (error) redirect(withMessage('/cadastro', authEmailError(error, 'signup')))
+  if (data.session) redirect('/perfil')
+  redirect(withSuccess('/confirmar-email', 'Solicitação recebida. Se o cadastro precisar de confirmação, você receberá um link por e-mail. Confira também o spam.'))
+}
+
+export async function resendConfirmationAction(formData: FormData) {
+  const email = z.string().trim().email('Informe um e-mail válido.').safeParse(formData.get('email'))
+  if (!email.success) redirect(withMessage('/confirmar-email', email.error.issues[0].message))
+  const emailRedirectTo = await emailCallback('/confirmar-email', '/perfil')
+  const supabase = await createClient()
+  const { error } = await supabase.auth.resend({ type: 'signup', email: email.data, options: { emailRedirectTo } })
+  if (error) redirect(withMessage('/confirmar-email', authEmailError(error, 'resend')))
+  redirect(withSuccess('/confirmar-email', 'Se houver um cadastro aguardando confirmação, você receberá um novo link. Confira também o spam e use o e-mail mais recente.'))
 }
 
 export async function requestPasswordResetAction(formData: FormData) {
   const email = z.string().trim().email('Informe um e-mail válido.').safeParse(formData.get('email'))
   if (!email.success) redirect(withMessage('/esqueci-a-senha', email.error.issues[0].message))
 
-  const origin = (await headers()).get('origin') ?? process.env.NEXT_PUBLIC_SITE_URL ?? 'http://localhost:3000'
+  const redirectTo = await emailCallback('/esqueci-a-senha', '/redefinir-senha')
   const supabase = await createClient()
   const { error } = await supabase.auth.resetPasswordForEmail(email.data, {
-    redirectTo: `${origin}/auth/callback?next=/redefinir-senha`,
+    redirectTo,
   })
-  if (error) redirect(withMessage('/esqueci-a-senha', 'Não foi possível enviar o e-mail agora.'))
-  redirect(withSuccess('/esqueci-a-senha', 'Se houver uma conta para este e-mail, enviamos um link seguro. Abra apenas o e-mail mais recente.'))
+  if (error) redirect(withMessage('/esqueci-a-senha', authEmailError(error, 'recovery')))
+  redirect(withSuccess('/esqueci-a-senha', 'Se houver uma conta para este e-mail, você receberá um link seguro. Confira também o spam e abra apenas o e-mail mais recente.'))
 }
 
 export async function updatePasswordAction(formData: FormData) {

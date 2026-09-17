@@ -257,6 +257,12 @@ export function AuthExperience({ initialMode, notice }: AuthExperienceProps) {
             </label>
 
             {isLogin && (
+              <Link className={styles.forgotPassword} href="/confirmar-email">
+                Não recebeu a confirmação do cadastro?
+              </Link>
+            )}
+
+            {isLogin && (
               <Link className={styles.forgotPassword} href="/esqueci-a-senha">
                 Esqueceu a senha?
               </Link>

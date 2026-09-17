@@ -20,7 +20,7 @@ export default function StandingsTab({ data }: { data: AdminData }) {
   const gameSeasons = data.seasons.filter((season) => season.game_id === selectedGame?.id)
   const participatingTeamIds = new Set(data.seasonEntries.map((entry) => entry.team_id))
   const eligibleTeams = selectedGame
-    ? data.teams.filter((team) =>
+    ? data.teams.filter((team) => team.active &&
       data.teamGames.some((item) => item.team_id === team.id && item.game_id === selectedGame.id && item.active)
       && !participatingTeamIds.has(team.id))
     : []
@@ -87,7 +87,7 @@ export default function StandingsTab({ data }: { data: AdminData }) {
                 ? `${gameName(selectedSeason.games)} — ${selectedSeason.label}`
               : 'Escolha ou crie uma temporada'}
             </h2>
-            <p className={styles.managerHint}>1º: 250 pts · 2º: 125 pts · 3º: 70 pts · 4º: 50 pts. Os resultados são administrados nos campeonatos.</p>
+            <p className={styles.managerHint}>1º: 250 · 2º: 200 · 3º: 100 · 4º: 80 · 5º: 60 · 6º: 40 · 7º: 20 · 8º: 10 pts. Os resultados são administrados nos campeonatos.</p>
           </div>
           {selectedSeason?.is_current && <span className={styles.currentBadge}>Temporada atual</span>}
         </div>

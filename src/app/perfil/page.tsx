@@ -8,6 +8,7 @@ import { getOwnMemberships } from '@/lib/players'
 import ManagedNavbar from '@/components/ManagedNavbar/ManagedNavbar'
 import { updateProfileAction } from './actions'
 import { ProfileAvatarPicker } from './ProfileAvatarPicker'
+import { AuthSubmitButton } from '@/components/AuthSubmitButton'
 import styles from './page.module.scss'
 
 export default async function ProfilePage() {
@@ -61,7 +62,6 @@ export default async function ProfilePage() {
                   <label className={styles.field}>WhatsApp<input name="whatsapp" type="tel" inputMode="tel" autoComplete="tel" defaultValue={user.whatsapp ?? ''} placeholder="(86) 99999-9999" /></label>
                   <label className={`${styles.field} ${styles.fieldWide}`}>Endereço<input name="address" autoComplete="street-address" defaultValue={user.address ?? ''} placeholder="Cidade, bairro ou endereço" /></label>
                   <label className={styles.field}>Jogo favorito<input name="favoriteGame" defaultValue={user.favoriteGame ?? ''} placeholder="Ex.: EA FC 26" /></label>
-                  <label className={styles.field}>Foto pessoal (opcional)<input name="avatarUrl" type="url" defaultValue={user.avatarUrl ?? ''} placeholder="https://..." /><small>Ao preencher, ela substitui o avatar padrão.</small></label>
                   <label className={`${styles.field} ${styles.fieldWide}`}>Bio pública<textarea name="bio" rows={4} defaultValue={user.bio ?? ''} placeholder="Conte um pouco sobre sua trajetória competitiva." /></label>
                   <label className={`${styles.field} ${styles.fieldWide} ${styles.publicToggle}`}>
                     <input name="publicProfile" type="checkbox" defaultChecked={user.publicProfile} />
@@ -72,7 +72,7 @@ export default async function ProfilePage() {
 
               <div className={styles.formFooter}>
                 <p>Seus dados ficam associados apenas à sua conta FEGEPI.</p>
-                <button className={styles.button}>Salvar perfil</button>
+                <AuthSubmitButton className={styles.button} pendingChildren="Salvando e processando foto…">Salvar perfil</AuthSubmitButton>
               </div>
             </form>
           </section>

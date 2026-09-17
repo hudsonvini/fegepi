@@ -73,7 +73,7 @@ select e.id, e.season_id, e.team_id,
   coalesce(h.recent_placements, '[]'::jsonb) as recent_placements
 from public.ranking_entries e
 left join lateral (
-  select sum(case r.placement when 1 then 250 when 2 then 125 when 3 then 70 when 4 then 50 else 0 end) as points,
+  select sum(case r.placement when 1 then 250 when 2 then 200 when 3 then 100 when 4 then 80 when 5 then 60 when 6 then 40 when 7 then 20 when 8 then 10 else 0 end) as points,
     count(*) filter(where r.placement = 1) as titles, count(*) as participations
   from public.championship_results r join public.championships c on c.id = r.championship_id
   where r.team_id = e.team_id and c.season_id = e.season_id and c.status = 'completed'

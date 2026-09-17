@@ -60,215 +60,6 @@ type RankedEntry = RankingEntry & {
     delta: number
 }
 
-const defaultGames: RankingGame[] = [
-    {
-        id: 'cs2',
-        name: 'Counter-Strike 2',
-        shortName: 'CS2',
-        cardLabel: 'Counter-Strike 2',
-        theme: 'cs2',
-        imageSrc: '/images/GameAreaImages/gameAreaCs.png',
-        seasons: [
-            {
-                id: '2026',
-                label: 'Temporada 2026',
-                entries: [
-                    { id: '1', teamName: 'Alpha Wolves', country: 'Piauí', points: 6770, previousPosition: 2, logoText: 'AW', crestSrc: '/images/GameAreaImages/times/escudoLiquid.png', tone: 'navy' },
-                    { id: '2', teamName: 'Delta Force', country: 'Parnaíba', points: 6540, previousPosition: 1, logoText: 'DF', crestSrc: '/images/GameAreaImages/times/escudoImperial.jpg', tone: 'red' },
-                    { id: '3', teamName: 'Caatinga Core', country: 'Teresina', points: 6415, previousPosition: 5, logoText: 'CC', tone: 'green' },
-                    { id: '4', teamName: 'Nordeste Rush', country: 'Picos', points: 6270, previousPosition: 3, logoText: 'NR', tone: 'red' },
-                    { id: '5', teamName: 'Sertao Tactics', country: 'Floriano', points: 6145, previousPosition: 7, logoText: 'ST', tone: 'green' },
-                    { id: '6', teamName: 'Vortex Piaui', country: 'Campo Maior', points: 5980, previousPosition: 4, logoText: 'VP', tone: 'silver' },
-                    { id: '7', teamName: 'Dragons Five', country: 'Barras', points: 5810, previousPosition: 6, logoText: 'D5', tone: 'gold' },
-                    { id: '8', teamName: 'Bravos Squad', country: 'Piripiri', points: 5695, previousPosition: 9, logoText: 'BS', tone: 'green' },
-                    { id: '9', teamName: 'Shadow Unit', country: 'União', points: 5520, previousPosition: 8, logoText: 'SU', tone: 'silver' },
-                    { id: '10', teamName: 'Rangers 1910', country: 'Esperantina', points: 5330, previousPosition: 11, logoText: 'R1', tone: 'green' },
-                    { id: '11', teamName: 'Prime Legacy', country: 'Altos', points: 5190, previousPosition: 10, logoText: 'PL', tone: 'silver' },
-                    { id: '12', teamName: 'Arenas Club', country: 'José de Freitas', points: 5045, previousPosition: 12, logoText: 'AC', tone: 'silver' },
-                ],
-            },
-            {
-                id: '2025',
-                label: 'Temporada 2025',
-                entries: [
-                    { id: '13', teamName: 'Delta Force', country: 'Parnaíba', points: 6620, previousPosition: 2, logoText: 'DF', tone: 'red' },
-                    { id: '14', teamName: 'Alpha Wolves', country: 'Piauí', points: 6490, previousPosition: 1, logoText: 'AW', tone: 'navy' },
-                    { id: '15', teamName: 'Vortex Piaui', country: 'Campo Maior', points: 6330, previousPosition: 5, logoText: 'VP', tone: 'silver' },
-                    { id: '16', teamName: 'Sertao Tactics', country: 'Floriano', points: 6210, previousPosition: 3, logoText: 'ST', tone: 'green' },
-                    { id: '17', teamName: 'Caatinga Core', country: 'Teresina', points: 6135, previousPosition: 4, logoText: 'CC', tone: 'green' },
-                    { id: '18', teamName: 'Nordeste Rush', country: 'Picos', points: 5990, previousPosition: 8, logoText: 'NR', tone: 'red' },
-                    { id: '19', teamName: 'Dragons Five', country: 'Barras', points: 5805, previousPosition: 6, logoText: 'D5', tone: 'gold' },
-                    { id: '20', teamName: 'Prime Legacy', country: 'Altos', points: 5665, previousPosition: 10, logoText: 'PL', tone: 'silver' },
-                    { id: '21', teamName: 'Bravos Squad', country: 'Piripiri', points: 5515, previousPosition: 7, logoText: 'BS', tone: 'green' },
-                    { id: '22', teamName: 'Arenas Club', country: 'José de Freitas', points: 5400, previousPosition: 9, logoText: 'AC', tone: 'silver' },
-                    { id: '23', teamName: 'Shadow Unit', country: 'União', points: 5220, previousPosition: 11, logoText: 'SU', tone: 'silver' },
-                    { id: '24', teamName: 'Rangers 1910', country: 'Esperantina', points: 5105, previousPosition: 12, logoText: 'R1', tone: 'silver' },
-                ],
-            },
-        ],
-    },
-    {
-        id: 'valorant',
-        name: 'Valorant',
-        shortName: 'V',
-        cardLabel: 'VALORANT',
-        theme: 'valorant',
-        imageSrc: '/images/GameAreaImages/gameAreaValorant.png',
-        seasons: [
-            {
-                id: '2026',
-                label: 'Temporada 2026',
-                entries: [
-                    { id: '25', teamName: 'Spike Hunters', country: 'Teresina', points: 7020, previousPosition: 1, logoText: 'SH', tone: 'red' },
-                    { id: '26', teamName: 'Ion Storm', country: 'Picos', points: 6880, previousPosition: 3, logoText: 'IS', tone: 'green' },
-                    { id: '27', teamName: 'Rush Protocol', country: 'Parnaíba', points: 6715, previousPosition: 2, logoText: 'RP', tone: 'navy' },
-                    { id: '28', teamName: 'Aim District', country: 'Barras', points: 6505, previousPosition: 5, logoText: 'AD', tone: 'green' },
-                    { id: '29', teamName: 'Echo Seven', country: 'Floriano', points: 6390, previousPosition: 4, logoText: 'E7', tone: 'silver' },
-                    { id: '30', teamName: 'Radiant Zone', country: 'Campo Maior', points: 6275, previousPosition: 8, logoText: 'RZ', tone: 'green' },
-                    { id: '31', teamName: 'Nova Duelists', country: 'União', points: 6150, previousPosition: 6, logoText: 'ND', tone: 'red' },
-                    { id: '32', teamName: 'Phantom Club', country: 'Altos', points: 6015, previousPosition: 9, logoText: 'PC', tone: 'green' },
-                    { id: '33', teamName: 'Orbital Five', country: 'Esperantina', points: 5890, previousPosition: 7, logoText: 'O5', tone: 'silver' },
-                    { id: '34', teamName: 'Tactical One', country: 'Piripiri', points: 5735, previousPosition: 10, logoText: 'T1', tone: 'silver' },
-                ],
-            },
-            {
-                id: '2025',
-                label: 'Temporada 2025',
-                entries: [
-                    { id: '35', teamName: 'Rush Protocol', country: 'Parnaíba', points: 6945, previousPosition: 2, logoText: 'RP', tone: 'navy' },
-                    { id: '36', teamName: 'Spike Hunters', country: 'Teresina', points: 6820, previousPosition: 1, logoText: 'SH', tone: 'red' },
-                    { id: '37', teamName: 'Ion Storm', country: 'Picos', points: 6630, previousPosition: 4, logoText: 'IS', tone: 'green' },
-                    { id: '38', teamName: 'Echo Seven', country: 'Floriano', points: 6490, previousPosition: 3, logoText: 'E7', tone: 'silver' },
-                    { id: '39', teamName: 'Aim District', country: 'Barras', points: 6315, previousPosition: 6, logoText: 'AD', tone: 'green' },
-                    { id: '40', teamName: 'Nova Duelists', country: 'União', points: 6175, previousPosition: 5, logoText: 'ND', tone: 'red' },
-                    { id: '41', teamName: 'Phantom Club', country: 'Altos', points: 6035, previousPosition: 8, logoText: 'PC', tone: 'green' },
-                    { id: '42', teamName: 'Orbital Five', country: 'Esperantina', points: 5895, previousPosition: 7, logoText: 'O5', tone: 'silver' },
-                    { id: '43', teamName: 'Radiant Zone', country: 'Campo Maior', points: 5775, previousPosition: 10, logoText: 'RZ', tone: 'green' },
-                    { id: '44', teamName: 'Tactical One', country: 'Piripiri', points: 5660, previousPosition: 9, logoText: 'T1', tone: 'silver' },
-                ],
-            },
-        ],
-    },
-    {
-        id: 'lol',
-        name: 'League of Legends',
-        shortName: 'LoL',
-        cardLabel: 'LEAGUE OF LEGENDS',
-        theme: 'lol',
-        imageSrc: '/images/GameAreaImages/gameAreaLOL.png',
-        seasons: [
-            {
-                id: '2026',
-                label: 'Temporada 2026',
-                entries: [
-                    { id: '45', teamName: 'Summoners PI', country: 'Teresina', points: 7210, previousPosition: 2, logoText: 'SP', tone: 'gold' },
-                    { id: '46', teamName: 'Baron Fight', country: 'Parnaíba', points: 7055, previousPosition: 1, logoText: 'BF', tone: 'red' },
-                    { id: '47', teamName: 'Blue Nexus', country: 'Picos', points: 6920, previousPosition: 4, logoText: 'BN', tone: 'green' },
-                    { id: '48', teamName: 'Dragon Soul', country: 'Floriano', points: 6760, previousPosition: 3, logoText: 'DS', tone: 'silver' },
-                    { id: '49', teamName: 'Mid River', country: 'Altos', points: 6615, previousPosition: 6, logoText: 'MR', tone: 'green' },
-                    { id: '50', teamName: 'Top Lane Five', country: 'União', points: 6445, previousPosition: 5, logoText: 'TL', tone: 'navy' },
-                    { id: '51', teamName: 'Bot Priority', country: 'Piripiri', points: 6310, previousPosition: 8, logoText: 'BP', tone: 'green' },
-                    { id: '52', teamName: 'Jungle Pulse', country: 'Campo Maior', points: 6170, previousPosition: 7, logoText: 'JP', tone: 'silver' },
-                    { id: '53', teamName: 'Vision Ward', country: 'Esperantina', points: 6030, previousPosition: 10, logoText: 'VW', tone: 'green' },
-                    { id: '54', teamName: 'Silver Arrows', country: 'Barras', points: 5920, previousPosition: 9, logoText: 'SA', tone: 'silver' },
-                ],
-            },
-            {
-                id: '2025',
-                label: 'Temporada 2025',
-                entries: [
-                    { id: '55', teamName: 'Baron Fight', country: 'Parnaíba', points: 7090, previousPosition: 2, logoText: 'BF', tone: 'red' },
-                    { id: '56', teamName: 'Summoners PI', country: 'Teresina', points: 6975, previousPosition: 1, logoText: 'SP', tone: 'gold' },
-                    { id: '57', teamName: 'Dragon Soul', country: 'Floriano', points: 6815, previousPosition: 4, logoText: 'DS', tone: 'silver' },
-                    { id: '58', teamName: 'Blue Nexus', country: 'Picos', points: 6695, previousPosition: 3, logoText: 'BN', tone: 'green' },
-                    { id: '59', teamName: 'Top Lane Five', country: 'União', points: 6540, previousPosition: 6, logoText: 'TL', tone: 'navy' },
-                    { id: '60', teamName: 'Mid River', country: 'Altos', points: 6405, previousPosition: 5, logoText: 'MR', tone: 'green' },
-                    { id: '61', teamName: 'Jungle Pulse', country: 'Campo Maior', points: 6230, previousPosition: 8, logoText: 'JP', tone: 'silver' },
-                    { id: '62', teamName: 'Bot Priority', country: 'Piripiri', points: 6125, previousPosition: 7, logoText: 'BP', tone: 'green' },
-                    { id: '63', teamName: 'Silver Arrows', country: 'Barras', points: 5960, previousPosition: 10, logoText: 'SA', tone: 'silver' },
-                    { id: '64', teamName: 'Vision Ward', country: 'Esperantina', points: 5820, previousPosition: 9, logoText: 'VW', tone: 'green' },
-                ],
-            },
-        ],
-    },
-    {
-        id: 'freefire',
-        name: 'Free Fire',
-        shortName: 'FF',
-        cardLabel: 'FREE FIRE',
-        theme: 'freefire',
-        imageSrc: '/images/GameAreaImages/gameAreaFreeFire.png',
-        seasons: [
-            {
-                id: '2026',
-                label: 'Temporada 2026',
-                entries: [
-                    { id: '65', teamName: 'Booyah Elite', country: 'Teresina', points: 6950, previousPosition: 1, logoText: 'BE', tone: 'red' },
-                    { id: '66', teamName: 'Drop Zone', country: 'Parnaíba', points: 6785, previousPosition: 4, logoText: 'DZ', tone: 'green' },
-                    { id: '67', teamName: 'Safe Circle', country: 'Picos', points: 6640, previousPosition: 2, logoText: 'SC', tone: 'silver' },
-                    { id: '68', teamName: 'Rush Island', country: 'Barras', points: 6495, previousPosition: 3, logoText: 'RI', tone: 'red' },
-                    { id: '69', teamName: 'Bermuda Kings', country: 'Campo Maior', points: 6365, previousPosition: 6, logoText: 'BK', tone: 'green' },
-                    { id: '70', teamName: 'Nova Queda', country: 'Floriano', points: 6210, previousPosition: 5, logoText: 'NQ', tone: 'silver' },
-                    { id: '71', teamName: 'Final Zone', country: 'Piripiri', points: 6080, previousPosition: 8, logoText: 'FZ', tone: 'green' },
-                    { id: '72', teamName: 'Loot Masters', country: 'Esperantina', points: 5960, previousPosition: 7, logoText: 'LM', tone: 'silver' },
-                ],
-            },
-            {
-                id: '2025',
-                label: 'Temporada 2025',
-                entries: [
-                    { id: '73', teamName: 'Safe Circle', country: 'Picos', points: 6815, previousPosition: 2, logoText: 'SC', tone: 'silver' },
-                    { id: '74', teamName: 'Booyah Elite', country: 'Teresina', points: 6750, previousPosition: 1, logoText: 'BE', tone: 'red' },
-                    { id: '75', teamName: 'Drop Zone', country: 'Parnaíba', points: 6610, previousPosition: 5, logoText: 'DZ', tone: 'green' },
-                    { id: '76', teamName: 'Rush Island', country: 'Barras', points: 6470, previousPosition: 3, logoText: 'RI', tone: 'red' },
-                    { id: '77', teamName: 'Nova Queda', country: 'Floriano', points: 6335, previousPosition: 4, logoText: 'NQ', tone: 'silver' },
-                    { id: '78', teamName: 'Bermuda Kings', country: 'Campo Maior', points: 6195, previousPosition: 7, logoText: 'BK', tone: 'green' },
-                    { id: '79', teamName: 'Loot Masters', country: 'Esperantina', points: 6050, previousPosition: 6, logoText: 'LM', tone: 'silver' },
-                    { id: '80', teamName: 'Final Zone', country: 'Piripiri', points: 5910, previousPosition: 8, logoText: 'FZ', tone: 'green' },
-                ],
-            },
-        ],
-    },
-    {
-        id: 'fc26',
-        name: 'EA Sports FC 26',
-        shortName: 'FC26',
-        cardLabel: 'FC26',
-        theme: 'fc26',
-        imageSrc: '/images/GameAreaImages/gameAreaFifa.png',
-        seasons: [
-            {
-                id: '2026',
-                label: 'Temporada 2026',
-                entries: [
-                    { id: '81', teamName: 'Piaui United', country: 'Teresina', points: 7125, previousPosition: 3, logoText: 'PU', tone: 'green' },
-                    { id: '82', teamName: 'Arena 26', country: 'Parnaíba', points: 7045, previousPosition: 1, logoText: 'A26', tone: 'red' },
-                    { id: '83', teamName: 'Capital Eleven', country: 'Picos', points: 6910, previousPosition: 2, logoText: 'CE', tone: 'silver' },
-                    { id: '84', teamName: 'Nordeste Pro', country: 'Altos', points: 6765, previousPosition: 5, logoText: 'NP', tone: 'green' },
-                    { id: '85', teamName: 'Gameplan Club', country: 'Floriano', points: 6600, previousPosition: 4, logoText: 'GC', tone: 'navy' },
-                    { id: '86', teamName: 'Meta Football', country: 'União', points: 6435, previousPosition: 7, logoText: 'MF', tone: 'green' },
-                    { id: '87', teamName: 'Pro League PI', country: 'Piripiri', points: 6295, previousPosition: 6, logoText: 'PL', tone: 'silver' },
-                    { id: '88', teamName: 'Kickoff Squad', country: 'Esperantina', points: 6155, previousPosition: 8, logoText: 'KS', tone: 'silver' },
-                ],
-            },
-            {
-                id: '2025',
-                label: 'Temporada 2025',
-                entries: [
-                    { id: '89', teamName: 'Arena 26', country: 'Parnaíba', points: 7085, previousPosition: 2, logoText: 'A26', tone: 'red' },
-                    { id: '90', teamName: 'Capital Eleven', country: 'Picos', points: 6965, previousPosition: 1, logoText: 'CE', tone: 'silver' },
-                    { id: '91', teamName: 'Piaui United', country: 'Teresina', points: 6875, previousPosition: 4, logoText: 'PU', tone: 'green' },
-                    { id: '92', teamName: 'Gameplan Club', country: 'Floriano', points: 6690, previousPosition: 3, logoText: 'GC', tone: 'navy' },
-                    { id: '93', teamName: 'Nordeste Pro', country: 'Altos', points: 6550, previousPosition: 6, logoText: 'NP', tone: 'green' },
-                    { id: '94', teamName: 'Pro League PI', country: 'Piripiri', points: 6380, previousPosition: 5, logoText: 'PL', tone: 'silver' },
-                    { id: '95', teamName: 'Meta Football', country: 'União', points: 6225, previousPosition: 8, logoText: 'MF', tone: 'green' },
-                    { id: '96', teamName: 'Kickoff Squad', country: 'Esperantina', points: 6090, previousPosition: 7, logoText: 'KS', tone: 'silver' },
-                ],
-            },
-        ],
-    },
-]
-
 function getMovement(currentPosition: number, previousPosition: number): Pick<RankedEntry, 'movement' | 'delta'> {
     if (!previousPosition) return { movement: 'same', delta: 0 }
     if (previousPosition > currentPosition) {
@@ -379,7 +170,7 @@ function GameOption({
 }
 
 export default function GameArea({
-    games = defaultGames,
+    games = [],
     defaultSeasonId,
     rankingLabel = 'Piauí Ranking',
 }: GameAreaProps) {
@@ -390,6 +181,7 @@ export default function GameArea({
     const [selectedGameId, setSelectedGameId] = useState(initialGame?.id ?? '')
     const [selectedSeasonId, setSelectedSeasonId] = useState(defaultSeasonId ?? initialGame?.seasons[0]?.id ?? '')
     const [isPending, startTransition] = useTransition()
+    const [page, setPage] = useState(1)
 
     const selectedGame = games.find((game) => game.id === selectedGameId && game.theme === 'cs2') ?? csGame
 
@@ -418,6 +210,10 @@ export default function GameArea({
             }
         })
 
+    const pageCount = Math.max(1, Math.ceil(rankedEntries.length / 10))
+    const currentPage = Math.min(page, pageCount)
+    const visibleEntries = rankedEntries.slice((currentPage - 1) * 10, currentPage * 10)
+
     return (
         <section className={styles.container}>
             <div className={styles.contentArea}>
@@ -442,6 +238,7 @@ export default function GameArea({
                                     selected={selectedGame.id === game.id}
                                     onSelect={() => startTransition(() => {
                                         setSelectedGameId(game.id)
+                                        setPage(1)
                                         setSelectedSeasonId(game.seasons[0]?.id ?? '')
                                     })}
                                 />
@@ -470,7 +267,7 @@ export default function GameArea({
                                         role="tab"
                                         aria-selected={season.id === resolvedSeasonId}
                                         className={season.id === resolvedSeasonId ? styles.selectedSeason : ''}
-                                        onClick={() => startTransition(() => setSelectedSeasonId(season.id))}
+                                        onClick={() => startTransition(() => { setSelectedSeasonId(season.id); setPage(1) })}
                                     >
                                         {season.label.replace(/temporada/gi, '').trim()}
                                     </button>
@@ -487,12 +284,17 @@ export default function GameArea({
                         </div>
 
                         <div className={styles.rankingTable} role="table" aria-label={`Classificação de ${selectedGame.name}`}>
-                            {rankedEntries.length ? rankedEntries.map((entry) => (
+                            {rankedEntries.length ? visibleEntries.map((entry) => (
                                 <RankingRow key={entry.id} entry={entry} />
                             )) : (
                                 <div className={styles.emptyRanking}>Nenhum time cadastrado nesta temporada.</div>
                             )}
                         </div>
+                        {rankedEntries.length > 10 && <nav className={styles.pagination} aria-label="Páginas do ranking">
+                            <button type="button" disabled={currentPage === 1} onClick={() => setPage(currentPage - 1)}>Anterior</button>
+                            <span aria-live="polite">Página {currentPage} de {pageCount} · {rankedEntries.length} times</span>
+                            <button type="button" disabled={currentPage === pageCount} onClick={() => setPage(currentPage + 1)}>Próxima</button>
+                        </nav>}
                     </div>
 
                     <RankingExplainer />

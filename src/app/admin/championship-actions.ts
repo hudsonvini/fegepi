@@ -24,6 +24,16 @@ export async function saveChampionshipAction(formData: FormData) {
   if (!parsed.success) redirect(`${path}&erro=${encodeURIComponent('Confira nome, data, participantes e colocações.')}`)
   const values = parsed.data
   const supabase = await createClient()
+  if (values.results.length) {
+    const { data: inactive, error: teamError } = await supabase.from('teams').select('id').in('id', values.results.map((result) => result.team_id)).eq('active', false)
+    const { data: previous, error: previousError } = values.id
+      ? await supabase.from('championship_results').select('team_id').eq('championship_id', values.id)
+      : { data: [], error: null }
+    if (teamError || previousError) redirect(`${path}&erro=${encodeURIComponent('Não foi possível verificar os participantes.')}`)
+    if (inactive?.some((team) => !previous?.some((result) => result.team_id === team.id))) {
+      redirect(`${path}&erro=${encodeURIComponent('Reative o time antes de inscrevê-lo em outro campeonato.')}`)
+    }
+  }
   const { data: championshipId, error } = await supabase.rpc('save_championship', {
     p_id: values.id, p_season_id: values.seasonId, p_name: values.name,
     p_played_at: values.playedAt, p_status: values.status, p_version: values.version, p_results: values.results,

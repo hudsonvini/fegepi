@@ -19,7 +19,10 @@ export default function ChampionshipsTab({ data, championshipId }: { data: Admin
     const championship = data.championships.find((item) => item.id === championshipId)
     if (!championship) return <div className={ui.empty}><Trophy /><h2>Campeonato não encontrado</h2><Link href={adminHref('campeonatos')}>Voltar aos campeonatos</Link></div>
     const season = data.seasons.find((item) => item.id === championship.season_id)
-    const entries = data.entries.filter((entry) => entry.season_id === championship.season_id)
+    const entries = data.entries.filter((entry) => entry.season_id === championship.season_id && (
+      data.teams.some((team) => team.id === entry.team_id && team.active)
+      || championship.championship_results.some((result) => result.team_id === entry.team_id)
+    ))
     return <>
       <Link className={ui.back} href={adminHref('campeonatos', season?.id, season?.game_id)}><ArrowLeft size={16} /> Todos os campeonatos</Link>
       <SectionTitle eyebrow={season?.label ?? 'Campeonato'} title={championship.name} description="Gerencie os participantes, registre as colocações e publique o resultado na temporada." />

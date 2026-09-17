@@ -4,7 +4,7 @@ Em um projeto já configurado com `schema.sql`, aplique no SQL Editor:
 
 1. `featured-players.sql`
 2. `championships.sql`
-3. `championship-example.sql` para criar um rascunho editável com até cinco times da temporada atual, sem pontuar no ranking.
+3. `nickname-rosters.sql` para cadastrar elencos por nick, com vínculo opcional a uma conta. Não execute `championship-example.sql` em produção: ele insere dados de demonstração.
 
 Os scripts são transacionais e reaplicáveis. Não execute `seed.sql` para esta atualização.
 Instalações novas também devem aplicar os dois primeiros arquivos após o schema.
@@ -14,9 +14,9 @@ Instalações novas também devem aplicar os dois primeiros arquivos após o sch
 - **Jogadores:** destacar, salvar ordem (0–99) e remover destaque. Destacar torna o perfil público; retirar o destaque mantém a preferência de perfil público. Apenas perfis públicos destacados aparecem na home (até 12).
 - **Temporadas e tabela:** criar a temporada, selecionar a modalidade e inscrever os times.
 - **Campeonatos:** criar um rascunho na temporada selecionada; selecionar os times inscritos; preencher as colocações finais e salvar como concluído.
-- Pontuação: 1º = 250; 2º = 125; 3º = 70; 4º = 50; demais = 0.
+- Pontuação: 1º = 250; 2º = 200; 3º = 100; 4º = 80; 5º = 60; 6º = 40; 7º = 20; 8º = 10; demais = 0.
 - Ao concluir, todas as posições devem ser preenchidas, únicas e entre 1 e o total de participantes. Para corrigir, altere os resultados e salve. Rascunhos e cancelados não pontuam; cancelar é reversível.
-- Desempate: pontos, títulos e nome do time. Os indicadores exibem os últimos cinco campeonatos concluídos da temporada, do mais recente ao mais antigo. 1º–5º recebem cores; ausência e posições inferiores ficam cinza. O texto acessível informa o campeonato e a colocação real.
+- Desempate: pontos, títulos e nome do time. Os indicadores exibem os últimos cinco campeonatos concluídos da temporada, do mais recente ao mais antigo. 1º–8º recebem cores; ausência e posições inferiores ficam cinza. O texto acessível informa o campeonato e a colocação real.
 
 `championship_standings` calcula os totais a partir dos campeonatos. Os campos e históricos antigos de vitórias/empates/derrotas são preservados no banco, mas não compõem mais a classificação. Não é possível inferir colocações de campeonatos a partir desses dados antigos; cadastre os campeonatos históricos para pontuá-los.
 

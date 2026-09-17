@@ -27,7 +27,7 @@ export default function AdminModal({ title, description, triggerLabel, triggerIc
     document.body.style.overflow = 'hidden'
     const focusable = () => Array.from(dialogRef.current?.querySelectorAll<HTMLElement>('button:not([disabled]), input:not([disabled]):not([type="hidden"]), select:not([disabled]), textarea:not([disabled]), a[href], [tabindex="0"]') ?? []).filter((element) => element.getClientRects().length > 0)
     const firstInput = dialogRef.current?.querySelector<HTMLElement>('input:not([type="hidden"]), select, textarea')
-    ;(firstInput ?? focusable()[0])?.focus()
+    ;(firstInput ?? focusable()[0])?.focus({ preventScroll: true })
     const trigger = triggerRef.current
     const closeOnEscape = (event: KeyboardEvent) => {
       if (event.key === 'Escape') setIsOpen(false)

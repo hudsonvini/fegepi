@@ -16,19 +16,19 @@ grant select,insert,update on public.profiles to authenticated;
 \ir ../featured-players.sql
 \ir ../featured-players.sql
 insert into public.ranking_seasons values(md5('season')::uuid), (md5('other-season')::uuid);
-insert into public.ranking_entries select md5('entry' || n)::uuid, md5('season')::uuid, md5('team' || n)::uuid from generate_series(1,7) n;
+insert into public.ranking_entries select md5('entry' || n)::uuid, md5('season')::uuid, md5('team' || n)::uuid from generate_series(1,10) n;
 select set_config('test.admin','true',false);
 do $$ declare cid uuid; results jsonb; total integer; ver integer; begin
-  select jsonb_agg(jsonb_build_object('team_id',md5('team' || n)::uuid,'placement',n)) into results from generate_series(1,6) n;
+  select jsonb_agg(jsonb_build_object('team_id',md5('team' || n)::uuid,'placement',n)) into results from generate_series(1,9) n;
   cid := public.save_championship(null,md5('season')::uuid,'Copa teste','2026-01-01','draft',0,results);
   if (select sum(points) from public.championship_standings) <> 0 then raise exception 'Rascunho pontuou'; end if;
   perform public.save_championship(cid,md5('season')::uuid,'Copa teste','2026-01-01','completed',1,results);
   if (select array_agg(points order by team_id) from public.championship_standings) is distinct from
-     (select array_agg(case n when 1 then 250 when 2 then 125 when 3 then 70 when 4 then 50 else 0 end order by md5('team' || n)::uuid) from generate_series(1,7) n) then raise exception 'Pontuação incorreta'; end if;
-  if (select participations from public.championship_standings where team_id=md5('team7')::uuid) <> 0 then raise exception 'Não participante contado'; end if;
-  if (select recent_placements->0->>'placement' from public.championship_standings where team_id=md5('team7')::uuid) is not null then raise exception 'Não participante com colocação'; end if;
+     (select array_agg(case n when 1 then 250 when 2 then 200 when 3 then 100 when 4 then 80 when 5 then 60 when 6 then 40 when 7 then 20 when 8 then 10 else 0 end order by md5('team' || n)::uuid) from generate_series(1,10) n) then raise exception 'Pontuação incorreta'; end if;
+  if (select participations from public.championship_standings where team_id=md5('team10')::uuid) <> 0 then raise exception 'Não participante contado'; end if;
+  if (select recent_placements->0->>'placement' from public.championship_standings where team_id=md5('team10')::uuid) is not null then raise exception 'Não participante com colocação'; end if;
   perform public.save_championship(cid,md5('season')::uuid,'Copa teste','2026-01-01','completed',2,results);
-  if (select sum(points) from public.championship_standings) <> 495 then raise exception 'Duplicação de pontos'; end if;
+  if (select sum(points) from public.championship_standings) <> 760 then raise exception 'Duplicação de pontos'; end if;
   begin
     perform public.save_championship(cid,md5('season')::uuid,'Conflito','2026-01-01','completed',2,results);
     raise exception using errcode='XX000', message='Versão obsoleta aceita';
@@ -59,7 +59,7 @@ do $$ declare cid uuid; results jsonb; total integer; ver integer; begin
   end loop;
   if (select jsonb_array_length(recent_placements) from public.championship_standings limit 1) <> 5 then raise exception 'Histórico não limitado'; end if;
   if (select recent_placements->0->>'name' from public.championship_standings limit 1) <> 'Etapa 7' then raise exception 'Ordem histórica incorreta'; end if;
-  if (select sum(points) from public.championship_standings) <> 3465 then raise exception 'Soma entre etapas incorreta'; end if;
+  if (select sum(points) from public.championship_standings) <> 5320 then raise exception 'Soma entre etapas incorreta'; end if;
 end $$;
 set role anon;
 select count(*) from public.championship_standings;

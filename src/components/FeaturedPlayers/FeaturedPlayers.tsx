@@ -58,8 +58,8 @@ function PlayerCard({ player, index }: { player: FeaturedPlayer; index: number }
           <span><Gamepad2 size={13} /> {player.game?.short_name || player.favorite_game || 'FEGEPI'}</span>
           <ArrowUpRight size={16} />
         </div>
-        <p>{player.player_tag ? `@${player.player_tag}` : 'Talento FEGEPI'}</p>
-        <h3>{player.full_name || 'Jogador FEGEPI'}</h3>
+        <p>{player.full_name || 'Jogador FEGEPI'}</p>
+        <h3>{player.player_tag ? `@${player.player_tag.replace(/^@+/, '')}` : 'Talento FEGEPI'}</h3>
         <div className={styles.meta}>
           <span className={styles.crest}>
             {player.team?.crest_url

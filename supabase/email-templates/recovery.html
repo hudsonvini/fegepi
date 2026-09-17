@@ -7,7 +7,7 @@
         <tr><td style="padding:36px;line-height:1.6;">
           <h1 style="margin:0 0 16px;font-size:24px;color:#062b59;">Redefina sua senha</h1>
           <p style="margin:0 0 20px;">Recebemos um pedido para criar uma nova senha para a sua conta FEGEPI.</p>
-          <p style="margin:0 0 28px;"><a href="{{ .ConfirmationURL }}" style="display:inline-block;padding:13px 20px;border-radius:8px;background:#034ea7;color:#ffffff;font-weight:700;text-decoration:none;">Criar nova senha</a></p>
+          <p style="margin:0 0 28px;"><a href="{{ .SiteURL }}/auth/callback?token_hash={{ .TokenHash }}&amp;type=recovery" style="display:inline-block;padding:13px 20px;border-radius:8px;background:#034ea7;color:#ffffff;font-weight:700;text-decoration:none;">Criar nova senha</a></p>
           <p style="margin:0 0 12px;font-size:14px;color:#5d6878;">Este link expira e só pode ser usado uma vez. Se você não solicitou esta alteração, pode ignorar este e-mail.</p>
           <p style="margin:0;font-size:14px;color:#5d6878;">Por segurança, use apenas o e-mail de recuperação mais recente.</p>
         </td></tr>
