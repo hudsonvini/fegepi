@@ -1,10 +1,17 @@
-import sharp from 'sharp'
 import { avatarFileError } from './avatar-rules'
 
 export async function compressAvatar(file: File): Promise<File> {
   const error = avatarFileError(file)
   if (error) throw new Error(error)
   const input = Buffer.from(await file.arrayBuffer())
+  let sharp: typeof import('sharp').default
+  try {
+    // Load the native codec only when uploading, never while rendering /perfil.
+    sharp = (await import('sharp')).default
+  } catch {
+    console.error('[avatar-image]', { code: 'image_processor_unavailable' })
+    throw new Error('O processamento de fotos está temporariamente indisponível. Tente novamente mais tarde.')
+  }
   try {
     const pipeline = sharp(input, { limitInputPixels: 25_000_000, failOn: 'warning' })
     const metadata = await pipeline.metadata()

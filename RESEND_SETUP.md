@@ -1,5 +1,13 @@
 # Resend dedicado à FEGEPI
 
+## Verificação em produção — 18/09/2026
+
+O domínio canônico observado é `https://www.fegepi.com.br`. O Site URL do Supabase estava em `https://fegepi.vercel.app` e foi corrigido no painel para `https://www.fegepi.com.br`. Também foram adicionados os retornos exatos `/auth/callback?next=/perfil` e `/auth/callback?next=/redefinir-senha` nesse domínio, preservando os retornos anteriores. E-mails já enviados não mudam; solicite um novo após a correção.
+
+A variável `NEXT_PUBLIC_SITE_URL` na hospedagem deve usar `https://www.fegepi.com.br`; seu valor remoto ainda não foi verificado. O arquivo `.env.local` mantém localhost para desenvolvimento.
+
+O perfil público retornou HTTP 500 mesmo sem sessão, enquanto o build local retorna corretamente 307 para `/login`. A causa do erro de produção depende dos logs da Vercel; a correção do domínio não comprova resolução desse erro.
+
 Decisão do responsável: usar uma nova conta Resend exclusiva da FEGEPI, preservando a aplicação existente. Domínio informado: `fegepi.com.br`. A conta e o acesso ao DNS ainda não foram disponibilizados; nenhuma configuração remota foi alterada.
 
 Proposta de domínio de envio: `notificacoes.fegepi.com.br`. Remetente proposto: `FEGEPI <nao-responda@notificacoes.fegepi.com.br>`. Os valores de DNS serão os gerados pela nova conta Resend; ainda não há registros prontos para publicação. Confirmar separadamente se a URL canônica do site usa `www` antes de alterar redirecionamentos de autenticação.

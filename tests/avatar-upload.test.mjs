@@ -19,6 +19,14 @@ function load(file, dependencies = {}) {
 const rules = load('src/lib/avatar-rules.ts')
 const { compressAvatar } = load('src/lib/avatar-image.ts', { sharp, './avatar-rules': rules })
 
+test('missing native codec does not prevent loading the profile module and returns a controlled upload error', async () => {
+  const unavailable = load('src/lib/avatar-image.ts', { './avatar-rules': rules })
+  await assert.rejects(
+    unavailable.compressAvatar(new File(['test'], 'photo.jpg', { type: 'image/jpeg' })),
+    /processamento de fotos está temporariamente indisponível/,
+  )
+})
+
 test('3 MB is checked before decoding, including exact boundary', async () => {
   assert.equal(rules.avatarFileError({ size: rules.MAX_AVATAR_BYTES, type: 'image/jpeg' }), null)
   const oversized = new File([new Uint8Array(rules.MAX_AVATAR_BYTES + 1)], 'large.jpg', { type: 'image/jpeg' })
