@@ -35,10 +35,10 @@ function PartnerGroup({ ariaHidden = false, id }: PartnerGroupProps) {
 export default function PartnersSlider() {
     return (
         <section className={styles.container} aria-labelledby="partners-title">
-            <div className={styles.titleArea}>
+            {/* <div className={styles.titleArea}>
                 <span>Quem nos apoia</span>
                 <h2 id="partners-title">Nossos parceiros</h2>
-            </div>
+            </div> */}
 
             <div className={styles.slider}>
                 <div className={styles.marquee}>
