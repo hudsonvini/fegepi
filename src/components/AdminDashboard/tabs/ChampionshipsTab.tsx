@@ -1,10 +1,8 @@
 import Link from 'next/link'
 import { ArrowLeft, ArrowUpRight, CalendarDays, Trophy, UsersRound } from 'lucide-react'
-import styles from '@/app/admin/page.module.scss'
 import ui from './ChampionshipsTab.module.scss'
-import { saveChampionshipAction } from '@/app/admin/championship-actions'
 import AdminModal from '@/components/AdminModal/AdminModal'
-import AdminSubmitButton from '@/components/AdminSubmitButton/AdminSubmitButton'
+import CreateChampionshipForm from '../CreateChampionshipForm'
 import ChampionshipEditor from '../ChampionshipEditor'
 import AdminGameSeasonSelector from '../AdminGameSeasonSelector'
 import { adminHref } from '../navigation'
@@ -35,15 +33,12 @@ export default function ChampionshipsTab({ data, championshipId }: { data: Admin
     <div className={ui.toolbar}>
       <div><h2>{data.selectedSeason?.label ?? 'Seus campeonatos'}</h2><p>{championships.length} campeonatos · {championships.filter((item) => item.status === 'completed').length} concluídos</p></div>
       <AdminModal title="Cadastrar campeonato" triggerLabel="Novo campeonato" description="Comece com o nome e a data. Na próxima tela, você seleciona os times e registra os resultados.">
-        <form action={saveChampionshipAction} className={styles.form}>
-          <input type="hidden" name="seasonId" value={data.selectedSeason?.id ?? ''} />
-          <input type="hidden" name="status" value="draft" />
-          <p className={styles.contextInfo}>{data.selectedGame?.name} · {data.selectedSeason?.label ?? 'Crie uma temporada antes de continuar.'}</p>
-          <label>Nome do campeonato<input name="name" required maxLength={120} placeholder="Ex.: Copa Piauí — Etapa 1" /></label>
-          <label>Data de encerramento<input type="date" name="playedAt" required /></label>
-          <p className={styles.automaticHint}>O campeonato começa em rascunho. A pontuação entra no ranking quando você concluir os resultados.</p>
-          <AdminSubmitButton className={styles.primaryButton} pendingLabel="Cadastrando..." disabled={!data.championshipsAvailable || !data.selectedSeason}>Cadastrar e selecionar times</AdminSubmitButton>
-        </form>
+        <CreateChampionshipForm
+          seasonId={data.selectedSeason?.id}
+          seasonLabel={data.selectedSeason?.label}
+          gameName={data.selectedGame?.name}
+          available={data.championshipsAvailable}
+        />
       </AdminModal>
     </div>
     {!data.championshipsAvailable && <p role="alert">Não foi possível carregar os campeonatos. Verifique a conexão com o banco.</p>}
